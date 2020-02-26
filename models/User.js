@@ -65,7 +65,9 @@ schema.methods.verify = function (password) {
 }
 
 module.exports = User =  Object.assign( getConnection('user', schema), mixins, {
-
+  async get() {
+    return [{name: "fdsf"}]
+  }
 })
 
 

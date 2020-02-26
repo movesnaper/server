@@ -44,6 +44,9 @@ module.exports = Lombard =  Object.assign( getConnection('lombard', schema), mix
     const { profile } = await this.findById(id)    
     const bookkeeper = 'Bookkeeper A.B.'
     return { ...profile, settings, bookkeeper }
+  },
+  async get() {
+    return [{title: "dfs"}, {title: "dddd"}]
   }
 })
 

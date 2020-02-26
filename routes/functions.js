@@ -15,7 +15,9 @@ const headers = name => ({body, headers}, res, next) => {
 }
 
 const conn = async ({ company_id }, res, next) => {
-    if (!company_id) return res.status(401).json('no company specified')
+        // console.log(company_id);
+        
+    // if (!company_id) return res.status(401).json('no company specified')
     const { conn } = await Company.findById(company_id)
     mongoose.conn = conn
     next() 

@@ -1,6 +1,6 @@
 <template>
     <div class="content mt-3">
-        <lombard-table class="lombards-table" :items="lombards"
+        <lombard-table class="lombards-table" :items="items"
             :fields="{
                 index: {name: '#'},
                 name: {name: 'Name'},
@@ -56,7 +56,12 @@ data () {
     }
 },
 computed: {
-    ...mapGetters('lombard',['lombards'])
+    ...mapGetters('lombard',['lombards']),
+    items({lombards}) {
+        console.log(lombards);
+        
+        return lombards
+    }
 },
 methods: {
     ...mapActions('lombard', ['save', 'remove', 'update']),

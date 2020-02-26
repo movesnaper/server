@@ -1,15 +1,17 @@
 const express = require('express')
 const router = express.Router()
 const { verify, conn: connection } = require('../functions')
-
+// const nano = require('nano')('http://localhost:5984');
 const company = async (req, res, next) => {
-    try {
-        const { id } = verify(req.headers['x-token'])
-        req.company_id = id
-        next() 
-    } catch(err) {
-        res.status(401).json('bad token')
-    }
+    req.company_id = '5dd01e8ea564ca1f78ee5778'
+    next()
+    // try {
+    //     const { id } = verify(req.headers['x-token'])
+    //     req.company_id = id
+    //     next() 
+    // } catch(err) {
+    //     res.status(401).json('bad token')
+    // }
 }
 
 const conn = [company, connection]
@@ -21,13 +23,17 @@ router.post('/register', ({body}, res) => {
 })
 
 router.post('/login',  ({ body }, res) => {    
-    Company.findOne({ email: body.email })
-        .then(({ sign }) => res.json(sign))
-            .then((company) => company.verify(body.password))
+
+
+    Company.findById('5dd01e8ea564ca1f78ee5778')
+        .then(({ sign }) => res.json('sign'))
+            // .then((company) => company.verify(body.password))
                 .catch(err => res.status(400).json(err))
 })
 
 router.get('/', company, async ({ company_id }, res) => {
+    
+ 
     Company.findById(company_id)
         .then((company) => res.json(company.profile))
             .catch(err => res.status(400).json(err))

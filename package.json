@@ -31,6 +31,7 @@
     "moment": "^2.24.0",
     "mongoose": "^5.4.10",
     "mongoose-transactions": "^1.1.1",
+    "nano": "^8.1.0",
     "nodemailer": "^5.1.1",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
