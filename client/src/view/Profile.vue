@@ -1,7 +1,7 @@
 <template>
 <div class="profile">
     <lombard-table></lombard-table>
-    <user-table></user-table>
+    <!-- <user-table></user-table> -->
 </div>
     
 </template>

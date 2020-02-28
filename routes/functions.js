@@ -3,8 +3,10 @@ require('../models')
 const jwt = require('jsonwebtoken')
 const {SECRET_OR_KEY} = process.env
 
-const verify =  token =>  {
-    return jwt.verify(token, SECRET_OR_KEY)
+const  verify = async (token) =>  {
+    const value = jwt.verify(token, SECRET_OR_KEY)
+    if (!value) throw 'bad_token'
+    return value
 }
 
 const sign = (v, expiresIn) => jwt.sign(v, SECRET_OR_KEY)

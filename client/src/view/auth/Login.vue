@@ -17,7 +17,7 @@
         </div>
 <div>
     no_account ?
-    <a href="/register" > register </a>
+    <a href="#" @click="$router.push('register')"> register </a>
 </div>
       </div>
 </template>

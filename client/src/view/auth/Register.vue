@@ -22,7 +22,7 @@
         </div>
 <div>
     have_account ?
-    <a href="/login"> login </a>
+    <a href="#" @click="$router.push('login')"> login </a>
 </div>
       </div>
 </template>

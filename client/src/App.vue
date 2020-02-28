@@ -17,7 +17,7 @@ export default {
   name: 'App',
   components: {MbaHeader},
   created() {
-    // this.$store.dispatch('update')
+    this.$store.dispatch('update')
   }
   
 }

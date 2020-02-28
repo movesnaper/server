@@ -1,31 +1,47 @@
-const nano = require('nano')('http://185.98.87.225:5984')
-const lombards = nano.db.use('lombards')
-
+const { COUCHDB_URI, SITE_URL } = process.env
+const PouchDB = require("pouchdb")
+const db = new PouchDB(COUCHDB_URI +'/lombards')
 const express = require('express')
 const router = express.Router()
 const { sign } = require('../functions')
 
+
 const profile = ({ _id, name, active }) => ({
-  _id, name, active, token: sign({ _id })
+  _id, name, active, token: sign({ _id, url: SITE_URL + '/api' })
 })
 
-router.get('/', async ({ }, res) => {
-    const docs = await lombards.list({ include_docs: true })
-    .then(({ rows }) => rows.map(v => v.doc))
-    res.json(docs.map(profile))
+const post = async (body) => {
+  const lombard = body._id ? await db.get(body._id) : {}
+  return db.post({ ...lombard, ...body })
+}
+
+const get = async (id) => {
+  const docs = await db.allDocs({ include_docs: true })
+  .then(({ rows }) => rows.map(v => v.doc))
+  return id ? docs.find(v => v._id === id) : docs
+}
+
+router.get('/', async ({}, res) => {
+  get().then(v => res.json(v.map(profile)))
+  
 })
 
 router.post('/', async ({ body }, res) => {
-  const { _rev } = {...await lombards.get(body._id) }
-  const { id } = await lombards.insert({...body, _rev })
-  res.json(id)
+  post(body)
+    .then(v => res.json(v))
+  // res.json(info)
 })
 
 router.post('/remove', async ({ body }, res) => {
-  const { _id, _rev } = {...await lombards.get(body._id) }
-  res.json(await lombards.destroy(_id, _rev))
+  const info = await db.get(body._id)
+    .then(v => db.put({...v, _deleted: true }))
+  res.json(info)
 })
 
-module.exports =  router
+module.exports =  {
+  router,
+  post,
+  get
+}
 
 

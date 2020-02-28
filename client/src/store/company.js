@@ -1,5 +1,5 @@
 import { router } from '@/setup'
-import { db, getToken } from '@/db'
+import { db } from '@/db'
 const { get, post } = db()
 
 const state = {
@@ -16,7 +16,7 @@ const getters = {
   },
 
   isAuth ({ company }) {
-    return !!company.id
+    return !!localStorage.getItem('x-token')
   }
 }
 const mutations = {
@@ -26,17 +26,14 @@ const mutations = {
 }
 const actions = {
 
-  async register (s, v) {
-    const res = await post('/register', v)
-    console.log(res)
+  async register ({ dispatch }, v) {
+    await post('/register', v)
     router.push('/login')
   },
 
   async login ({ dispatch }, v) {
-    const token = await post('/login', v)
-    console.log(token)
-    localStorage.setItem('x-token', token)
-    await dispatch('update')
+    await post('/login', v)
+      .then(() => dispatch('update'))    
     router.push('/profile')
   },
 
@@ -45,15 +42,14 @@ const actions = {
     dispatch('update')
   },
 
-  async logout ({ dispatch }) {
-    localStorage.removeItem('x-token')
-    await dispatch('update')
+  async logout ({ dispatch }, silent) {
+    await post('/logout')
+      .then(() => dispatch('update', {}))
     router.push('/login')
   },
 
-  async update  ({ commit }) {
-    getToken('x-token')
-    commit('company', await get('/'))
+  async update ({ commit }, v) {
+    commit('company', v || await get('/'))
   }
 
 }

@@ -28,7 +28,10 @@ const actions = {
   },
 
   async update ({ commit }) {
-    commit('lombards', await get('/'))
+    const ddd = await get('/')
+    console.log(ddd);
+    
+    commit('lombards', ddd)
   }
 }
 

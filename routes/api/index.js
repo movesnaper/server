@@ -1,51 +1,57 @@
 const express = require('express')
 const router = express.Router()
-const { verify, conn: connection } = require('../functions')
-// const nano = require('nano')('http://localhost:5984');
-const company = async (req, res, next) => {
-    req.company_id = '5dd01e8ea564ca1f78ee5778'
-    next()
-    // try {
-    //     const { id } = verify(req.headers['x-token'])
-    //     req.company_id = id
-    //     next() 
-    // } catch(err) {
-    //     res.status(401).json('bad token')
-    // }
+const { COUCHDB_URI } = process.env
+const PouchDB = require("pouchdb")
+PouchDB.plugin(require('pouchdb-authentication'))
+const db = new PouchDB(COUCHDB_URI +'/_users')
+const { verify } = require('../functions')
+const lombard = require('./lombard')
+
+const session = async (req, res, next) => {
+    db.getSession().then(({ userCtx }) => {
+        const user = req.user = userCtx.name
+        user ? next() : res.status(401).json('bad token')
+    })
+}
+const token = async (req, res, next) => {
+    
+    verify(req.body.token).then(v => {
+        req.body = v
+        next()
+    }).catch(err => res.status(400).json(err))
 }
 
-const conn = [company, connection]
-
-router.post('/register', ({body}, res) => {
-    Company.save(body)
-        .then(() => res.json('ok'))
-            .catch(err => res.status(400).json(err))
-})
-
-router.post('/login',  ({ body }, res) => {    
-
-
-    Company.findById('5dd01e8ea564ca1f78ee5778')
-        .then(({ sign }) => res.json('sign'))
-            // .then((company) => company.verify(body.password))
-                .catch(err => res.status(400).json(err))
-})
-
-router.get('/', company, async ({ company_id }, res) => {
+router.post('/activate', token, async ({ body }, res) => {
+    const { id } = await lombard.post({ _id: body._id, active: true })
+    const { name } = await lombard.get(id)
     
- 
-    Company.findById(company_id)
-        .then((company) => res.json(company.profile))
-            .catch(err => res.status(400).json(err))
+    res.json({ name, remote_url: COUCHDB_URI })
 })
-
-router.post('/',  company, ({ body, company_id }, res) => {
-    Company.save({ ...body, company_id })
-        .then(() => res.json('ok'))
-            .catch(err => res.status(400).json(err))
+router.post('/register', async ({ body }, res) => {
+    const { name, email, password } = body
+    const metadata = { email }
+    db.signUp(name, password, { metadata })
+        .then(v => res.json(v))
+            .catch(err => res.status(404).json(err))
 })
+router.post('/login', async ({ body }, res) => {
+    const { email, password } = body
+    db.logIn(email, password)
+        .then(v => res.json(v))
+            .catch(err => res.status(404).json(err))
+})
+router.post('/logout', async (req, res) => {
+    db.logOut()
+        .then(v => res.json(v))
+            .catch(err => res.status(404).json(err))
+})
+router.get('/', session, async ({ user }, res) => {
+    db.getUser(user)
+        .then(v => res.json(v))
+            .catch(err => res.status(404).json(err))
+})
+router.post('/',  session, ({ body }, res) => {})
 
-router.use('/lombard', conn, require('./lombard'))
-router.use('/user', conn, require('./user'))
+router.use('/lombard', session, lombard.router)
 
-module.exports = router;
+module.exports = router
