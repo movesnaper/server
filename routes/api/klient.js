@@ -1,15 +1,15 @@
-const { SITE_URL, COUCHDB, LOCALDB: local } = process.env
-const url = SITE_URL + '/api'
+
 const express = require('express')
 const router = express.Router()
-const { sign, docs } = require('../functions')
+const { docs } = require('../functions')
 
-router.get('/', async ({ db, user: company }, res) => {
-  const remote = `${COUCHDB}/${company}`
-  const getToken = ({ _id: lombard }) => sign({ lombard, company, local, remote, url })
-  const profile = v => ({...v, token: getToken(v)})  
+// const profile = ({ _id, name, active, email }) =>
+//   ({ _id, name, active, email })
+
+
+router.get('/', async ({ db }, res) => {
   db.allDocs({ include_docs: true })
-    .then(v => res.json(docs(v).map(profile)))
+    .then(v => res.json(docs(v)))
       .catch(err => console.log(err))
 })
 
@@ -25,6 +25,6 @@ router.post('/remove', async ({ db, body }, res) => {
         .catch(err => console.log(err))
 })
 
-module.exports =  router
+module.exports = router
 
 

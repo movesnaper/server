@@ -4,7 +4,9 @@ const { get, post } = db()
 
 const state = {
   logo: 'PS',
-  company: {}
+  company: {},
+  klients: [],
+  reestr: []
 }
 const getters = {
   company ({ company }) {
@@ -21,7 +23,13 @@ const getters = {
 }
 const mutations = {
   company (state, v) {
-    state.company = v || {}
+    state.company = v
+  },
+  klients (state, v) {
+    state.klients = v
+  },
+  reestr (state, v) {
+    state.reestr = v
   }
 }
 const actions = {
@@ -33,7 +41,8 @@ const actions = {
 
   async login ({ dispatch }, v) {
     await post('/login', v)
-      .then(() => dispatch('update'))    
+      .then(() => dispatch('update'))
+        .catch(err => console.log(err))
     router.push('/profile')
   },
 
@@ -49,7 +58,9 @@ const actions = {
   },
 
   async update ({ commit }, v) {
-    commit('company', v || await get('/'))
+    commit('company', v || await get('/profile'))
+    commit('klients', v || await get('/klients/'))
+    commit('reestr', v || await get('/reestr/'))
   }
 
 }

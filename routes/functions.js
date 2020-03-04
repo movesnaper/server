@@ -1,33 +1,32 @@
-const mongoose = require('mongoose')
-require('../models')
-const jwt = require('jsonwebtoken')
-const {SECRET_OR_KEY} = process.env
 
+const jwt = require('jsonwebtoken')
+const { COUCHDB, PASSWORD, SECRET_OR_KEY } = process.env
+const auth = { username: 'admin', password: PASSWORD }
+const PouchDB = require("pouchdb")
+PouchDB.plugin(require('pouchdb-authentication'))
 const  verify = async (token) =>  {
     const value = jwt.verify(token, SECRET_OR_KEY)
     if (!value) throw 'bad_token'
     return value
 }
 
+
 const sign = (v, expiresIn) => jwt.sign(v, SECRET_OR_KEY)
 
-const headers = name => ({body, headers}, res, next) => {
-    Object.assign(body, verify(headers[name]))
-    next() 
-}
+const newPouchDb = url =>
+    new PouchDB(url ? `${COUCHDB}/${url}` : COUCHDB, { auth })
+const docs = ({ rows }) => rows.map(v => v.doc)
+// const get = async (url, id) => {
+//     const db = newPouchDb(url)
+//     const docs = await db.allDocs({ include_docs: true })
+//     .then(({ rows }) => rows.map(v => v.doc))
+//     return id ? docs.find(v => v._id === id) : docs
+//   }
+  
+//   const put = async (url, body) => {
+//     const db = newPouchDb(url)
+//     const doc = await db.get(body._id).catch(() => {})
+//     return db.put({...doc, ...body })
+//   }
 
-const conn = async ({ company_id }, res, next) => {
-        // console.log(company_id);
-        
-    // if (!company_id) return res.status(401).json('no company specified')
-    const { conn } = await Company.findById(company_id)
-    mongoose.conn = conn
-    next() 
-}
-
-module.exports = {
-    verify,
-    headers,
-    sign,
-    conn
-}
+module.exports = { newPouchDb, docs, verify, sign }

@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 app.use('/api', require('./routes/api'))
-app.use('/lombard', require('./routes/lombard'))
+// app.use('/lombard', require('./routes/lombard'))
 
 if(process.env.NODE_ENV === 'production'){
   app.use(express.static('client/dist'))

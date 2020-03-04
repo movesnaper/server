@@ -58,7 +58,7 @@ data () {
 computed: {
     ...mapGetters('lombard',['lombards']),
     items({lombards}) {
-        console.log(lombards);
+        // console.log(lombards);
         
         return lombards
     }

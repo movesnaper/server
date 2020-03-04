@@ -1,0 +1,5 @@
+2020/03/01-22:40:57.338 df8 Recovering log #56
+2020/03/01-22:40:57.338 df8 Level-0 table #59: started
+2020/03/01-22:40:57.388 df8 Level-0 table #59: 237 bytes OK
+2020/03/01-22:40:57.538 df8 Delete type=0 #56
+2020/03/01-22:40:57.539 df8 Delete type=3 #54
