@@ -6,13 +6,8 @@
                 name: {name: 'Name'},
                 email: {name: 'Email'},
                 active: {name: 'active'},
-            }"
-            :actions="{
-                edit: {icon: 'fas fa-pen'},
-                remove: {icon: 'fas fa-trash'}
-            }"
-            @remove="remove"
-            @edit="edit">
+                setup: {name: ''}
+            }">
             <template #index="{item}"> {{item.index + 1}}</template> 
             <template #name="{item}"> {{item.name}}</template> 
             <template #email="{item}">{{item.email}}  </template> 
@@ -29,9 +24,9 @@
                 </div>
             </template> 
         </user-table>
-        <modal-row   ref='modal-user'
+        <!-- <modal-row   ref='modal-user'
         :fields="['name', 'email', 'password']"
-        @ok="save"/>
+        @ok="save"/> -->
     </div>
 </template>
 

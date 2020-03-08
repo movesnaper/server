@@ -1,11 +1,8 @@
 <template>
   <div id="app" >
-    <div class="container">
-        <mba-header class="row "></mba-header>
-        <div class="container-fluid ">
-
-          <router-view  class="center"/>
-        </div>
+    <div class="">
+        <mba-header class=""></mba-header>
+        <router-view class="" />
     </div>
   </div>
 </template>
@@ -15,7 +12,7 @@ import MbaHeader from '@/components/Header'
 
 export default {
   name: 'App',
-  components: {MbaHeader},
+  components: { MbaHeader },
   created() {
     this.$store.dispatch('update')
   }

@@ -1,5 +1,5 @@
 <template>
-        <div class="mba-table" @mouseleave="$refs.menu.close()">
+        <div class="mba-table">
         <table class="table table-sm">
         <thead >
             <tr>
@@ -10,8 +10,7 @@
         </thead>
         <tbody >
             <tr v-for="(item, index) in items"  :key="index"
-                :class="{active: active === index}"
-                @contextmenu.prevent="context($event, {...item, index})">
+                :class="{active: active === index}">
             <td v-for="({name}, key) in fields"  :key="key" :class="key">
                 <slot  :name="key" :item="{...item, index}"></slot>
             </td>
@@ -25,25 +24,13 @@
 
         </tbody>
         </table> 
-      <vue-context class="vue-context" ref="menu">
-        <ul slot-scope="child" >
-            <li
-            v-for="({icon}, name) in actions" :key="name"
-            @click="emit(name, child.data)">
-                <span>{{name}}</span> <i :class="icon"></i>
-            </li>
-        </ul>
-    </vue-context>    
     </div>
 </template>
 
 <script>
-import { VueContext } from 'vue-context';
 export default {
-components: {VueContext},
     props: {
         fields: Object,
-        actions: Object,
         items: Array,
     },
     data () {
@@ -53,10 +40,10 @@ components: {VueContext},
     },
 
 methods: {
-    context(evt, data) {
-        this.active = data.index
-        this.$refs.menu.open(evt, data)
-    },
+    // context(evt, data) {
+    //     this.active = data.index
+    //     this.$refs.menu.open(evt, data)
+    // },
     emit(name, data) {
         this.active = false
         this.$emit(name, data)

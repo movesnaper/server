@@ -7,6 +7,9 @@ const state = {
 const getters = {
   lombards ({ lombards }) {
     return lombards || []
+  },
+  map({ lombards }) {
+    return lombards.reduce((res, v) => ({...res, [v._id]: v }), {})
   }
 }
 const mutations = {
@@ -23,6 +26,8 @@ const actions = {
   },
 
   async save ({ dispatch }, v) {
+    console.log(v);
+    
     await post('/', v)
     return dispatch('update')
   },

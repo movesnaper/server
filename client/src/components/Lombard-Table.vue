@@ -4,23 +4,16 @@
             :fields="{
                 index: {name: '#'},
                 name: {name: 'Name'},
-                token: {name: 'token'},
                 active: {name: 'active'},
-            }"
-            :actions="{
-                edit: {icon: 'fas fa-pen'},
+                token: {name: 'token'},
+                setup: {icon: 'fas fa-pen'},
                 remove: {icon: 'fas fa-trash'}
-            }"
-            @remove="remove"
-            @edit="edit">
+            }">
             <template #index="{item}"> {{item.index + 1}}</template> 
             <template #name="{item}"> {{item.name}}</template> 
             <template #token="{item}" >
-                <input type="text" class=" form-control form-control-sm"
-                @contextmenu="$event.stopPropagation()"
-                :value="item.token" 
-                @focus="$event.target.select()"
-                readonly>
+                <input v-if="item.active" type="text" class=" form-control form-control-sm"
+                :value="item.token" readonly>
             </template> 
             <template #active="{item}">
                 <div class="form-check">
@@ -29,44 +22,46 @@
                     @change="save({...item, active: !item.active})">
                 </div>            
             </template> 
-            <template #footer_index>
-                <div @click="edit">
-                    <i class="fas fa-plus-circle"></i>
+            <template #setup="{item}">
+                <div @click="go(item)">
+                    <i class="fas fa-pen"></i>
                 </div>
             </template> 
+            <template #remove="{item}">
+                <div @click="remove(item)">
+                    <i class="fas fa-trash"></i>
+                </div>
+            </template> 
+            <template #footer_index>
+                <div><i class="fas fa-plus-circle"></i></div>
+            </template> 
+            <template #footer_name="{item}">
+                <input type="text" :value="item"
+                @change="({target}) => save({ name: target.value, index: items.length })">
+            </template> 
         </lombard-table>
-        <modal-row   ref='modal-lombard' :fields="['name']"
-         @ok="save"/>
     </div>
 </template>
 
 <script>
 import {mapGetters, mapActions} from 'vuex'
 import LombardTable from '@/widjets/Mba-Table'
-import ModalRow from '@/widjets/ModalRow'
 
 export default {
-components: {LombardTable, ModalRow},
+components: { LombardTable },
 created() {
     this.update()
 },
-data () {
-    return {
-        row: {}
-    }
-},
 computed: {
     ...mapGetters('lombard',['lombards']),
-    items({lombards}) {
-        // console.log(lombards);
-        
-        return lombards
+    items({ lombards }) {
+        return lombards.sort((a, b) => a.index - b.index)
     }
 },
 methods: {
     ...mapActions('lombard', ['save', 'remove', 'update']),
-    edit(data) {
-        this.$refs['modal-lombard'].show(data || {})
+    go({ _id }) {
+        this.$router.push(`/lombard/${_id}`)       
     }
 }
 }

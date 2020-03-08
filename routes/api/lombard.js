@@ -14,6 +14,8 @@ router.get('/', async ({ db, user: company }, res) => {
 })
 
 router.post('/', async ({ db, body}, res) => {
+  // console.log(body);
+  
   db.put({ _id: body.name, ...body })
     .then(v => res.json(v))
       .catch(err => console.log(err))
