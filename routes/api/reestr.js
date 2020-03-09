@@ -8,8 +8,10 @@ const { docs } = require('../functions')
 
 
 router.get('/', async ({ db }, res) => {
+  console.log('reestr');
+  
   db.allDocs({ include_docs: true })
-    .then(v => res.json(docs(v)))
+    .then(v => res.json(v))
       .catch(err => console.log(err))
 })
 

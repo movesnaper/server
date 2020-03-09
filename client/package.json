@@ -16,6 +16,8 @@
     "bootstrap-vue": "^2.0.0-rc.20",
     "deep-equal": "^1.0.1",
     "jwt-decode": "^2.2.0",
+    "moment": "^2.24.0",
+    "moment-range": "^4.0.2",
     "validator": "^10.11.0",
     "vue": "^2.5.22",
     "vue-context": "^4.0.0",

@@ -32,7 +32,7 @@
     </div>
 
 </div>
-    <div class="col mt-4 pr-2">
+    <div class="col mt-4 pr-2" style="overflow: scroll;">
         <router-view></router-view>
     </div>
 </div>

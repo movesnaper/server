@@ -5,9 +5,12 @@ const db = newPouchDb()
 
 const session = async (req, res, next) => {
   const { userCtx } = await db.getSession()
-    const user = userCtx.name
-    if (!user) return res.status(401).json('auth_user_requred')
+    // const user = userCtx.name
+    const user = 'po-light'
+    if (!user || user === 'admin') return res.status(401).json('auth_user_requred')
     req.user = user
+    // console.log(user);
+    
     req.db = newPouchDb(user)
     next()
 }
@@ -30,6 +33,11 @@ router.post('/logout', async (req, res) => {
 router.get('/profile', session, async ({ user }, res) => {
     db.getUser(user).then(v => res.json(v))
         .catch(err => res.status(401).json(err))
+})
+router.get('/', session, async ({ db }, res) => {
+    db.allDocs({ include_docs: true })
+    .then(v => res.json(v))
+      .catch(err => console.log(err))
 })
 
 router.use('/lombard', session, require('./lombard'))

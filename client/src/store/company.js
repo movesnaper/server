@@ -5,12 +5,23 @@ const { get, post } = db()
 const state = {
   logo: 'PS',
   company: {},
-  klients: [],
-  reestr: []
+  docs: {}
 }
 const getters = {
   company ({ company }) {
     return company
+  },
+  docs ({ docs }) {
+    return (docs.rows || []).map(({ doc }) => doc)
+  },
+  reestr ({}, { docs }) {
+    return docs.filter(({ type }) => type === 'reestr')
+  },
+  users ({}, { docs }) {
+    return docs.filter(({ type }) => type === 'user')
+  },
+  klients ({}, { docs }) {
+    return docs.filter(({ type }) => type === 'klient')
   },
 
   logo ({ company, logo }) {
@@ -28,8 +39,8 @@ const mutations = {
   klients (state, v) {
     state.klients = v
   },
-  reestr (state, v) {
-    state.reestr = v
+  docs (state, v) {
+    state.docs = v
   }
 }
 const actions = {
@@ -58,8 +69,10 @@ const actions = {
   },
 
   async update ({ commit }, v) {
+    console.log('update');
     
     commit('company', v || await get('/profile'))
+    commit('docs', v || await get('/'))
     // commit('klients', v || await get('/klients/'))
     // commit('reestr', v || await get('/reestr/'))
   }
