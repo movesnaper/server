@@ -9,14 +9,14 @@ router.get('/', async ({ db, user: company }, res) => {
   const getToken = ({ _id: lombard }) => sign({ lombard, company, local, remote, url })
   const profile = v => ({...v, token: getToken(v)})  
   db.allDocs({ include_docs: true })
-    .then(v => res.json(docs(v).map(profile)))
+    .then(v => res.json(docs(v).filter(v => v.type === 'lombard').map(profile)))
       .catch(err => console.log(err))
 })
 
 router.post('/', async ({ db, body}, res) => {
   // console.log(body);
-  
-  db.put({ _id: body.name, ...body })
+  const _id = body.name
+  db.put({ _id, type: 'lombard', ...body })
     .then(v => res.json(v))
       .catch(err => console.log(err))
 })

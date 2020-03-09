@@ -1,12 +1,13 @@
 <template>
     <div class="content mt-3">
-        <user-table class="users-table" :items="users"
+        <user-table class="users-table" :items="items"
             :fields="{
                 index: {name: '#'},
                 name: {name: 'Name'},
-                email: {name: 'Email'},
                 active: {name: 'active'},
-                setup: {name: ''}
+                email: {name: 'Email'},
+                setup: {icon: 'fas fa-pen'},
+                remove: {icon: 'fas fa-trash'}
             }">
             <template #index="{item}"> {{item.index + 1}}</template> 
             <template #name="{item}"> {{item.name}}</template> 
@@ -17,16 +18,25 @@
                     :checked="item['active']"
                     @change="save({...item, active: !item.active})">
                 </div>            
-            </template> 
-            <template #footer_index>
-                <div @click="edit">
-                    <i class="fas fa-plus-circle"></i>
+            </template>
+            <template #setup="{item}">
+                <div @click="go(item)">
+                    <i class="fas fa-pen"></i>
                 </div>
             </template> 
+            <template #remove="{item}">
+                <div @click="remove(item)">
+                    <i class="fas fa-trash"></i>
+                </div>
+            </template> 
+            <template #footer_index>
+                <div><i class="fas fa-plus-circle"></i></div>
+            </template>
+            <template #footer_name="{item}">
+                <input type="text" :value="item"
+                @change="({target}) => save({ name: target.value, index: items.length })">
+            </template> 
         </user-table>
-        <!-- <modal-row   ref='modal-user'
-        :fields="['name', 'email', 'password']"
-        @ok="save"/> -->
     </div>
 </template>
 
@@ -40,17 +50,16 @@ components: {UserTable, ModalRow},
 created() {
     this.update()
 },
-
-data () {
-    return {}
-},
 computed: {
-    ...mapGetters('user',['users'])
+    ...mapGetters('user',['users']),
+    items({ users }) {
+        return users.sort((a, b) => a.index - b.index)
+    }
 },
 methods: {
     ...mapActions('user', ['save', 'remove', 'update']),
-    edit(data) {
-        this.$refs['modal-user'].show(data)
+    go({ _id }) {
+        this.$router.push(`/user/${_id}`)       
     }
 }
 }

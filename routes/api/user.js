@@ -3,18 +3,16 @@ const express = require('express')
 const router = express.Router()
 const { docs } = require('../functions')
 
-const profile = ({ _id, name, active, email }) =>
-  ({ _id, name, active, email })
-
 
 router.get('/', async ({ db }, res) => {
   db.allDocs({ include_docs: true })
-    .then(v => res.json(docs(v).map(profile)))
+    .then(v => res.json(docs(v).filter(v => v.type === 'user')))
       .catch(err => console.log(err))
 })
 
-router.post('/', async ({ db, body}, res) => {
-  db.put({ _id: body.name, ...body })
+router.post('/', async ({ db, body}, res) => {  
+  const _id = `org.couchdb.user:${body.name}` 
+  db.put({ _id, type: 'user', ...body })
     .then(v => res.json(v))
       .catch(err => console.log(err))
 })

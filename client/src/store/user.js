@@ -7,6 +7,9 @@ const state = {
 const getters = {
   users ({ users }) {
     return users || []
+  },
+  map({ users }) {
+    return users.reduce((res, v) => ({...res, [v._id]: v }), {})
   }
 }
 const mutations = {

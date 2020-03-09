@@ -13,11 +13,11 @@ router.get('/', async ({ db }, res) => {
       .catch(err => console.log(err))
 })
 
-router.post('/', async ({ db, body}, res) => {
-  db.put({ _id: body.name, ...body })
-    .then(v => res.json(v))
-      .catch(err => console.log(err))
-})
+// router.post('/', async ({ db, body}, res) => {
+//   db.put(body)
+//     .then(v => res.json(v))
+//       .catch(err => console.log(err))
+// })
 
 router.post('/remove', async ({ db, body }, res) => {
   db.put({ ...body, _deleted: true })

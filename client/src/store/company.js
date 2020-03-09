@@ -58,11 +58,10 @@ const actions = {
   },
 
   async update ({ commit }, v) {
-    // console.log(await get('/profile'));
     
     commit('company', v || await get('/profile'))
-    commit('klients', v || await get('/klients/'))
-    commit('reestr', v || await get('/reestr/'))
+    // commit('klients', v || await get('/klients/'))
+    // commit('reestr', v || await get('/reestr/'))
   }
 
 }

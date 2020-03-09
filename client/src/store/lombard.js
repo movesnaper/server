@@ -14,7 +14,6 @@ const getters = {
 }
 const mutations = {
   lombards (state, v) {
-    // console.log(v)
     state.lombards = v || []
   }
 }
@@ -26,8 +25,6 @@ const actions = {
   },
 
   async save ({ dispatch }, v) {
-    console.log(v);
-    
     await post('/', v)
     return dispatch('update')
   },

@@ -37,9 +37,6 @@ export default {
     },
     penalty() {
       return ['gold', 'silver', 'things']
-    },
-    days() {
-      return ['min', 'max']
     }
   },
   methods: {}

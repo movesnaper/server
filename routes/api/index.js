@@ -4,23 +4,13 @@ const { newPouchDb } = require('../functions')
 const db = newPouchDb()
 
 const session = async (req, res, next) => {
-    const { userCtx } = await db.getSession()
-    // console.log(userCtx);
-    
-    const user = req.user = userCtx.name
-    user ? next() : res.status(401).json('auth_user_requred')
+  const { userCtx } = await db.getSession()
+    const user = userCtx.name
+    if (!user) return res.status(401).json('auth_user_requred')
+    req.user = user
+    req.db = newPouchDb(user)
+    next()
 }
-const useUrl = (name = '') => [session, (req, res, next) => {
-    req.db = newPouchDb(req.user + name)
-    req.user !== 'admin' ? next() : res.status(401).json('auth_user_requred')
-}]
-
-router.post('/activate', async ({ body }, res) => {
-    verify(body.token).then((v) => {
-        console.log(v)
-        res.json(v)      
-    }).catch(err => res.status(404).json(err))
-})
 
 router.post('/register', async ({ body }, res) => {
     const { name, email, password } = body
@@ -42,9 +32,9 @@ router.get('/profile', session, async ({ user }, res) => {
         .catch(err => res.status(401).json(err))
 })
 
-router.use('/lombard', useUrl(), require('./lombard'))
-router.use('/user', useUrl('_user'), require('./user'))
-router.use('/klients', useUrl('_klient'), require('./klient'))
-router.use('/reestr', useUrl('_reestr'), require('./reestr'))
+router.use('/lombard', session, require('./lombard'))
+router.use('/user', session, require('./user'))
+router.use('/klients', session, require('./klient'))
+router.use('/reestr', session, require('./reestr'))
 
 module.exports = router
