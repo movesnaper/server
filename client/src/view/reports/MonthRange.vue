@@ -1,10 +1,12 @@
 <template>
+<div class="row">
 <ul  class="list-group list-group-horizontal-sm">
   <li v-for="(item, i) in range" :key="item"
   :class="['list-group-item', { active: month.format('MMMM') === item }]"
   @click="selectMonth(i)"
   >{{ item }}</li>
 </ul>
+</div>
 </template>
 
 <script>

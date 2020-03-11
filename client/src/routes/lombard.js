@@ -1,7 +1,7 @@
 
 import Lombard from '@/view/Lombard'
 import { Main, Price, Accounts, Ui } from '@/view/settings'
-import { Kassa, Penalty } from '@/view/reports'
+import { Kassa, Ostatki } from '@/view/reports'
 // import { store } from '@/setup'
 
 export default {
@@ -14,7 +14,7 @@ export default {
       { path: 'settings/price', component: Price, meta: { current: 'settings'} },
       { path: 'settings/account', component: Accounts, meta: { current: 'settings'} },
       { path: 'settings/ui', component: Ui, meta: { current: 'settings'} },
-      { path: 'zvit/kassa', component: Kassa, meta: { current: 'zvit'} },
-      { path: 'zvit/penalty', component: Penalty, meta: { current: 'zvit'} },
+      { path: 'reports/kassa', component: Kassa, meta: { current: 'reports'} },
+      { path: 'reports/ostatki', component: Ostatki, meta: { current: 'reports'} },
   ]
 }

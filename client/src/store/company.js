@@ -1,7 +1,7 @@
 import { router } from '@/setup'
 import { db } from '@/db'
 const { get, post } = db()
-
+const reduceBy = (key, arr) => arr.reduce((cur, v) => ({...cur, [v[key]]: v }), {})
 const state = {
   logo: 'PS',
   company: {},
@@ -23,6 +23,15 @@ const getters = {
   klients ({}, { docs }) {
     return docs.filter(({ type }) => type === 'klient')
   },
+  lombards ({}, { docs }) {
+    return docs.filter(({ type }) => type === 'lombard')
+  },
+  lombardsMap ({}, { lombards }) {
+    return reduceBy('_id', lombards)
+  },
+  klientsMap ({}, { klients }) {
+    return reduceBy('_id', klients)
+  },
 
   logo ({ company, logo }) {
     return company.name || logo
@@ -35,9 +44,6 @@ const getters = {
 const mutations = {
   company (state, v) {
     state.company = v
-  },
-  klients (state, v) {
-    state.klients = v
   },
   docs (state, v) {
     state.docs = v
@@ -69,12 +75,8 @@ const actions = {
   },
 
   async update ({ commit }, v) {
-    console.log('update');
-    
     commit('company', v || await get('/profile'))
     commit('docs', v || await get('/'))
-    // commit('klients', v || await get('/klients/'))
-    // commit('reestr', v || await get('/reestr/'))
   }
 
 }

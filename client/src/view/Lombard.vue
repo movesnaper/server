@@ -7,7 +7,7 @@
     <li class="breadcrumb-item active" aria-current="page">{{ $route.meta.current }}</li>
   </ol>
 </nav>
-<div class="row m-0">    
+<div class="row m-0" style="height: -webkit-fill-available;">    
     <div class="accordion col-4" id="menu">
     <div  v-for="(item) in Object.keys(menu)" :key="item">
         <div class="card border-0">
@@ -32,7 +32,7 @@
     </div>
 
 </div>
-    <div class="col mt-4 pr-2" style="overflow: scroll;">
+    <div class="col mt-4 pr-2" style="overflow: auto;">
         <router-view></router-view>
     </div>
 </div>
@@ -59,7 +59,7 @@ computed: {
     menu() {
         return {
             settings: ['main', 'account', 'price', 'ui'],
-            zvit: ['kassa', 'penalty']
+            reports: ['kassa', 'ostatki']
         }
     } 
     

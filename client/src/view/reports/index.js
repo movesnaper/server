@@ -1,6 +1,6 @@
 import Kassa from './Kassa'
-import Penalty from './Penalty'
+import Ostatki from './Ostatki'
 export {
     Kassa,
-    Penalty
+    Ostatki
 }
