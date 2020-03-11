@@ -5,8 +5,8 @@ const db = newPouchDb()
 
 const session = async (req, res, next) => {
   const { userCtx } = await db.getSession()
-    // const user = userCtx.name
-    const user = 'po-light'
+    const user = userCtx.name
+    // const user = 'po-light'
     if (!user || user === 'admin') return res.status(401).json('auth_user_requred')
     req.user = user
     // console.log(user);

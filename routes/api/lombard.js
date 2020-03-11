@@ -1,12 +1,11 @@
-const { SITE_URL, COUCHDB, LOCALDB: local } = process.env
-const url = SITE_URL + '/api'
+const { COUCHDB } = process.env
 const express = require('express')
 const router = express.Router()
 const { sign, docs } = require('../functions')
 
 router.get('/', async ({ db, user: company }, res) => {
   const remote = `${COUCHDB}/${company}`
-  const getToken = ({ _id: lombard }) => sign({ lombard, company, local, remote, url })
+  const getToken = ({ _id: lombard }) => sign({ lombard, company, remote })
   const profile = v => ({...v, token: getToken(v)})  
   db.allDocs({ include_docs: true })
     .then(v => res.json(docs(v).filter(v => v.type === 'lombard').map(profile)))
@@ -14,7 +13,6 @@ router.get('/', async ({ db, user: company }, res) => {
 })
 
 router.post('/', async ({ db, body}, res) => {
-  // console.log(body);
   const _id = body.name
   db.put({ _id, type: 'lombard', ...body })
     .then(v => res.json(v))
