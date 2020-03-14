@@ -15,10 +15,11 @@ export default {
     },
     methods: {
       ...mapActions({
-        save: 'user/save'
+        save: 'user/save',
+        // updateUser: 'user/updateUser'
       }),
       onChange(name, value) {
-        this.save({...this.user, [name]: value })        
+        return this.save({...this.user, [name]: value })
       }
     }
   }

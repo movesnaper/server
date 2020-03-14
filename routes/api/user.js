@@ -1,4 +1,5 @@
-
+// const bcrypt = require('bcrypt');
+// const saltRounds = 10;
 const express = require('express')
 const router = express.Router()
 const { docs } = require('../functions')
@@ -11,8 +12,7 @@ router.get('/', async ({ db }, res) => {
 })
 
 router.post('/', async ({ db, body}, res) => {  
-  const _id = `org.couchdb.user:${body.name}` 
-  db.put({ _id, type: 'user', ...body })
+  db.put({...body, _id: body.name, type: 'user' })
     .then(v => res.json(v))
       .catch(err => console.log(err))
 })

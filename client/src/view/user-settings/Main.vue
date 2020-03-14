@@ -2,12 +2,10 @@
   <div>
     <h1>{{ user.name }}</h1>
     <div class="row m-0">
-      <!-- <div class="col-2" ></div> -->
       <input type="text" class="form-control col" placeholder="family"
       :value="fio.family" @change="({ target }) => onChange('fio', {...fio, family: target.value})">    
     </div>
     <div class="row m-0 mt-2">
-      <!-- <div class="col-2" ></div> -->
       <div class="col">
         <div class="row">
           <input type="text" class="form-control col-5 mr-1" placeholder="name"
@@ -36,7 +34,7 @@ export default {
   mixins: [ mix ],
   computed: {
     fields() {
-      return ['password', 'email', 'phone']
+      return ['email', 'phone']
     },
     fio({ user }) {
       return {...user.fio }
