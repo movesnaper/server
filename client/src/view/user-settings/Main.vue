@@ -1,6 +1,14 @@
 <template>
   <div>
-    <h1>{{ user.name }}</h1>
+    <div class="row m-0 mt-2">
+      <div class="col"><h1>{{ user.name }}</h1></div>
+      <div class="col">
+        <div class="form-group row">
+          <label class="col">Reset password</label>
+          <button class="col" @click="() => onChange('password', false)">reset</button>
+        </div>
+      </div>
+    </div>
     <div class="row m-0">
       <input type="text" class="form-control col" placeholder="family"
       :value="fio.family" @change="({ target }) => onChange('fio', {...fio, family: target.value})">    
