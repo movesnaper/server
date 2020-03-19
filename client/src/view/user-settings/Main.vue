@@ -2,11 +2,12 @@
   <div>
     <div class="row m-0 mt-2">
       <div class="col"><h1>{{ user.name }}</h1></div>
-      <div class="col">
-        <div class="form-group row">
-          <label class="col">Reset password</label>
-          <button class="col" @click="() => onChange('password', false)">reset</button>
-        </div>
+      <div class="col-4">
+        <!-- <div class="form-group row"> -->
+          <!-- <label class="col">Reset password</label> -->
+      <button class="btn btn-primary" :disabled="!user.password"
+      @click="() => onChange('password', false)">reset password</button>
+        <!-- </div> -->
       </div>
     </div>
     <div class="row m-0">
