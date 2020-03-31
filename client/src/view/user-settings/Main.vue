@@ -30,6 +30,11 @@
       @change="({ target }) => onChange(item, target.value)">
     </div>
     <div class="form-group row m-0 mt-2">
+      <label class="col-sm-4 col-form-label" >post</label>
+      <input type="text" class="col form-control" :value="user.post"
+      @change="({ target }) => onChange('post', target.value)">
+    </div>
+    <div class="form-group row m-0 mt-2">
       <label class="col-sm-4 col-form-label" >roles</label>
       <input type="text" class="col form-control" :value="(user.roles || []).join(', ')"
       @change="({ target }) => onChange('roles', (target.value || '').split(',').map(v => v.trim()))">

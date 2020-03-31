@@ -30,7 +30,7 @@ export default {
   mixins: [ mix ],
   computed: {
     fields() {
-      return ['number', 'menu', 'discount', 'statment', 'excludes']
+      return ['number', 'menu', 'discount', 'statment', 'excludes', 'excludes-users']
     },
     days() {
       return ['min', 'max']
