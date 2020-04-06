@@ -67,12 +67,12 @@ export default {
             }, [])
         },
         accounts({ lombard }) {
-        const reduce = key => ({...lombard.accounts}[key] || [])
-            .reduce((cur, v) => ({...cur, [v.acc]: v }), {})
-        return { dt: reduce('dt'), ct: reduce('ct') }
+            const reduce = key => ({...lombard.accounts}[key] || [])
+                .reduce((cur, v) => ({...cur, [v.acc]: v }), {})
+            return { dt: reduce('dt'), ct: reduce('ct') }
     },
         monthRange({ year, month }) {
-        return year.month(month - 1).range('month')
+            return year.month(month - 1).range('month')
         },
         days({ monthRange }) {          
             return [ ...monthRange.by('days')]

@@ -18,8 +18,8 @@
                         <div class="col-2 border-right">{{ t('row month start') }}</div>
                         <div class="col-2">{{ t('row month end') }}</div>
                     </div>
-                    <div v-for="(item, i) in rows" :key="i">
-                      <fin-results-row :value="item" :summ="summ"/>
+                    <div v-for="(item, i) in rows" :key="`1${i}`">
+                      <fin-results-row :value="item" :summ="summ" :range="range"/>
                     </div>
                     <div v-for="(item, i) in [
                         { title: `${t('credits info')}` },
@@ -28,9 +28,9 @@
                         { title: `${t('things')}`, style: 'second', kod: '102', values: get(v => v.dt ==='377').filter(v => v.zalog !== 'gold') },
                         { title: `${t('col')} ${t('payed by sale')}`, style: 'first', kod: '107', values: get(v => v.dt === '200') },
                     ]" :key="`3${i}`">
-                      <fin-results-row :value="item" :summ="col"/>
+                      <fin-results-row :value="item" :summ="col" :range="range"/>
                     </div>
-                    <fin-results-row :summ="rent"
+                    <fin-results-row :summ="rent" :range="range"
                     :value="{ title: `${t('rent')}`, style: 'first', kod: '110', values: get(v => v.dt ==='377') }"/>
                 </div>
              </div>
@@ -61,7 +61,12 @@ components: { HrTable, FinResultsRow },
         }
       },
   computed: {
-
+    range({ year }) {
+      const quarter = year.quarter(this.quarter)
+      const start = moment.range(quarter.clone().startOf('quarter'), quarter.clone().endOf('quarter'))
+      const end = moment.range(year.clone().startOf('year'), year.clone().endOf('year'))
+      return { start, end }
+    },
     rows({ t, get, gold, things }) {
         return [
             { title: `${t('credit results')}` },

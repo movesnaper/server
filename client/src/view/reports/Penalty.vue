@@ -29,9 +29,9 @@
                       { title: `${t('summ procents')}, ${t('after date')}`, kod: '020', values: get(v => v.ct === '703') },
                       { title: `${t('summ penalty')}, ${t('after date')}`, kod: '030', values: get(v => v.ct === '704') }                  
                     ]" :key="i">
-                    <penalty-row :value="item" :summ="summ"/>
+                    <penalty-row :value="item" :summ="summ" :range="range"/>
                   </div>
-                    <penalty-row :summ="col" 
+                    <penalty-row :summ="col"  :range="range"
                     :value="{ title: `${t('col fin credits')}, ${t('after date')}`, kod: '040', values: get(v => v.dt === '377') }"/>
                 </div>
              </div>
@@ -62,6 +62,11 @@ components: { HrTable, PenaltyRow },
         }
       },
   computed: {
+    range({ monthRange }) {
+      const start = monthRange.start.subtract(1, 'days')
+      const end = monthRange.end
+      return { start, end }
+    },
     title({ monthRange, format }) {
       return `${this.t('h3')} ${format(monthRange.end)} г.`
     },

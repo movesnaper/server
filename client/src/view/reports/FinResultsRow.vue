@@ -4,10 +4,10 @@
         {{ title }}</div>
         <div class="col-1 border-right">{{ kod }}</div>
         <div class="col-2 border-right" style="text-align: right;">
-            {{ kod ? summ(values.filter(isOver(start))) : '' }}
+            {{ kod ? summ(values.filter(isOver(range.start))) : '' }}
         </div>
         <div class="col-2" style="text-align: right;">
-            {{ kod ? summ(values.filter(isOver(end))) : '' }}
+            {{ kod ? summ(values.filter(isOver(range.end))) : '' }}
         </div>
     </div>
 </template>
@@ -17,15 +17,9 @@ import { toNumber, moment } from '@/functions'
 import mix from './mix'
 export default {
     mixins: [ mix ],
-    props: { value: Object, summ: Function },
+    props: { value: Object, summ: Function, range: Object },
     computed: {
-        start({ year }) {
-            const quarter = year.quarter(this.quarter)
-            return moment.range(quarter.clone().startOf('quarter'), quarter.clone().endOf('quarter'))
-        },
-        end({ year }) {
-            return moment.range(year.clone().startOf('year'), year.clone().endOf('year'))
-        },
+
         title({ value }) {
             return value.title
         },
