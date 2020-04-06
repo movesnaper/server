@@ -1,5 +1,5 @@
 <template>
-<div class="row">
+<div class="range">
 <ul  class="list-group list-group-horizontal-sm">
   <li v-for="(item, i) in range" :key="item"
   :class="['list-group-item', { active: month.format('MMMM') === item }]"

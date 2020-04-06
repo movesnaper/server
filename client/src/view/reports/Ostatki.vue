@@ -1,5 +1,5 @@
 <template>
-  <div  class="row">
+  <div  class="row" style="font-size: 14px;">
     <input type="range" class="col form-control-range mr-3"
     min="65" max="100" v-model="zoom" >
     <input class="button col-2" type="button" @click="print('printMe')" value="print">
@@ -7,16 +7,19 @@
     <month-range  class="no-print mb-2" style="zoom: 95%;"
     v-model="month" :range="months" :year="year"/>    
     <div id="printMe" >
-      <h4>{{ title }}</h4>
+      <h5>{{ logo }}</h5>
+      <h5>{{ title }}</h5>
     <table   class="kassa table table-striped table-sm mt-2">
     <thead>
         <tr>
+          <th scope="col">#</th>
           <th v-for="(item, i) in header" :key="i" scope="col">{{ t(item) }}</th>
         </tr>
     </thead>
     <tbody>
         <tr v-for="(item, i) in items" :key="i">
-            <th scope="row">{{ item.number }}</th>
+            <th>{{ item.i }}</th>
+            <th>{{ item.number }}</th>
             <td>{{ format(item.date) }}</td>
             <td>{{ fio(item.klient) }}</td>
             <td style="text-align: right">{{ item.ssuda }}</td>
@@ -28,7 +31,8 @@
 
         </tr>
         <tr style="text-align: right; font-weight: bold">
-            <th scope="row"></th>
+            <th></th>
+            <th></th>
             <td></td>
             <td></td>
             <td>{{ totalSsuda }}</td>
@@ -52,24 +56,28 @@ import mix from './mix'
 export default {
   mixins: [ mix ],
   computed: {
-    title({ route, lombardsMap, monthRange, format }) {
+    title({ monthRange, format }) {
       const { end } = monthRange
-      const { logo } = {...lombardsMap[route] }
-      return `Vedomost ostatkov ${logo} na ${format(end)}`
+      return `${this.t('vedomost ostatkov')} ${format(end)}`
     },
     header() {
       return ['bilet', 'date', 'fio', 'ssuda', 'title', 'proba', 'ves', 'price', 'ocenca',]
     },
-    numbers({ reestr, klientsMap }) {
-      return reestr.filter(v => v.number)
-        .filter(v => !v.ref).map(v => ({...v, klient: klientsMap[v.klient]}))    
+    numbers({ reestr, klientsMap, monthRange }) {
+      const { start, end } = monthRange
+      return reestr.filter(({ number, ref }) => number && !ref)
+        .filter(this.isSameOrBefore(end))
+          .filter(this.usedBefore(end))
+            .map(v => ({...v, klient: klientsMap[v.klient]}))    
     },
     totalSsuda({ numbers }) {
       return summ(...numbers.map(v => v.ssuda))
     },
     obespechenie({ numbers }) {
+      let i = 1
       return numbers.map(v => {
-        v.obespechenie[0] = { ...v.obespechenie[0], ...v }
+        v.obespechenie[0] = { ...v.obespechenie[0], ...v, i }
+        i = i + 1
         return v
       })
     },
@@ -82,7 +90,10 @@ export default {
     },
   },
   methods: {
-
+    usedBefore(date) {
+      const { used, isBefore } = this
+      return v => !used[v._id] || !moment(used[v._id].date).isBefore(date, 'day')
+    }
   }
 
 }

@@ -3,7 +3,7 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb m-0">
     <li class="breadcrumb-item"><a href="/home">Home</a></li>
-    <li class="breadcrumb-item"><a href="#" @click="$router.push('/profile')">Profile</a></li>
+    <li class="breadcrumb-item"><a href="#" @click="$router.push('/profile')">{{ route }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ $route.meta.current }}</li>
   </ol>
 </nav>
@@ -53,8 +53,10 @@ data() {
     }
 },
 computed: {
-
-    menu() {
+    route() {
+        return this.$route.params.id
+    },
+    menu({ route }) {
         return {
             settings: ['main', 'passport'],
             // zvit: ['kassa', 'penalty']

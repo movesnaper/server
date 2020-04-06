@@ -1,65 +1,101 @@
 import { mapGetters } from 'vuex'
 import MonthRange from './MonthRange'
+import QuorterRange from './QuorterRange'
 import { summ, mult, moment } from '@/functions'
-
+import Sign from './Sign'
+const accounts = ['377', '703', '704']
 export default {
-    components: { MonthRange },
+    components: { QuorterRange, MonthRange, Sign },
       props: { value: Object },
       data() {
         return {
           month: moment().month() + 1,
+          quarter: moment().quarter() + '',
           zoom: 90
         }
       },
       computed: {
-          ...mapGetters({
-              allReestr: 'reestr',
-              company: 'company',
-              klientsMap: 'klientsMap',
-              lombardsMap: 'lombardsMap',
-          }),
-          route() {
+        ...mapGetters({
+            allReestr: 'reestr',
+            company: 'company',
+            klientsMap: 'klientsMap',
+            lombardsMap: 'lombardsMap',
+        }),
+        logo({ route, lombardsMap }) {
+            const { logo } = {...lombardsMap[route] }
+            return logo
+        },
+        route() {
             return this.$route.params.id
-          },
-          reestr({ allReestr, route }) {
-            return allReestr.filter(({ lombard }) => lombard === route)
-          },
-          date({  }) {
-              return moment()
-          },
-          year({ date }) {
-              return moment(date.year(), 'YYYY')
-          },
-          months({ year }) {
-              const range = year.range('year')
-              return [ ...range.by('months')].map(v => v.format('MMMM'))
-          },
-          values({ reestr }) {      
-          return  reestr.filter(({ values }) => values && values.map)
-              .reduce((arr, { values, _id, date }) => {
-                  const items = values.map(v => ({ ...v, _id, date }))
-                  return [ ...arr, ...items ]
-              }, [])
-          },
-          accaunts() {
-              return ['377', '703', '704']
-          },
-          monthRange({ year, month }) {
-            return year.month(month - 1).range('month')
-          },
-          days({ monthRange }) {          
-              return [ ...monthRange.by('days')]
-          },
-          ok({ isBefore, monthRange }) {
-            const { start } = monthRange
-              return this.getOk(isBefore(start))
-          },
-          dt301({ values }) {
-              return values.filter(({ dt }) => dt === '301')
-          },
-          ct301({ values }) {
-              return values.filter(({ ct }) => ct === '301')
-          }
+        },
+        lombard({ route, lombardsMap }) {
+        return {...lombardsMap[route]}
+        },
+        finCod({ lombard }) {
+            return lombard.kod
+        },
+        reestr({ allReestr, route }) {
+        return allReestr
+            .filter(({ lombard }) => lombard === route)
+                .filter(({ deleted }) => !deleted)
+        },
+        used({ reestr }) {
+        return reestr.filter(v => v.ref)
+            .reduce((cur, v) => {
+                return {...cur, [v.ref]: v }
+            }, {})
+        },
+        date({  }) {
+            return moment()
+        },
+        year({ date }) {
+            return moment(date.year(), 'YYYY')
+        },
+        quarters({ year }) {
+            const range = year.range('year')
+            return [ ...range.by('quarters')]
+        },
+        months({ year }) {
+            const range = year.range('year')
+            return [ ...range.by('months')].map(v => v.format('MMMM'))
+        },
+        values({ reestr }) {      
+        return  reestr.filter(({ values }) => values && values.map)
+            .reduce((arr, { values, _id, date }) => {
+                const items = values.map(v => ({ ...v, _id, date }))
+                return [ ...arr, ...items ]
+            }, [])
+        },
+        accounts({ lombard }) {
+        const reduce = key => ({...lombard.accounts}[key] || [])
+            .reduce((cur, v) => ({...cur, [v.acc]: v }), {})
+        return { dt: reduce('dt'), ct: reduce('ct') }
+    },
+        monthRange({ year, month }) {
+        return year.month(month - 1).range('month')
+        },
+        days({ monthRange }) {          
+            return [ ...monthRange.by('days')]
+        },
+        ok({ isBefore, monthRange }) {
+        const { start } = monthRange
+            return this.getOk(isBefore(start))
+        },
+        dt301({ values }) {
+            return values.filter(({ dt }) => dt === '301')
+        },
+        ct377({ values }) {
+            return values.filter(({ dt }) => dt === '301')
+        },
+        ct703({ values }) {
+            return values.filter(({ dt }) => dt === '301')
+        },
+        ct704({ values }) {
+            return values.filter(({ dt }) => dt === '301')
+        },
+        ct301({ values }) {
+            return values.filter(({ ct }) => ct === '301')
+        }
       },
       methods: {
           format(date) {
@@ -80,12 +116,12 @@ export default {
           },
           prixod(filter) {
               const values = this.dt301.filter(filter)
-                .filter(({ ct }) => !this.accaunts.includes(ct))
+                .filter(({ ct }) => !accounts.includes(ct))
               return summ( ...values.map(v => v.summ))
           },
           rasxod(filter) {
               const values = this.ct301.filter(filter)
-                .filter(({ dt }) => !this.accaunts.includes(dt))
+                .filter(({ dt }) => !accounts.includes(dt))
               return summ( ...values.map(v => v.summ))
           },
           dt(acc, filter) {
@@ -105,14 +141,13 @@ export default {
               return summ( ...values.map(v => v.summ))
           },
           getOk(filter) {
-              const ok = 1000
+              const ok = {...this.accounts.dt['301']}.summ
               const dt = this.totalDt(filter)
               const ct = mult(this.totalCt(filter), -1)
               return summ(ok, dt, ct)
           },
           t(v) {
-              // return this.$t('zvit.' + v)
-              return v
+              return this.$t('zvit.' + v)
           },
           fio(v){
             const { family, name, sername } = {...v }

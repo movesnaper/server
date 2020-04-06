@@ -1,68 +1,49 @@
 <template>
     <div class="content mt-3">
-        <lombard-table class="lombards-table" :items="items"
+        <mba-table class="lombards-table" :items="model"
             :fields="{
                 index: {name: '#'},
                 name: {name: 'Name'},
                 active: {name: 'active'},
                 token: {name: 'token'},
-                setup: {icon: 'fas fa-pen'},
                 remove: {icon: 'fas fa-trash'}
             }">
             <template #index="{item}"> {{item.index + 1}}</template> 
-            <template #name="{item}"> {{item.name}}</template> 
+            <template #name="{item}"><a href="#" @click="go('lombard',item)">{{ item.name }}</a></template> 
             <template #token="{item}" >
                 <input v-if="item.active" type="text" class=" form-control form-control-sm"
                 :value="item.token" readonly>
             </template> 
             <template #active="{item}">
-                <div class="form-check">
-                    <input class="form-check-input ml-0" type="checkbox" 
-                    :checked="item['active']"
-                    @change="save({...item, active: !item.active})">
+                <div class="form-check"><input class="form-check-input ml-0" type="checkbox" 
+                :checked="item['active']"
+                @change="save({...item, active: !item.active})">
                 </div>            
             </template> 
-            <template #setup="{item}">
-                <div @click="go(item)">
-                    <i class="fas fa-pen"></i>
-                </div>
-            </template> 
             <template #remove="{item}">
-                <div @click="remove(item)">
-                    <i class="fas fa-trash"></i>
-                </div>
+                <div @click="onRemove(item)" style="text-align: center;"><i class="fas fa-trash"></i></div>
             </template> 
-            <template #footer_index>
-                <div><i class="fas fa-plus-circle"></i></div>
+            <template #footer_index><div><i class="fas fa-plus-circle"></i></div></template> 
+            <template #footer_name="{item}"><input type="text" :value="item"
+            @change="({target}) => save({ name: target.value, index: model.length })">
             </template> 
-            <template #footer_name="{item}">
-                <input type="text" :value="item"
-                @change="({target}) => save({ name: target.value, index: items.length })">
-            </template> 
-        </lombard-table>
+        </mba-table>
     </div>
 </template>
 
 <script>
-import {mapGetters, mapActions} from 'vuex'
-import LombardTable from '@/widjets/Mba-Table'
+import { mapGetters, mapActions } from 'vuex'
+import mix from './mix'
 
 export default {
-components: { LombardTable },
-created() {
-    this.update()
-},
+mixins: [mix],
 computed: {
-    ...mapGetters('lombard',['lombards']),
-    items({ lombards }) {
-        return lombards.sort((a, b) => a.index - b.index)
-    }
+    ...mapGetters({
+        items: 'lombard/lombards'
+    })
 },
 methods: {
-    ...mapActions('lombard', ['save', 'remove', 'update']),
-    go({ _id }) {
-        this.$router.push(`/lombard/${_id}`)       
-    }
+    ...mapActions('lombard', ['save', 'remove', 'update'])
 }
 }
 </script>

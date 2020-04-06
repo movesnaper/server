@@ -3,8 +3,8 @@
         <table class="table table-sm">
         <thead >
             <tr>
-                <th v-for="({name}, key) in fields" :key="key"
-                 :class="key">{{name}}
+                <th v-for="({name}, key) in fields" :key="key" :class="key">
+                 {{name}}
                 </th>
             </tr>
         </thead>

@@ -4,7 +4,9 @@ import VueSidebarMenu from 'vue-sidebar-menu'
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
 import { store, router, i18n, mixins, bootstrapVue } from '@/setup'
 import VueHtmlToPaper from 'vue-html-to-paper';
- 
+import VModal from 'vue-js-modal'
+Vue.use(VModal, { dynamic: true, injectModalsContainer: true })
+
 const options = {
   name: '_blank',
   specs: [

@@ -7,11 +7,12 @@
     <month-range  class="no-print mb-2" style="zoom: 95%;"
     v-model="month" :range="months" :year="year"/>    
     <div id="printMe" >
-      <h2>{{ route }}</h2>
+      <h5>{{ logo }}</h5>
     <table   class="kassa table table-striped table-sm mt-2">
     <thead>
         <tr>
             <th v-for="(item, i) in header" :key="i" scope="col">{{ t(item) }}</th>
+            <th scope="col">{{ ok }}</th>
         </tr>
     </thead>
     <tbody>
@@ -57,7 +58,7 @@ export default {
     mixins: [ mix ],
     computed: {
         header() {
-            return ['date', 'prixod', 'ssuda', 'procent', 'penalty', 'totalDt', 'rasxod', 'ssuda', 'procent', 'penalty', 'totalCt', 'ok']    
+            return ['date', 'prixod', 'ssuda', 'procent', 'penalty', 'totalDt', 'rasxod', 'ssuda', 'procent', 'penalty', 'totalCt']    
         }
     }
 }
