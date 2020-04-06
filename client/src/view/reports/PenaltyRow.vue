@@ -15,8 +15,8 @@
         <div class="row border-left border-right">
             <div class="col border-right pl-5" style="text-align: left">{{ t('before month') }}</div>
             <div class="col-1 border-right">{{ `0${toNumber(kod) + 2}` }}</div>
-            <div class="col-2 border-right">{{ summ(values.filter(gold).filter(isOver(range.start, v => v < 30))) }}</div>
-            <div class="col-2">{{ summ(values.filter(gold).filter(isOver(range.end, v => v < 30))) }}</div>
+            <div class="col-2 border-right">{{ summ(values.filter(gold).filter(isOver(range.start, v => !(v > 30)))) }}</div>
+            <div class="col-2">{{ summ(values.filter(gold).filter(isOver(range.end, v => !(v > 30)))) }}</div>
         </div>
         <div class="row border-left border-right border-bottom">
             <div class="col border-right pl-5" style="text-align: left">{{ t('after month') }}</div>
