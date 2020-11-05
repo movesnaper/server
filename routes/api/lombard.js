@@ -1,11 +1,9 @@
-const { COUCHDB } = process.env
 const express = require('express')
 const router = express.Router()
 const { sign, docs } = require('../functions')
 
 router.get('/', async ({ db, user: company }, res) => {
-  const remote = `${COUCHDB}/${company}`
-  const getToken = ({ _id: lombard }) => sign({ lombard, company, remote })
+  const getToken = ({ _id: lombard }) => sign({ lombard, company })
   const profile = v => ({...v, token: getToken(v)})  
   db.allDocs({ include_docs: true })
     .then(v => res.json(docs(v).filter(v => v.type === 'lombard').map(profile)))

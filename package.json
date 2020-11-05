@@ -4,7 +4,6 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "server2": "node server2.js",
     "client": "npm run serve --prefix client",
     "client-build": "npm run build --prefix client",
     "start": "node server.js",
