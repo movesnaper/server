@@ -61,7 +61,7 @@ computed: {
     },
     menu() {
         return {
-            settings: ['main', 'account', 'price', 'ui'],
+            settings: ['main', 'account', 'price', 'ui', 'program'],
             reports: ['kassa', 'ostatki', 'penalty', 'finresults']
         }
     } 
