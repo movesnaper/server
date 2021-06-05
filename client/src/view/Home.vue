@@ -1,13 +1,15 @@
 <template>
-    <h1>Home</h1>
+  <h1>Home Client</h1>
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
 
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>

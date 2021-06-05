@@ -25,5 +25,25 @@ export default {
     margin: 0;
     padding: 0;
 }
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+}
+.center {
+  display: flex;
+  justify-content: center;
+}
+.absolute-center {
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+}
+.relative {
+  position: relative;
+}
 
 </style>

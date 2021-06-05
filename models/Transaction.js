@@ -13,8 +13,5 @@ const schema = new Schema({
 schema.pre('save', function() {})
 
 module.exports = Transaction =  Object.assign( getConnection('transaction', schema), mixins, {
-  // save(body) {
-  //   console.log(body);
 
-  // }
 })

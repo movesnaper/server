@@ -2,19 +2,16 @@ import { db } from '@/db'
 const { get, post } = db('/user')
 
 const state = {
-  users: []
+  user: {}
 }
 const getters = {
-  users ({ users }) {
-    return users || []
-  },
-  map({ users }) {
-    return users.reduce((res, v) => ({...res, [v._id]: v }), {})
+  user ({ user }) {
+    return user
   }
 }
 const mutations = {
-  users (state, v) {
-    state.users = v || []
+  user (state, v) {
+    state.user = v
   }
 }
 const actions = {
@@ -30,7 +27,7 @@ const actions = {
   },
 
   async update ({ commit }) {
-    commit('users', await get('/'))
+    commit('user', await get('/'))
   }
 }
 
