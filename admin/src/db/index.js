@@ -2,11 +2,14 @@ import axios from 'axios'
 import { store } from '@/setup'
 
 axios.interceptors.response.use((response) => {
-  if(response.status === 401) {
-    store.dispatch('logout', true)
-  }
+  
+
   return response;
-}, (error) => {
+}, async (error) => {
+  if(error.response.status === 401) {
+    const user = await store.dispatch('updateUser')
+    user && store.dispatch('logout', true)
+  }
   if (error.response && error.response.data) {
       return Promise.reject(error.response.data);
   }

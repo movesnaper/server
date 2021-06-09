@@ -2,13 +2,16 @@
   <div>
     <div class="form-group">
       <input type="text" class="form-control"
-      placeholder="Name"
-        v-model="value.name"/>
+      :placeholder="$t(`auth.name`)"
+      v-on:keyup.enter="disabled ? $refs['password'].focus() : $emit('login', value)"
+      v-model="value.name"/>
         <p class="error" v-if="err.name">{{ t('err', err.name) }}</p>
     </div>    
     <div class="form-group">
-      <input type="password" class="form-control" 
-        placeholder="Password"
+      <input type="password" class="form-control"
+        ref="password"
+        :placeholder="$t(`auth.password`)"
+        v-on:keyup.enter="!disabled && $emit('login', value)"
         v-model="value.password"/>
         <p class="error" v-if="err.password">{{ t('err', err.password) }}</p>
     </div>

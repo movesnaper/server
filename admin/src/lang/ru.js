@@ -1,18 +1,22 @@
 
 export default {
   ru: {
+    confirm: {
+      to_confirm: 'Для подтверждения операции',
+      enter: 'введите'
+    },
     auth: {
       err: {
         user_not_found: 'Пользователь не найден',
         incorect_password: 'Неверныйй пароль'
       },
       false: '',
-      name: 'Name',
+      name: 'Имя',
       email_address: 'Email address',
       enter_email: 'Enter email',
       email_already_exists: 'Email already exists',
       incorrect_email: 'Incorrect email',
-      password: 'Password',
+      password: 'Пароль',
       incorrect_password: 'Incorrect password',
       enter_password: 'Enter password',
       remind_me_password: 'Remind me password',
@@ -22,7 +26,6 @@ export default {
       login: 'Логин',
       logout: 'Выйти',
       register: 'Зарегистрироваться',
-      activate: 'Activate',
       incorrect_length: 'Incorrect length',
       field_required: 'Field required',
       user_not_found: 'User not found',
@@ -31,8 +34,9 @@ export default {
       have_account: 'Есть аккаунт ?'
     },
     btn: {
-      "cansel": "Отмена",
-      "remove": "Удалить",
+      cansel: "Отмена",
+      remove: "Удалить",
+      print: 'Печать'
     },
     penalty: {
       "h1": "Форма 0203. Отчёт о наличии задолжности по финансовым кредитам, не возвращённых в срок, указанный в договоре (ежемесячный)",
@@ -82,10 +86,103 @@ export default {
       "director": "Директор",
       "bookkeeper": "Бухгалтер",
     },
+    users: {
+      name: 'Логин',
+      roles: 'Роли',
+      reset_password: 'Сбросить пароль',
+      remove: 'Удалить'
+    },
+    program: {
+      version: 'Версия',
+      title: 'Наименование',
+      date: 'Дата',
+      description: 'Описание',
+      link: 'Ссылка на скачивание'
+    },
+    lombards: {
+      name: 'Наименование',
+      program: 'Версия программы',
+      token: 'Токен',
+      copy_token: 'Скопировано в буфер обмена',
+      remove: 'Удалить'
+    },
+    lombard: {
+      settings: 'Настройки',
+      main: 'Основные настройки',
+      account: 'План счетов',
+      price: 'Цены на драг. металлы',
+      ui: 'Настроки интерфейса',
+      reports: 'Отчёты',
+      kassa: 'Кассовый отчёт',
+      ostatki: 'Ведомость остатков',
+      penalty: 'Задолжность по кредитам ф-0203',
+      finresults: 'Отчёт о деятельности ломбарда ф-0202'
+    },
+    settings: {
+      main: {
+        logo: 'Наименование',
+        kod: 'Код учреждения',
+        idn: 'ОКПО',
+        director: 'Директор',
+        bookkeeper: 'Бухгалтер',
+        phone: 'Телефон'
+      },
+      accounts: {
+        date: 'Начальная дата',
+        title: 'Наименование',
+        summ: 'Сумма',
+        value: 'Значение'
+      },
+      price: {
+        proba: 'Проба',
+        price: 'Цена за 1 грамм'
+      }
+    },
+    company: {
+      name: 'Наименование',
+      logo: 'Наименование',
+      idn: 'Код ОКПО',
+      kod: 'Код финансового учреждения',
+      director: 'Директор',
+      bookkeeper: 'Бухгалтер',
+      phone: 'Телефон',
+      menu: {
+        company: 'Компания',
+        lombard: 'Ломбард',
+        program: 'Программа',
+        settings: 'Настройки',
+        address: 'Адрес'
+      },
+    },
+    user: {
+      menu: {
+        user: 'Сотрудник',
+        passport: 'Паспорт',
+        address: 'Адрес'
+      },
+      family: 'Фамилия',
+      name: 'Имя',
+      sername: 'Отчество',
+      bithday: 'Дата рождения',
+      email: 'E-mail',
+      phone: 'Телефон',
+      passport: {
+        seria: 'Серия',
+        number: 'Номер',
+        issued: 'Кем и когда выдан'
+      }
+    },
+    address: {
+      city: 'Город',
+      district: 'Район',
+      street: 'Улица',
+      home: 'Дом',
+    },
     zvit: {
-      "name fin company": "Наименование финансового учреждения",
+      "name fin company": 'Наименование финансового учреждения',
       "cod fin company": "Код финансового учреждения",
       "vedomost ostatkov": "Ведомость остатков по состоянию на",
+      "kassa_report": "Кассовый отчёт за",
       "discount": "скидка",
       "nationality": "гражданство",
       'curency': 'рос.руб.',
@@ -95,7 +192,8 @@ export default {
       'bithday': 'Дата рождения',
       'phone': 'Телефон',
       'ssuda': 'Ссуда',
-      penalty: 'пеня',
+      penalty: 'Пеня',
+      total: 'Итого',
       totalDt: 'Дт',
       totalCt: 'Кт',
       passport: 'Паспорт',

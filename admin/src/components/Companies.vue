@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import ModalLogin from './ModalLogin.vue'
 import ModalCopy from './ModalCopy.vue'
 
@@ -29,8 +30,10 @@ export default {
   props: ['items'],
   components: { ModalLogin, ModalCopy },
   methods: {
-    onLogin(name) {
-      return this.$refs['modal-login'].show(name)
+    ...mapActions(['updateUser']),
+    async onLogin(name) {
+      const user = await this.updateUser()
+      return user === name || this.$refs['modal-login'].show(name)
     },
     async onCopy(name) {
       await this.onLogin(name)

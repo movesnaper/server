@@ -12,19 +12,23 @@
   <div  v-for="(item) in Object.keys(menu)" :key="item">
     <div class="card border-0">
       <div class="card-header row m-0 p-2" :id="`header${item}`">
-      <h2 class="mb-0">
+      <h2 class="mb-0 px-2">
         <button class="btn btn-link" type="button" data-toggle="collapse" :data-target="`#${item}`" aria-expanded="true" :aria-controls="item"
         @click="onClick(item)">
-        {{ item }}
+        {{ $t(`lombard.${item}`) }}
         </button>
       </h2>
       </div>
       <div :id="item" :class="['collapse', { show: opened.includes(item)}]" :aria-labelledby="`header${item}`" :data-parent="`#${menu}`">
       <div class="card-body p-0">
-        <ul class="list-group-flush mb-0">
+        <ul class="list-group-flush mb-0 pl-3">
           <li v-for="(subItem) in menu[item]" :key="subItem"
           :class="['list-group-item', { active: $route.path.includes(`${item}/${subItem}`) }]"
-          @click="go(item, subItem)">{{ subItem }}</li>
+          @click="go(item, subItem)">
+            <div class="px-3">
+              {{ $t(`lombard.${subItem}`) }}
+            </div>
+          </li>
         </ul>
       </div>
       </div>
@@ -60,7 +64,7 @@ computed: {
   },
   menu() {
     return {
-      settings: ['main', 'account', 'price', 'ui', 'program'],
+      settings: ['main', 'account', 'price'],
       reports: ['kassa', 'ostatki', 'penalty', 'finresults']
     }
   } 

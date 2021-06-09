@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-for="({ name, is, type }, i) in fields" :key="i" class="form-group row m-0 mt-2">
-      <label class="col-sm-4 col-form-label" >{{ name }}</label>
+      <label class="col-sm-4 col-form-label" >{{ $t(`company.${name}`) }}</label>
       <component 
       class="col"
       :is="is"

@@ -6,7 +6,7 @@ const app = express()
 app.use(express.json()); //Used to parse JSON bodies
 app.use(express.urlencoded()); //Parse URL-encoded bodies
 app.use(cors())
-app.use('/api', require('./routes/api'))
+app.use('/api', require('./routes/admin'))
 
 if(process.env.NODE_ENV === 'production'){
   app.use(express.static(path.join(__dirname, '/dist')));

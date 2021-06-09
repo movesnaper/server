@@ -8,9 +8,10 @@ import { BootstrapVue, IconsPlugin } from './bootstrapVue-setup'
 // db({
 //   onResponseErr: ({ status, data }) => {
 //     if (status === 401) {
-//       Object.keys(data).forEach(name => {
-//         // store.dispatch('logout')
-//       })
+//       console.log('401', data);
+//       // Object.keys(data).forEach(name => {
+//       //   store.dispatch('logout')
+//       // })
 //     }
 //   }
 // })

@@ -2,28 +2,47 @@
   <div class="content p-5">
     <mba-table v-if="!loading" class="users-table" :items="items"
         :fields="{
-        index: {name: '#'},
-        name: {name: 'Name'},
-        active: {name: 'active'},
-        email: {name: 'Email'},
-        remove: {icon: 'fas fa-trash'}
+        index: {name: '#', width: '10px'},
+        name: {name: $t('users.name')},
+        roles: {name: $t('users.roles')},
+        active: {width: '10px'},
+        reset: {width: '15%'},
+        remove: {width: '10px'}
         }">
-        <template #index="{item}"> {{item.index + 1}}</template> 
-        <template #name="{item}"><a href="#" @click="go('user',item)">{{ item.name }}</a></template> 
-        <template #email="{item}">{{item.email}}  </template> 
+        <template #index="{item}">{{item.index + 1}}</template> 
+        <template #name="{item}">
+          <a href="#" @click="go('user',item)">{{ item.name }}</a>
+        </template> 
+        <template #roles="{item}">
+          <b-input type="text"
+          :value="(item.roles || []).join(', ')"
+          @change="(v) => save({...item, roles: v.split(',').map(v => v.trim())})"/>
+        </template> 
+        <template #reset="{item}">
+          <div class="center">
+            <b-button variant="outline-primary"
+            :disabled="!item.active || !item.password"
+            @click="() => resetPassword(item)">{{ $t(`users.reset_password`)}}</b-button>          
+          </div>
+        </template>
         <template #active="{item}">
-          <div class="form-check"><input class="form-check-input ml-0" type="checkbox" 
-          :checked="item['active']" @change="save({...item, active: !item.active})">
+          <div class="center">
+            <input type="checkbox" :checked="item['active']"
+            @change="save({...item, active: !item.active})">
           </div>         
         </template>
-        <template #setup="{item}">
-          <div @click="go(item)"><i class="fas fa-pen"></i></div>
-        </template> 
-        <template #remove="{item}">
-          <div @click="onRemove(item)" style="text-align: center;"><i class="fas fa-trash"></i> </div>
-        </template> 
+        <template #remove="{item, index}">
+          <b-button  variant="outline" :id="`remove-${index}`">
+            <b-icon icon="trash" @click="onRemove(item)" variant="danger"/>
+          </b-button>
+          <b-tooltip :target="`remove-${index}`" variant="danger">
+            {{ $t('lombards.remove')}}
+          </b-tooltip>
+        </template>
         <template #footer_index>
-          <div><i class="fas fa-plus-circle"></i></div>
+          <div class="center">
+            <b-icon icon="plus-circle" variant="success"/>
+          </div>
         </template>
         <template #footer_name="{item}"><input type="text" :value="item"
         @change="({target}) => save({ name: target.value, index: items.length })">
@@ -33,8 +52,7 @@
       <b-skeleton-table 
       :rows="5"
       :columns="4"
-      :table-props="{ bordered: true, striped: true }"
-      ></b-skeleton-table>
+      :table-props="{ bordered: true, striped: true }"/>
     </div>
   </div>
 </template>
@@ -51,16 +69,21 @@ export default {
     }),
   },
   methods: {
-    ...mapActions('user', [ 'save', 'remove', 'update' ])
+    ...mapActions('user', [ 'save', 'remove', 'update' ]),
+    async resetPassword(v) {
+      const dialog = await this.confirm(v, this.$t(`users.reset_password`))
+      await this.save({...v, password: undefined })
+      dialog.close()
+    },
+    async onRemove(v) {
+      const dialog = await this.confirm(v, this.$t(`users.remove`))
+      await this.remove(v)
+      dialog.close()
+    }
   }
 }
 </script>
 
 <style>
-
-.users-table th.active {
-  width: 10px;
-}
-
 
 </style>

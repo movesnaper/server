@@ -37,6 +37,10 @@ export default {
   display: flex;
   justify-content: center;
 }
+.flex-center {
+  display: flex;
+  align-items: center;
+}
 .absolute-center {
   margin: auto;
   position: absolute;
@@ -44,6 +48,9 @@ export default {
 }
 .relative {
   position: relative;
+}
+.pointer {
+  cursor: pointer;
 }
 
 </style>

@@ -3,7 +3,8 @@
     <table class="table table-sm">
     <thead >
       <tr>
-        <th v-for="({name}, key) in fields" :key="key" :class="key">
+        <th v-for="({name, width}, key) in fields" :key="key" 
+        :class="key" :style="{width}">
           {{name}}
         </th>
       </tr>
@@ -11,8 +12,8 @@
     <tbody >
       <tr v-for="(item, index) in items"  :key="index"
         :class="{active: active === index}">
-      <td v-for="({}, key) in fields"  :key="key" :class="key">
-        <slot  :name="key" :item="{...item, index}"></slot>
+      <td v-for="({ width }, key) in fields" :key="key" :class="key" :style="{width}">
+        <slot  :name="key" :item="{...item, index}" :index="index"></slot>
       </td>
       </tr>
       <tr class="footer">
@@ -55,6 +56,7 @@ export default {
   .mba-table .table td,   .mba-table .table th {
     border-top: none;
     border-right: 1px solid #00000033;
+    vertical-align: middle;
   }
   .mba-table table{
     border: 1px solid rgba(0, 0, 0, 0.22);
@@ -62,10 +64,10 @@ export default {
   tr.active{
     background-color: #0000001a;
   }
-  .mba-table .index {
+  /* .mba-table .index {
     text-align: center;
     width: 10px;
-  }
+  } */
 
   .vue-context li:hover {
     background-color: #0000000a;

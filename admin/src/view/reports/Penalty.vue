@@ -2,7 +2,7 @@
   <div  class="row" style="font-size: 14px;">
     <input type="range" class="col form-control-range mr-3"
     min="65" max="100" v-model="zoom" >
-    <input class="button col-2" type="button" @click="print('printMe')" value="print">
+    <input class="button col-2" type="button" @click="print('printMe')" :value="$t('btn.print')">
     <div class="row m-0 mt-2" :style="{ zoom: zoom + '%' }">
     <month-range  class="mb-5" style="zoom: 95%;"
       v-model="month" :range="months" :year="year"/>    

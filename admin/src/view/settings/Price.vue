@@ -2,8 +2,8 @@
   <div class="row">
     <div class="col">
       <div class="row" >
-        <div class="col-4">gold</div>
-        <div class="col">price</div>
+        <div class="col-4">{{ $t(`settings.price.proba`) }}</div>
+        <div class="col">{{ $t(`settings.price.price`) }}</div>
       </div>
       <div v-for="({ proba, price, add }, i) in [...gold, { add: true }]" :key="i"
       :class="['form-group row m-0 mt-2', { add }]">

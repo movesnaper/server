@@ -4,7 +4,7 @@
     v-model="quarter" :range="quarters" :year="year"/>   
     <input type="range" class="col form-control-range mr-3"
     min="65" max="100" v-model="zoom" >
-    <input class="button col-1" type="button" @click="print('printMe')" value="print">
+    <input class="button col-1" type="button" @click="print('printMe')" :value="$t('btn.print')">
     <div class="row m-0 mt-5" :style="{ zoom: zoom + '%' }">
     <div  id="printMe" >
              <div class="col">

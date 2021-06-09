@@ -29,7 +29,8 @@ const actions = {
     return dispatch('update')
   },
 
-  async update ({ commit }) {
+  async update ({ commit, dispatch }) {
+    dispatch('updateCompany', null, { root: true })
     commit('lombards', await get('/'))
   }
 }

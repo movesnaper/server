@@ -18,14 +18,15 @@ const pDiff = (a, b) => {
     const res = a - (b > 0 ? b : b * -1)
     return res > 0 ? res : false
 }
-const rorrect = (v1, v2) => {
-  const [b] = toDouble(v1).split('.')
-  const [, k] = toDouble(v2).split('.')    
-  return `${b}.${k}`
-}
+
 const round = v => {
   return Number(numberFormat(v))
 }
+
+const toTitleCase = (v) => {
+  return [...v].map((w, i) => i === 0 ? w[0].toUpperCase() : w).join('')
+}
+
 const getOcenca = (v, isAfter, rate ) => {
   const procent = v * rate / 100
   return isAfter(v + procent) ? v : getOcenca(v + procent, isAfter, rate)
@@ -60,10 +61,10 @@ export  {
   months,
   getOcenca,
   getProcent,
-  rorrect,
   round,
   firstChar,
   daysDiff,
   filters,
-  reduce
+  reduce,
+  toTitleCase
 }

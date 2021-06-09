@@ -3,59 +3,58 @@
     <div class="row">
       <input type="range" class="col form-control-range mr-3"
       min="65" max="100" v-model="zoom" >
-      <input class="button col-2" type="button" @click="print('printMe')" value="print">
+      <input class="button col-2" type="button" @click="print('printMe')" :value="$t('btn.print')">
     </div>
     <div class="mt-2" :style="{ zoom: zoom + '%' }">
     <month-range  class="no-print mb-2" style="zoom: 95%;"
     v-model="month" :range="months" :year="year"/>    
     <div id="printMe" >
-      <h5>{{ logo }}</h5>
-    <table   v-if="!loading"
-    class="kassa table table-striped table-sm mt-2">
-    <thead>
-      <tr>
-        <th v-for="(item, i) in header" :key="i" scope="col">{{ t(item) }}</th>
-        <th scope="col">{{ okStart }}</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr v-for="(v, i) in dataValues" :key="i">
-          <th scope="row">{{ v.date }}</th>
-          <td>{{ v.prixod }}</td>
-          <td>{{ v.ct377 }}</td>
-          <td>{{ v.ct703 }}</td>
-          <td>{{ v.ct704 }}</td>
-          <th>{{ v.totalDt }}</th>
-          <td>{{ v.rasxod }}</td>
-          <td>{{ v.dt377 }}</td>
-          <td>{{ v.dt703 }}</td>
-          <!-- <td>{{ v.dt704 }}</td> -->
-          <th>{{ v.totalCt }}</th>
-          <th>{{ getOk(v.date) }}</th>
-        </tr>
-        <tr>
-          <th scope="row"></th>
-          <td>{{ total('proxod') }}</td>
-          <td>{{ total('ct377') }}</td>
-          <td>{{ total('ct703') }}</td>
-          <td>{{ total('ct704') }}</td>
-          <th>{{ total('totalDt') }}</th>
-          <td>{{ total('rasxod') }}</td>
-          <td>{{ total('dt377') }}</td>
-          <td>{{ total('dt703') }}</td>
-          <!-- <td>{{ total('dt704') }}</td> -->
-          <th>{{ total('totalCt') }}</th>
-          <th></th>
-        </tr>
-    </tbody>
-    </table>
-    <div v-else>
-      <b-skeleton-table 
-      :rows="5"
-      :columns="4"
-      :table-props="{ bordered: true, striped: true }"
-      ></b-skeleton-table>
-    </div>
+      <h5>{{ title }}</h5>
+      <table   v-if="!loading" class="kassa table table-striped table-sm mt-2">
+        <thead>
+          <tr>
+            <th v-for="(item, i) in header" :key="i" scope="col">{{ t(item) }}</th>
+            <th scope="col">{{ okStart }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(v, i) in dataValues" :key="i">
+            <th scope="row">{{ v.date }}</th>
+            <td>{{ v.prixod }}</td>
+            <td>{{ v.ct377 }}</td>
+            <td>{{ v.ct703 }}</td>
+            <td>{{ v.ct704 }}</td>
+            <th>{{ v.totalDt }}</th>
+            <td>{{ v.rasxod }}</td>
+            <td>{{ v.dt377 }}</td>
+            <td>{{ v.dt703 }}</td>
+            <!-- <td>{{ v.dt704 }}</td> -->
+            <th>{{ v.totalCt }}</th>
+            <th>{{ getOk(v.date) }}</th>
+          </tr>
+          <tr>
+            <th scope="row">{{ t('total') }}</th>
+            <td>{{ total('proxod') }}</td>
+            <td>{{ total('ct377') }}</td>
+            <td>{{ total('ct703') }}</td>
+            <td>{{ total('ct704') }}</td>
+            <th>{{ total('totalDt') }}</th>
+            <td>{{ total('rasxod') }}</td>
+            <td>{{ total('dt377') }}</td>
+            <td>{{ total('dt703') }}</td>
+            <!-- <td>{{ total('dt704') }}</td> -->
+            <th>{{ total('totalCt') }}</th>
+            <th></th>
+          </tr>
+        </tbody>
+      </table>
+      <div v-else>
+        <b-skeleton-table 
+        :rows="5"
+        :columns="4"
+        :table-props="{ bordered: true, striped: true }"
+        ></b-skeleton-table>
+      </div>
     </div>
     </div>
   </div>
@@ -64,7 +63,7 @@
 <script>
 import { db } from '@/db'
 import mix from './mix'
-import { toDouble, toNumber } from '../../functions'
+import { toDouble, toNumber, moment, toTitleCase } from '@/functions'
 export default {
     mixins: [ mix ],
     data: () => ({
@@ -75,6 +74,10 @@ export default {
     computed: {
       header() {
         return ['date', 'prixod', 'ssuda', 'procent', 'penalty', 'totalDt', 'rasxod', 'ssuda', 'procent', 'totalCt']    
+      },
+      title() {
+        const value = moment().month(this.month -1 ).format('MMMM YYYY')
+        return `${this.t('kassa_report')} ${toTitleCase(value)} г.`
       }
     },
     async created() {

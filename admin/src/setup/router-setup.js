@@ -7,7 +7,6 @@ import profile from '@/routes/profile'
 import lombard from '@/routes/lombard'
 import user from '@/routes/user'
 import home from '@/routes/home'
-import dbs from '@/routes/dbs'
 import lombards from '@/routes/lombards'
 import users from '@/routes/users'
 
@@ -20,7 +19,6 @@ const routes = [
   lombard,
   user,
   home,
-  dbs,
   lombards,
   users
 ]

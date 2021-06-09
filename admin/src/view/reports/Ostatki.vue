@@ -2,37 +2,36 @@
   <div  class="row" style="font-size: 14px;">
     <input type="range" class="col form-control-range mr-3"
     min="65" max="100" v-model="zoom" >
-    <input class="button col-1" type="button" @click="print('printMe')" value="print">
+    <input class="button col-1" type="button" @click="print('printMe')" :value="$t('btn.print')">
     <div class="row m-0 mt-2" :style="{ zoom: zoom + '%' }">
     <month-range  class="no-print mb-2" style="zoom: 95%;"
     v-model="month" :range="months" :year="year"/>    
-    <div id="printMe" >
-      <h5>{{ logo }}</h5>
+    <div id="printMe" style="width: 100%">
       <h5>{{ title }}</h5>
-    <table v-if="!loading"   class="kassa table table-striped table-sm mt-2">
-    <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th v-for="(item, i) in header" :key="i" scope="col">{{ t(item) }}</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr v-for="(item, i) in items" :key="i">
-            <th>{{ item.index }}</th>
+      <table v-if="!loading" class="kassa table table-striped table-sm mt-2">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th v-for="(item, i) in header" :key="i" scope="col">{{ t(item) }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, i) in dataValues" :key="i">
+            <td>{{ item.index }}</td>
             <th>{{ item.number }}</th>
-            <td>{{ format(item.date) }}</td>
-            <td>{{ fio(item.klient) }}</td>
+            <td>{{ item.date }}</td>
+            <td>{{ item.klient }}</td>
             <td style="text-align: right">{{ item.ssuda }}</td>
             <td>{{ item.title }}</td>
             <td >{{ item.proba }}</td>
             <td style="text-align: right">{{ item.ves }}</td>
             <td style="text-align: right">{{ item.price }}</td>
             <td style="text-align: right">{{ item.ocenca }}</td>
-        </tr>
-        <tr style="text-align: right; font-weight: bold">
+          </tr>
+          <tr style="text-align: right; font-weight: bold">
             <th></th>
             <th></th>
-            <td></td>
+            <td>{{ t('total') }}</td>
             <td></td>
             <td>{{ totalSsuda }}</td>
             <td></td>
@@ -40,16 +39,16 @@
             <td></td>
             <td></td>
             <td>{{ totalOcenca }}</td>
-        </tr>
-    </tbody>
-    </table>
-    <div v-else>
-      <b-skeleton-table 
-      :rows="5"
-      :columns="4"
-      :table-props="{ bordered: true, striped: true }"
-      ></b-skeleton-table>
-    </div>
+          </tr>
+        </tbody>
+      </table>
+      <div v-else>
+        <b-skeleton-table 
+        :rows="5"
+        :columns="4"
+        :table-props="{ bordered: true, striped: true }"
+        ></b-skeleton-table>
+      </div>
     </div>
     </div>
   </div>
@@ -70,14 +69,10 @@ export default {
   },
   computed: {
     title({ monthRange, format }) {
-      const { end } = monthRange
-      return `${this.t('vedomost ostatkov')} ${format(end)}`
+      return `${this.t('vedomost ostatkov')} ${format(monthRange.end)}`
     },
     header() {
       return ['bilet', 'date', 'fio', 'ssuda', 'title', 'proba', 'ves', 'price', 'ocenca',]
-    },
-    items({ dataValues, klientsMap }) {
-      return dataValues.map(v => ({...v, klient: klientsMap[v.klient]}))    
     },
     totalSsuda({ dataValues }) {
       return summ(...dataValues.map(v => v.ssuda))

@@ -1,11 +1,8 @@
 import { mapGetters } from 'vuex'
 import MonthRange from './MonthRange'
 import QuorterRange from './QuorterRange'
-import { summ, mult, moment } from '@/functions'
-import { db } from '@/db'
-const { get, post } = db('/lombard')
+import { moment } from '@/functions'
 import Sign from './Sign'
-const accounts = ['377', '703', '704']
 export default {
     components: { QuorterRange, MonthRange, Sign },
       props: { value: Object },
@@ -14,7 +11,6 @@ export default {
           month: moment().month() + 1,
           quarter: moment().quarter() + '',
           zoom: 90,
-          
         }
       },
       watch: {
@@ -27,11 +23,10 @@ export default {
             allReestr: 'reestr',
             company: 'company',
             klientsMap: 'klientsMap',
-            lombardsMap: 'lombardsMap',
+            lombardsMap: 'lombard/map',
         }),
         logo({ route, lombardsMap }) {
-            const { logo } = {...lombardsMap[route] }
-            return logo
+            return (lombardsMap[route] || {}).logo
         },
         route() {
             return this.$route.params.id
@@ -84,30 +79,6 @@ export default {
         },
         days({ monthRange }) {          
             return [ ...monthRange.by('days')]
-        },
-        ok({ isBefore, monthRange }) {
-        const { start } = monthRange
-            return 0
-            // this.getOk(isBefore(start))
-        },
-        dt301({ values }) {
-            return values.filter(({ dt }) => dt === '301')
-        },
-        ct377({ values }) {
-            return 0
-            values.filter(({ dt }) => dt === '301')
-        },
-        ct703({ values }) {
-            return 0
-            values.filter(({ dt }) => dt === '301')
-        },
-        ct704({ values }) {
-            return 0
-            values.filter(({ dt }) => dt === '301')
-        },
-        ct301({ values }) {
-            return 0
-            values.filter(({ ct }) => ct === '301')
         }
       },
       methods: {
@@ -174,8 +145,9 @@ export default {
               return this.$t('zvit.' + v)
           },
           fio(v){
-            const { family, name, sername } = {...v }
-            return v ? `${family} ${name.charAt(0)}. ${sername.charAt(0)}.` : ''
+            if (!v) return ''
+            const { family, name, sername } = v || {}
+            return `${family} ${name.charAt(0)}. ${sername.charAt(0)}.`
           },
           print(id) {
             this.$htmlToPaper(id);

@@ -112,7 +112,7 @@ const actions = {
 
   async save ({ dispatch }, v) {
     await post('/profile', v)
-    dispatch('update')
+    await dispatch('update')
   },
 
   async logout () {
@@ -123,7 +123,7 @@ const actions = {
 
   async update ({ commit }, v) {
     // await get('/')
-    // commit('company', v || await get('/profile'))
+    commit('company', await get('/profile'))
     // commit('docs', v || await get('/'))
   }
 
