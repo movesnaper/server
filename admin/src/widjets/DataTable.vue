@@ -12,7 +12,8 @@
     <tbody >
       <tr v-for="(item, index) in items"  :key="index"
         :class="{active: active === index}">
-      <td v-for="({ width }, key) in fields" :key="key" :class="key" :style="{width}">
+      <td v-for="({ width }, key) in fields" :key="key" :class="['p-0', key]" 
+      :style="{width, 'vertical-align': 'unset'}">
         <slot  :name="key" :item="{...item, index}" :index="index"></slot>
       </td>
       </tr>
@@ -28,10 +29,11 @@
 
 <script>
 export default {
-  props: {
-    fields: Object,
-    items: Array,
-  },
+  props: ['fields', 'items'],
+  // props: {
+  //   fields: Object,
+  //   items: Array,
+  // },
   data () {
     return {
       active: false,

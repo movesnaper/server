@@ -20,8 +20,9 @@ router.get('/', async ({ db }, res) => {
 // })
 
 router.post('/remove', async ({ db, body }, res) => {
-  db.put({ ...body, _deleted: true })
-    .then(v => res.json(v))
+  db.get(body._id)
+    .then((v) => db.remove(v))
+      .then((v) => res.json(v))
         .catch(err => console.error(err))
 })
 

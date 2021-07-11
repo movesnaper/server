@@ -121,7 +121,7 @@ const actions = {
     window.location.reload()
   },
 
-  async update ({ commit }, v) {
+  async update ({ commit }) {
     // await get('/')
     commit('company', await get('/profile'))
     // commit('docs', v || await get('/'))

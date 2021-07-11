@@ -16,6 +16,7 @@ const session = async (req, res, next) => {
   next()
 };
 
+
 const ipMiddleware = function(req, res, next) {
   const r = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/;
   const [clientIp] = requestIp.getClientIp(req).match(r)
@@ -75,6 +76,7 @@ router.post('/replicate', session, async ({ db, body }, res) => {
 })
 
 router.use('/profile', session, require('./profile'))
+router.use('/company', session, require('./company'))
 router.use('/lombard', session, require('./lombard'))
 router.use('/user', session, require('./user'))
 router.use('/klients', session, require('./klient'))

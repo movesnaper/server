@@ -1,12 +1,11 @@
-
-import MbaTable from '@/widjets/Mba-Table'
+import { DataTable, FormInput } from '@/widjets'
 import { confirm } from '@/widjets/mixins'
 
 export default {
-components: { MbaTable },
+components: { DataTable, FormInput },
 mixins: [confirm],
 data: () => ({
-  loading: false,
+  loading: false
 }),
 async created() {
   this.loading = true
@@ -22,6 +21,15 @@ methods: {
   go(name, { _id }) {
     this.$router.push(`/${name}/${_id}`)  
   },
-
+  async onRemove({ _id }) {
+    const dialog = await this.confirm(v)
+    await this.remove([_id])
+    dialog.close()
+  },
+  addNew(name) {
+    const values = this.items.filter(v => v.index).map(v => v.index)
+    const index = Math.max(...values) + 1
+    return this.save({ name, index })
+  }
 }
 }

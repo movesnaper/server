@@ -1,9 +1,40 @@
 
 export default {
   ru: {
+    conflict: 'Логин занят',
+    warnings: {
+      deleted: 'Удаление',
+      warning: 'Замечание'
+    },
     confirm: {
       to_confirm: 'Для подтверждения операции',
       enter: 'введите'
+    },
+    accounts: {
+      dt: {
+        '377': 'выдача'
+      }
+    },
+    bank_account: {
+      name: 'Наименование банка',
+      idn: 'Регистрационный номер',
+      number: 'Номер счёта',
+      date: 'Дата открытия',
+      description: 'Описание'
+    },
+    reports: {
+      company: {
+        title: `Отчёт о деятельности некредитных финансовых организаци,
+         осуществляющей деятельность ломбардов`,
+        menu: {
+          'common-info': 'Общие сведения',
+          'common-results': 'Основные показатели',
+          'average-values': 'Средняя стоимость займов',
+          'money-operations': 'Денежные операции',
+          'balance-info': 'Балансовые показатели',
+          'gold-guaranty': 'Информация о залогах'
+        }
+      }
     },
     auth: {
       err: {
@@ -36,7 +67,8 @@ export default {
     btn: {
       cansel: "Отмена",
       remove: "Удалить",
-      print: 'Печать'
+      print: 'Печать',
+      select_all: 'Выбрать все'
     },
     penalty: {
       "h1": "Форма 0203. Отчёт о наличии задолжности по финансовым кредитам, не возвращённых в срок, указанный в договоре (ежемесячный)",
@@ -92,13 +124,6 @@ export default {
       reset_password: 'Сбросить пароль',
       remove: 'Удалить'
     },
-    program: {
-      version: 'Версия',
-      title: 'Наименование',
-      date: 'Дата',
-      description: 'Описание',
-      link: 'Ссылка на скачивание'
-    },
     lombards: {
       name: 'Наименование',
       program: 'Версия программы',
@@ -118,26 +143,20 @@ export default {
       penalty: 'Задолжность по кредитам ф-0203',
       finresults: 'Отчёт о деятельности ломбарда ф-0202'
     },
-    settings: {
-      main: {
-        logo: 'Наименование',
-        kod: 'Код учреждения',
-        idn: 'ОКПО',
-        director: 'Директор',
-        bookkeeper: 'Бухгалтер',
-        phone: 'Телефон'
-      },
-      accounts: {
-        date: 'Начальная дата',
-        title: 'Наименование',
-        summ: 'Сумма',
-        value: 'Значение'
-      },
-      price: {
-        proba: 'Проба',
-        price: 'Цена за 1 грамм'
-      }
-    },
+    // settings: {
+    //   main: {
+    //     logo: 'Наименование',
+    //     kod: 'Код учреждения',
+    //     idn: 'ОКПО',
+    //     director: 'Директор',
+    //     bookkeeper: 'Бухгалтер',
+    //     phone: 'Телефон'
+    //   },
+    //   price: {
+    //     proba: 'Проба',
+    //     price: 'Цена за 1 грамм'
+    //   }
+    // },
     company: {
       name: 'Наименование',
       logo: 'Наименование',
@@ -150,9 +169,55 @@ export default {
         company: 'Компания',
         lombard: 'Ломбард',
         program: 'Программа',
+        accounts: 'План счетов',
         settings: 'Настройки',
-        address: 'Адрес'
+        address: 'Адрес',
+        bank: 'Банк',
+        account: 'Расчётный счёт',
+        reports: 'Отчёты',
+        price: 'Цена',
+        reestr: 'Реестр'
       },
+    },
+    program: {
+      menu: {
+        versions: 'Версии',
+        settings: 'Настройки'
+      },
+      version: 'Версия',
+      title: 'Наименование',
+      date: 'Дата',
+      description: 'Описание',
+      link: 'Ссылка на скачивание',
+      settings: {
+        key: 'Ключ',
+        description: 'Описание',
+        value: 'Значение',
+      }
+    },
+    accounts: {
+      key: 'Счет',
+      date: 'Начальная дата',
+      description: 'Описание',
+      value: 'Сумма',
+      document: 'Документ',
+      menu: {
+        dt: 'Дебет',
+        ct: 'Кредит'
+      }
+    },
+    reestr: {
+      key: 'Счет',
+      'date-start': 'Начальная дата',
+      'date-end': 'Конечная дата',
+      count: 'Количество',
+      document: 'Документ',
+      summ: 'Сумма',
+      description: 'Описание',
+      menu: {
+        reestr: 'Реестр',
+        balance: 'Баланс'
+      }
     },
     user: {
       menu: {
@@ -174,6 +239,7 @@ export default {
     },
     address: {
       city: 'Город',
+      region: 'Область',
       district: 'Район',
       street: 'Улица',
       home: 'Дом',

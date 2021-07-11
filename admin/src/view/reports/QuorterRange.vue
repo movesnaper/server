@@ -27,8 +27,11 @@ export default {
 }
 </script>
 
-<style>
-.range li {
-  cursor: pointer;
-}
+<style scoped>
+  .range li {
+    cursor: pointer;
+  }
+  .range li:hover {
+    background: #80808014;
+  }
 </style>

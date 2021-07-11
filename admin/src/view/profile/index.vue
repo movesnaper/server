@@ -1,9 +1,9 @@
 <template>
-  <div class="p-5">
+  <div>
     <b-card v-if="!loading" no-body class="company">
       <b-tabs v-model="active" small card class="company_tabs">
         <b-tab v-for="(item, i) in tabs" :key="i" :title="$t(`company.menu.${item}`)">
-          <component class="p-3" :is="item"/>
+          <component class="p-3" :is="`profile-${item}`"/>
         </b-tab>
       </b-tabs>
     </b-card>
@@ -17,17 +17,28 @@
   </div>
 </template>
 
+
 <script>
-import Company from './Company'
-import Program from './Program'
-import Settings from './Settings'
+import ProfileCompany from './company'
+import ProfileProgram from './program'
+import ProfileAccounts from './accounts'
+import ProfileReports from './reports'
+import ProfilePrice from './price/index.vue'
+import ProfileReestr from './reestr/index.vue'
 
 export default {
-  components: { Company, Program, Settings },
+  components: { 
+    ProfileCompany, 
+    ProfileProgram, 
+    ProfileAccounts,
+    ProfileReports,
+    ProfilePrice,
+    ProfileReestr
+  },
   data: () => ({
     loading: false,
     active: 0,
-    tabs: ['company', 'program', 'settings']
+    tabs: ['company', 'program', 'accounts', 'reports', 'price', 'reestr']
   }),
   async created() {
     this.loading = true

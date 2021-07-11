@@ -1,26 +1,43 @@
 <template>
-  <div class="content p-5">
-    <mba-table v-if="!loading" class="lombards-table" :items="model"
+  <div class="lombards p-5">
+    <data-table v-if="!loading" class="lombards-table" :items="model"
       :fields="{
         index: {name: '#', width: '10px'},
         name: {name: $t('lombards.name')},
-        program: {name: $t('lombards.program'), width: '20%'},
-        active: {width: '10px'},
-        token: {name: $t('lombards.token'), width: '30%'},
+        program: {name: $t('lombards.program'), width: '15%'},
+        active: {width: '30px'},
+        token: {name: $t('lombards.token'), width: '20%'},
         remove: {width: '10px'}
       }">
-      <template #index="{item}">{{item.index + 1}}</template> 
-      <template #name="{item}">
-        <a href="#" @click="go('lombard',item)">{{ item.name }}</a>
+      <template #index="{index}">{{index + 1}}</template> 
+      <template #name="{item, index}">
+        <div class="row m-0 flex-center">
+          <div class="col">
+            <a href="#" @click="go('lombard',item)">{{ item.name }}</a>
+          </div>
+          <warnings-header :index="index" :items="warnings[item.name] || []"/>
+          <b-button variant="outlined"
+          v-b-toggle="`info-${index}`" 
+          :disabled="!(warnings[item.name] || []).length">
+            <b-icon icon="chevron-down"  :rotate="visible[index] ? 180 : 0"></b-icon>
+          </b-button>
+        </div>
+        <warnings-list
+        :index="index"
+        :value="visible[index]"
+        :items="warnings[item.name] || []" 
+        @input="(v) => visible.splice(index, 1, v)"
+        :remove="(v) => remove(v).then(refresh)"/>
       </template> 
       <template #program="{item}">
-      <b-form-select
-        class="col form-control"
-        :value="item.program.index"
-        @input="(index)=> onSelect(item, index)"
-        :options="programs"
-        text-field="version"
-        value-field="index"/>
+        <div class="px-2">
+          <b-form-select
+          :value="(item.program || {}).index"
+          @input="(index)=> onSelect(item, index)"
+          :options="programs"
+          text-field="version"
+          value-field="index"/>
+        </div>
       </template> 
       <template #token="{item, index}" >
         <div class="row m-0 px-2">
@@ -55,10 +72,10 @@
           <b-icon icon="plus-circle" variant="success"/>
         </div>
       </template> 
-      <template #footer_name="{item}"><input type="text" :value="item"
-      @change="({target}) => save({ name: target.value, index: model.length })">
+      <template #footer_name>
+        <form-input :action="addNew"/>
       </template> 
-    </mba-table>
+    </data-table>
     <div v-else>
       <b-skeleton-table 
       :rows="5"
@@ -69,14 +86,22 @@
 </template>
 
 <script>
+import { db } from '@/db'
+const { get } = db('/lombard')
 import { mapGetters, mapActions } from 'vuex'
+import { WarningsHeader, WarningsList } from '@/components/warnings'
 import mix from './mix'
 
 export default {
   mixins: [mix],
-  async created() {
-    await this.update()
-  },
+  components: { WarningsList, WarningsHeader },
+  data: () => ({
+    visible: [],
+    warnings: {}
+  }),
+  created() {
+    this.refresh()
+  },  
   computed: {
     ...mapGetters({
       items: 'lombard/lombards',
@@ -88,10 +113,8 @@ export default {
   },
   methods: {
     ...mapActions('lombard', ['save', 'remove', 'update']),
-    async onRemove(v) {
-      const dialog = await this.confirm(v, this.$t(`lombards.remove`))
-      await this.remove(v)
-      dialog.close()
+    async refresh() {
+      this.warnings = await get(`/warnigs`)
     },
     onSelect(item, index) {
       const { remote, local } = this.company
@@ -124,11 +147,9 @@ export default {
 }
 </script>
 
-<style>
-
-/* .lombards-table th.active {
-  width: 10px;
-} */
-
-
+<style scoped>
+  .lombards >>> .list-group-item {
+    border-left: initial;
+    border-right: initial;
+  }
 </style>

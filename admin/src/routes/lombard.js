@@ -19,7 +19,6 @@ export default {
       { path: 'reports/finresults', component: FinResults, meta: { current: 'reports'} },
   ],
   beforeEnter: async (to, from, next) => {
-    // store.dispatch('updateDbs')
     const user = await store.dispatch('updateUser')
     !user ? next('/') : next()
   }

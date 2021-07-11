@@ -14,7 +14,9 @@ router.get('/', async ({ db }, res) => {
 router.post('/', async ({ db, body}, res) => {  
   db.put({...body, _id: body.name, type: 'user' })
     .then(v => res.json(v))
-      .catch(err => console.error(err))
+      .catch(({ status, name: message }) => {
+        res.status(status).json({ message })
+      })
 })
 
 router.post('/remove', async ({ db, body }, res) => {

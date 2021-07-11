@@ -13,11 +13,14 @@ const  verify = async (token) =>  {
 
 const sign = v => jwt.sign(v, SECRET_OR_KEY)
 
-const newPouchDb = (url) => {
-  return new PouchDB(url ? `${COUCHDB}/${url}` : COUCHDB, { auth })
-}
-
+const newPouchDb = (url) => new PouchDB(url ? `${COUCHDB}/${url}` : COUCHDB, { auth })
 
 const docs = ({ rows }) => rows.map(v => v.doc)
 
-module.exports = { newPouchDb, docs, verify, sign, COUCHDB, auth }
+const reduce = ({ docs }) => docs.reduce((cur, v) => ({...cur, [v._id]: v }), {})
+
+const shortName = ({ family = '', name = '', sername = '' }) => 
+  [family, name.charAt(0), sername.charAt(0)].join(' ')
+  // `${family} ${name.charAt[0]} ${sername.charAt[0]}`
+
+module.exports = { newPouchDb, docs, verify, sign, COUCHDB, auth, reduce, shortName }

@@ -21,12 +21,12 @@ const actions = {
 
   async remove ({ dispatch }, v) {
     await post('/remove', v)
-    return dispatch('update')
+    await dispatch('update')
   },
 
   async save ({ dispatch }, v) {
     await post('/', v)
-    return dispatch('update')
+    await dispatch('update')
   },
 
   async update ({ commit, dispatch }) {

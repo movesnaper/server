@@ -6,7 +6,7 @@
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <div class="modal-body">
+  <div class="modal-body" v-if="html">
     <div v-html="html"></div>
     <input type="text" class="form-control" v-model="confirm">
   </div>
@@ -34,7 +34,7 @@ export default {
   },
   computed: {
     confirm: {
-      get({ data, value }) {
+      get({ data }) {
         return {...data}.confirm
       },
       set(confirm) {
@@ -45,7 +45,7 @@ export default {
       return {...value}.html
     },
     header({value }) {
-      return value.header
+      return value.header || 'Подтвердите удаление'
     },
     title({value }) {
       return value.title

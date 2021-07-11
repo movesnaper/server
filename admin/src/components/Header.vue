@@ -1,5 +1,5 @@
 <template>
-  <b-navbar type="dark" variant="info" class="px-5">
+  <b-navbar type="dark" variant="info" class="px-5" fixed="top">
       <b-navbar-brand @click="reload" style="cursor: pointer">PShop</b-navbar-brand>
     <b-navbar-nav >
       <b-nav-item to="/" exact exact-active-class="active">Главная</b-nav-item>

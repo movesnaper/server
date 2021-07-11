@@ -1,6 +1,6 @@
 <template>
   <div class="content p-5">
-    <mba-table v-if="!loading" class="users-table" :items="items"
+    <data-table v-if="!loading" class="users-table" :items="model"
         :fields="{
         index: {name: '#', width: '10px'},
         name: {name: $t('users.name')},
@@ -9,7 +9,7 @@
         reset: {width: '15%'},
         remove: {width: '10px'}
         }">
-        <template #index="{item}">{{item.index + 1}}</template> 
+        <template #index="{index}">{{index + 1}}</template> 
         <template #name="{item}">
           <a href="#" @click="go('user',item)">{{ item.name }}</a>
         </template> 
@@ -44,10 +44,10 @@
             <b-icon icon="plus-circle" variant="success"/>
           </div>
         </template>
-        <template #footer_name="{item}"><input type="text" :value="item"
-        @change="({target}) => save({ name: target.value, index: items.length })">
-        </template> 
-    </mba-table>
+      <template #footer_name>
+        <form-input :action="addNew"/>
+      </template> 
+    </data-table>
     <div v-else>
       <b-skeleton-table 
       :rows="5"
@@ -73,11 +73,6 @@ export default {
     async resetPassword(v) {
       const dialog = await this.confirm(v, this.$t(`users.reset_password`))
       await this.save({...v, password: undefined })
-      dialog.close()
-    },
-    async onRemove(v) {
-      const dialog = await this.confirm(v, this.$t(`users.remove`))
-      await this.remove(v)
       dialog.close()
     }
   }

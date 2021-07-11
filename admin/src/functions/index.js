@@ -8,24 +8,25 @@ const toDouble = v => numberFormat(v, 2, '.', ' ')
 const toNumber = v => Number(numberFormat(v || 0, 2, '.', '')) 
 const summ = (...values) => toDouble(values.reduce((a, b) => a + toNumber(b), 0))
 const mult = (a, b) => {
-    return toNumber(a) * toNumber(b)
+  return toNumber(a) * toNumber(b)
 }
 const proc = (a, b) => mult(a, b) / 100
 const diff = (a, b) => toDouble(toNumber(a) - toNumber(b))
 const pDiff = (a, b) => {
-    a = toNumber(a)
-    b = toNumber(b)
-    const res = a - (b > 0 ? b : b * -1)
-    return res > 0 ? res : false
+  a = toNumber(a)
+  b = toNumber(b)
+  const res = a - (b > 0 ? b : b * -1)
+  return res > 0 ? res : false
 }
 
-const round = v => {
-  return Number(numberFormat(v))
+const toSearchString = (...atrs) => {
+  const str = (v) => v && (v + '').replace(/[.,\s]/g, '').toLowerCase()
+  return atrs.join(str)
 }
 
-const toTitleCase = (v) => {
-  return [...v].map((w, i) => i === 0 ? w[0].toUpperCase() : w).join('')
-}
+const round = v => Number(numberFormat(v))
+
+const toTitleCase = (v) => [...v].map((w, i) => i === 0 ? w[0].toUpperCase() : w).join('')
 
 const getOcenca = (v, isAfter, rate ) => {
   const procent = v * rate / 100
@@ -34,8 +35,8 @@ const getOcenca = (v, isAfter, rate ) => {
 const getProcent = ({ ocenca, procent, days }) => {
   return proc(ocenca, procent * toNumber(days))
 }
-const firstChar = v => {
-  return (v + '').charAt(0).toUpperCase()
+const firstChar = (v = '') => {
+  return v.charAt(0).toUpperCase()
 }
 moment.locale('ru')
 const months = {
@@ -66,5 +67,6 @@ export  {
   daysDiff,
   filters,
   reduce,
-  toTitleCase
+  toTitleCase,
+  toSearchString
 }
