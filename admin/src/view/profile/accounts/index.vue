@@ -9,9 +9,9 @@
     <b-tabs pills class="tab mt-3 " vertical>
       <b-tab :title="$t(`accounts.menu.${tab}`)" v-for="(tab, i) in tabs" :key="i">
         <div class="row ml-0 ">
-          <table class="table sticky-header">
+          <table class="table ">
             <thead >
-              <tr>
+              <tr class="sticky">
                 <th v-for="({ key, width }) in fields" :key="key"
                 :width="width">{{ $t(`accounts.${key}`) }}</th>
                 <th width="10px">
@@ -22,6 +22,7 @@
                   </b-button>
                 </draggable>
                 </th>
+                <b-progress v-if="loading" class="progress"  height="2px" :value="loadValue"></b-progress>
               </tr>
             </thead>
             <table-row 
@@ -40,7 +41,7 @@
 import Draggable from "vuedraggable";
 import mixins from '../mixins'
 import TableRow from './TableRow.vue'
-
+let timer = null
 export default {
   mixins: [mixins],
   components: { Draggable, TableRow },
@@ -49,11 +50,24 @@ export default {
     fields: [
       { key: 'key', width: '20%' },
       { key: 'description' },
-      { key: 'count', width: '10%' },
-      { key: 'summ', width: '20%' },
+      { key: 'document', width: '10%' },
+      { key: 'count', width: '8%' },
+      { key: 'summ', width: '10%' },
     ],
-    loading: false
+    loading: false,
+    loadValue: 25
   }),
+  watch: {
+    loading(value) {
+      this.loadValue = 25
+      clearInterval(timer)
+      if(value) {
+        timer = setInterval(() => {
+          this.loadValue += 25
+        }, 300)
+      }
+    }
+  },
   computed: {
     settings() {
       return this.company.settings || {}
@@ -81,6 +95,16 @@ export default {
     top: 120px;
     z-index: 2000;
     border-bottom: none;    
+  }
+  .progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 2000;
+    width: 100%;
+  }
+  .table >>> th {
+    border-bottom: none;
   }
 
 </style>

@@ -16,8 +16,8 @@ axios.interceptors.response.use((response) => {
   return Promise.reject(error.message);
 })
 
-const query = (action, url, params) => {
-  return axios[action](url, params)
+const query = (method, url, params) => {
+  return axios[method](url, params)
     .then(res => res.data)
 }
 
@@ -35,7 +35,7 @@ export const getToken = (name) => {
 export const db = (name = '') => {
   const baseUrl = '/api' + name
   return {
-    get: (action, params) => query('get', baseUrl + action, params),
-    post: (action, params) => query('post', baseUrl + action, params)
+    get: (method, params) => query('get', baseUrl + method, params),
+    post: (method, params) => query('post', baseUrl + method, params)
   }
 }

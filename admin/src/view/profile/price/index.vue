@@ -9,18 +9,30 @@
               <th></th>
             </tr>
           </thead>
-          <table-row/>
+          <table-row :value="company.price" @change="onChange"/>
         </table>
     </div>
 </template>
 
 
 <script>
-
+import mixins from '../mixins'
 import TableRow from './TableRow'
 
 export default {
-  components: { TableRow }
+  components: { TableRow },
+  mixins: [mixins],
+  data: () => ({
+    loading: false
+  }),
+  methods: {
+    async onChange(price) {
+      this.loading = true
+      await this.save({...this.company, price })
+      this.loading = false
+      this.update()      
+    }
+  }
 }
 </script>
 

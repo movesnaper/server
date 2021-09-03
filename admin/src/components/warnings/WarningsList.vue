@@ -105,7 +105,7 @@ export default {
     },
     getAccount([{ dt, ct, summ }]) {
       const acc = dt !== '301' ? `dt.${dt}` : `ct.${ct}`
-      return { account: this.$t(`accounts.${acc}`), summ }
+      return { account: this.$t(`accounts.dt${dt}-ct${ct}`), summ }
     }
   }
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <!-- <div> -->
     <div class="accordion" role="tablist">
         <b-card v-for="(item, index) in programs" :key="index" no-body>
           <b-card-header class="py-0 pointer" role="tab" v-b-toggle="`program-${index}`">
@@ -39,12 +39,12 @@
           <b-icon icon="plus-circle" variant="success"/>
           <b-spinner v-if="loading" class="absolute-center"/>
         </b-button>
-      </div>
-  </div>
+    </div>
+  <!-- </div> -->
 </template>
 
 <script>
-import { moment } from '../../../functions'
+import { moment } from '@/functions'
 import mixins from '../mixins'
 
 export default {

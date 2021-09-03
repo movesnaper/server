@@ -1,79 +1,138 @@
 <template>
   <div class="reestr">
-    <div class="row ml-0 ">
-      <table class="table sticky-header">
-        <thead >
-          <tr>
-            <th v-for="({ key, width }) in fields" :key="key"
-            :width="width">{{ $t(`reestr.${key}`) }}</th>
-            <th width="10px">
-            </th>
-          </tr>
-        </thead>
-        <tr v-for="(item, i) in values" :key="i" :index="i">
-          <td class="px-1" v-for="({ key, is, type }) in fields" :key="key">
-            <component :is="is" :type="type" :value="item[key]" :disabled="loading && selected === i"
-            @change="(v) => setValue(i, {...item, [key]: v })"/>
-          </td>
-          <td class="center px-0">
-            <b-button variant="outline" >
-              <b-icon icon="trash" @click.stop="remove(i)" variant="danger"/>
-            </b-button>
-          </td>
-        </tr>
-        <tr>
-          <td class="px-0 py-0">
-            <b-button variant="outline" @click="add" class="relative px-0 py-0" :disabled="loading">
-              <b-icon icon="plus-circle" variant="success"/>
-              <b-spinner v-if="loading" class="absolute-center"/>
-            </b-button>
-          </td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-      </table>
+    <div class="accordion" role="tablist">
+      <infinite-loading direction="top" :identifier="infiniteId" @infinite="infiniteHandler"/>
+        <b-card v-for="(item, index) in reestr" :key="index" no-body>
+          <b-card-header class="pointer" role="tab" v-b-toggle="`reestr-${index}`">
+            <div class="row">
+              <div class="col-1 flex-center">
+                {{ moment(item.date).format('DD.MM.YYYY') }}
+              </div>
+              <div class="col-1 flex-center">
+                {{ item.lombard }}
+              </div>
+              <div class="col flex-center">
+                {{ description(item) }}
+              </div>
+              <div>
+              </div>
+            </div>
+          </b-card-header>
+          <b-collapse
+          v-model="visible[index]"
+          :id="`reestr-${index}`" 
+          :ref="`reestr-${index}`" 
+          accordion="accordion" 
+          role="tabpanel">
+            <reestr-item :value="item.values">
+              <template #action>
+                <b-button  variant="outline" :id="`edit-${index}`">
+                  <b-icon icon="pencil-square" variant="secondary" @click.stop="edit(item)"/>
+                </b-button>
+                <b-tooltip :target="`edit-${index}`" variant="secondary">
+                  {{ $t('btn.edit')}}
+                </b-tooltip>
+              </template>              
+            </reestr-item>
+          </b-collapse>
+        </b-card>
     </div>
+    <b-button variant="outline" @click="edit()" class="my-1">
+      <b-icon icon="plus-circle" variant="success"/>
+    </b-button>
+    <edit-dialog ref="edit-dialog" :loading="loading" @remove="remove"/>
   </div>
 </template>
 
 <script>
 import mixins from '../mixins'
+import { moment } from '@/functions'
+import ReestrItem from './ReestrItem.vue'
+import EditDialog from './EditDialog.vue'
+import { db } from '@/db'
+import InfiniteLoading from 'vue-infinite-loading'
 
 export default {
   mixins: [mixins],
+  props: ['active'],
+  components: { ReestrItem, EditDialog, InfiniteLoading },
   data: () => ({
-    fields: [
-      { key: 'date', width: '5%', is: 'b-input', type: 'date' },
-      { key: 'dt', width: '10%', is: 'b-select' },
-      { key: 'ct', width: '10%', is: 'b-select' },
-      { key: 'description', is: 'b-input' },
-      { key: 'count', width: '5%', is: 'b-input', type: 'number' },
-      { key: 'summ', width: '10%', is: 'b-input', type: 'number' },
-    ],
-    loading: false
+    visible: {},
+    reestr: [],
+    loading: false,
+    page: 0,
+    infiniteId: +new Date()
   }),
-  computed: {
-    values() {
-      return [{}]
-    },
+  watch: {
+    active(v) {
+      if(v === 'reestr' ) {
+        this.refresh()
+      }
+    }
   },
+
   methods: {
-    add() {},
-    remove() {},
-    setValue() {},
-    async onChange(reestr) {
-      this.loading = true
-      // await this.save({...this.company, reestr })
-      this.loading = false
-      this.update()
+    moment,
+    async infiniteHandler($state) {
+      const params = { page: this.page, limit: 10 }
+      const { docs } = await db('/reestr').get('/values', { params })
+      if (docs.length) {
+        this.page += 1
+        this.reestr.unshift(...docs.reverse())
+        $state.loaded()
+      } else $state.complete()
+    },
+    refresh() {
+      this.page = 0;
+      this.reestr = [];
+      this.infiniteId += 1;
+      this.visible = {}
+    },
+    async edit(value) {
+      const { show, hide } = this.$refs['edit-dialog']
+      this.visible = {}
+      const data = await show(value)
+      try {
+        this.loading = true
+        await db('/reestr').post('/', data)
+        this.refresh()
+        hide()
+      } catch(e) {
+        console.error(e);
+      } finally {
+        this.loading = false
+      }
+    },
+    async remove(value) {
+      const { hide } = this.$refs['edit-dialog']
+      try {
+        this.loading = true
+        await db('/reestr').post('/remove', value)
+        this.refresh()
+        hide()
+      } catch(e) {
+        console.error(e);
+      } finally {
+        this.loading = false
+      }
+    },
+    description({ description, values = [], number }) {
+      const [v] = values
+      const value = v && this.$t(`accounts.dt${v.dt}-ct${v.ct}`)
+      return description || `${value} ${number}`
     }
   }
 }
 </script>
 
 <style scoped>
-
+.reestr {
+  border: 1px solid rgba(0, 0, 0, 0.315);
+}
+.accordion {
+  height: 70vh;
+  overflow-y: scroll;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.315);
+}
 
 </style>

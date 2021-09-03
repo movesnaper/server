@@ -1,24 +1,24 @@
 <template>
   <div class="company-reestr">
-    <b-tabs pills class="tab mt-3 " vertical>
+    <b-tabs v-model="active" pills class="tab mt-3 " vertical>
       <b-tab :title="$t(`reestr.menu.${tab}`)" v-for="(tab, i) in tabs" :key="i">
-        <component :is="tab"/>
+        <component :is="tab" :active="tabs[active]"/>
       </b-tab>
     </b-tabs>
   </div>
 </template>
 
 <script>
-// import mixins from '../mixins'
 import Reestr from './Reestr.vue'
 import Balance from './Balance.vue'
 
 export default {
-  // mixins: [mixins],
   components: {  Reestr, Balance },
   data: () => ({
+    active: 0,
     tabs: ['reestr', 'balance']
   })
+
 }
 </script>
 
@@ -31,7 +31,7 @@ export default {
     background-color: white;
     position: sticky;
     top: 120px;
-    z-index: 2000;
+    z-index: 1000;
     border-bottom: none;    
   }
 

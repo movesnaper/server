@@ -1,5 +1,6 @@
 
 const express = require('express')
+const {moment} = require('./functions')
 const router = express.Router()
 
 const reestr = {
@@ -8,18 +9,18 @@ const reestr = {
 }
 
 const values = async (req, res, next) => {
+  const { start, end } = req.query
+  const selector = { 
+    ...reestr,
+    date: { $gt: start, $lt: moment(end).add(1, 'd') }
+  }
+  const request = {
+    selector,
+    fields: ['_id', 'date', 'days', 'values', 'klient', 'zalog'],
+    limit: 10000 
+  }  
   try {
-    const { start, end } = req.query
-    const selector = { 
-      ...reestr,
-      date: { $gt: start, $lt: moment(end).add(1, 'd') }
-    }
-    const request = { 
-      selector,
-      fields: ['_id', 'date', 'days', 'values', 'klient', 'zalog'],
-      limit: 10000 
-    }
-    req.values = (await db.find(request)).docs
+    req.values = (await req.db.find(request)).docs
       .reduce((cur, { _id, date, days, values, klient, zalog }) => {
         const issued = values.map((v) => ({...v, _id, date, days, klient, zalog }))
         return [...cur, ...issued]
@@ -41,7 +42,7 @@ const used = async (req, res, next) => {
       fields: ['ref'],
       limit: 10000 
     }
-    req.used = (await db.find(request)).docs.map(v => v.ref)
+    req.used = (await req.db.find(request)).docs.map(v => v.ref)
     next()
   } catch({ message }) {
     res.status(404).json(message)
@@ -64,10 +65,10 @@ router.get('/average', values, require('./average'))
 router.get('/money', company, values, require('./money'))
 router.get('/balance', company, values, require('./balance'))
 // router.get('/ensuarance', request, require('./ensuarance'))
-// router.get('/kassa:id', request, require('./kassa'))
-// router.get('/ostatki/:id', request, require('./ostatki'))
-// router.get('/penalty/:id', request, require('./penalty'))
-// router.get('/fin-result/:id', request, require('./results'))
+router.use('/kassa', company, require('./period'), require('./kassa'))
+router.use('/ostatki', require('./ostatki'))
+router.use('/penalty', require('./penalty'))
+router.use('/fin-result', require('./fin-result'))
 
 module.exports = router
 

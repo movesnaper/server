@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "..\\..\\corela-master\\corella"
+		}
+	],
+	"settings": {
+		"editor.fontSize": 16,
+		"editor.fontLigatures": null,
+		"window.zoomLevel": 1
+	}
+}

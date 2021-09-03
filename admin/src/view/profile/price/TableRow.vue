@@ -28,23 +28,26 @@
 
 <script>
 import Draggable from "vuedraggable";
-import mixins from '../mixins'
+import { debounce } from 'vue-debounce';
 
 export default {
-  mixins: [mixins],
   components: { Draggable },
-  data() {
+  props: ['value'],
+  data(vm) {
     return {
-      values: []
+      values: null,
+      changeSync: debounce((value) => vm.$emit('change', value), 3000)
     };
   },
   watch: {
-    values(price) {
-      return this.save({...this.company, price })
+    values(value, old) {
+      if(!!old) {
+        this.changeSync(value)
+      }
     }
   },
   created() {
-    this.values = this.company.price || []
+    this.values = this.value || []
   },
   methods: {
     setValue(i, v) {

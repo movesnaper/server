@@ -46,19 +46,24 @@
 <script>
 import Draggable from "vuedraggable";
 import mixins from '../mixins'
+import { debounce } from 'vue-debounce';
 
 export default {
   mixins: [mixins],
   components: { Draggable },
-  data() {
+  data(vm) {
     return {
-      values: []
+      values: null,
+      changeSync: debounce((value) => vm.onChange(value), 3000),
+      loading: false
     };
   },
   watch: {
-    values(settings) {
-      const program = {...this.program, settings }
-      return this.save({...this.company, program })
+    values(settings, old) {
+      if(!!old) {
+        const program = {...this.program, settings }
+        this.changeSync(program)
+      }
     }
   },
   computed: {
@@ -77,8 +82,15 @@ export default {
       const dialog = await this.$confirm()
       this.values.splice(i, 1)
       dialog && dialog.close()
+    },
+    async onChange(program) {
+      this.loading = true
+      await this.save({...this.company, program })
+      this.loading = false
+      this.update()
     }
-  }
+  },
+
 };
 </script>
 <style scoped>

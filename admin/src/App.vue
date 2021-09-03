@@ -77,6 +77,15 @@ export default {
     position: sticky;
     top: 55px;
     z-index: 2000;
-    border-bottom: none;
-  } 
+    /* border-bottom: none; */
+  }
+  .btn.focus, .btn:focus {
+    outline: 0;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+  }
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
 </style>

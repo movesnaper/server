@@ -3,7 +3,7 @@
     <b-card v-if="!loading" no-body class="company">
       <b-tabs v-model="active" small card class="company_tabs">
         <b-tab v-for="(item, i) in tabs" :key="i" :title="$t(`company.menu.${item}`)">
-          <component class="p-3" :is="`profile-${item}`"/>
+          <component :is="`profile-${item}`" :active="tabs[active]"/>
         </b-tab>
       </b-tabs>
     </b-card>
@@ -38,12 +38,25 @@ export default {
   data: () => ({
     loading: false,
     active: 0,
-    tabs: ['company', 'program', 'accounts', 'reports', 'price', 'reestr']
+    tabs: [
+      'company',
+      'program',
+      'accounts',
+      'reports',
+      'price',
+      'reestr'
+    ]
   }),
   async created() {
     this.loading = true
-    await this.$store.dispatch('updateCompany')
+    await this.update()
     this.loading = false
+  },
+  methods: {
+    async update() {
+      await this.$store.dispatch('updateCompany')
+      await this.$store.dispatch('lombard/update')
+    }
   }
 }
 </script>

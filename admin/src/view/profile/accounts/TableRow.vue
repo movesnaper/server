@@ -5,7 +5,7 @@
     <tr 
     v-for="(item, i) in [...values, {}]" :key="i" :index="i">
       <td class="px-1" v-for="({ key }) in fields" :key="key">
-        <b-input :value="item[key]" :disabled="loading && selected === i"
+        <b-input :value="item[key]"
         @change="(v) => setValue(i, {...item, [key]: v })"/>
       </td>
       <td class="center px-0">
@@ -19,23 +19,27 @@
 
 <script>
 import Draggable from "vuedraggable";
+import { debounce } from 'vue-debounce';
 
 export default {
-  props: ['fields', 'value', 'loading'],
+  props: ['fields', 'value'],
   components: { Draggable },
-  data() {
+  data(vm) {
     return {
       selected: '',
-      values: []
+      values: null,
+      changeSync: debounce((value) => vm.$emit('change', value), 3000)
     };
   },
   watch: {
-    values(v) {
-      this.$emit('change', v)
+    values(value, old) {
+      if(!!old) {
+        this.changeSync(value)
+      }
     }
   },
   created() {
-    this.values = this.value
+    this.values = this.value || []
   },
   methods: {
     end({ newIndex, to }) {

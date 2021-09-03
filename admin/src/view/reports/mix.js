@@ -77,7 +77,7 @@ export default {
         monthRange({ year, month }) {
             return year.month(month - 1).range('month')
         },
-        days({ monthRange }) {          
+        days({ monthRange }) {     
             return [ ...monthRange.by('days')]
         }
       },

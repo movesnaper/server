@@ -13,6 +13,7 @@ const getYear = () => moment(moment().year(), 'YYYY')
 
 const monthRange = ({ year, month }) => getYear(year).month(month - 1).range('month')
 
+const summ = (...values) => toDouble(values.reduce((a, b) => a + toNumber(b), 0))
 
  module.exports = {
   format: 'YYYY-MM-DD',
@@ -21,4 +22,6 @@ const monthRange = ({ year, month }) => getYear(year).month(month - 1).range('mo
   toDouble,
   getYear,
   monthRange,
+  summ,
+  numberFormat
  }
