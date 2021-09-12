@@ -13,7 +13,8 @@
       :columns="4"
       :table-props="{ bordered: true, striped: true }"
       ></b-skeleton-table>
-    </div>    
+    </div>
+
   </div>
 </template>
 
@@ -54,8 +55,8 @@ export default {
   },
   methods: {
     async update() {
-      await this.$store.dispatch('updateCompany')
-      await this.$store.dispatch('lombard/update')
+      // await this.$store.dispatch('updateCompany')
+      // await this.$store.dispatch('lombard/update')
     }
   }
 }

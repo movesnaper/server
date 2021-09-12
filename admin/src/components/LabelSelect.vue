@@ -1,6 +1,6 @@
 <template>
-    <div class="label-select row">
-      <label class="flex-center mr-3" for="input">{{ $attrs.label }}</label>
+    <div class="label-select row m-0">
+      <label v-if="$attrs.label" class="flex-center mr-3" for="input">{{ $attrs.label }}</label>
       <b-form-select
       class="col"
       id="input"

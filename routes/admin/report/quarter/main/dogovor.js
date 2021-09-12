@@ -1,4 +1,4 @@
-const {moment} = require('../functions')
+const {moment} = require('../../functions')
 
 module.exports = async ({ values, used, query }) => {
   const diff = (func) => ({ date, days }) => {

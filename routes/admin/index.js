@@ -16,6 +16,14 @@ const session = async (req, res, next) => {
   next()
 };
 
+const company = async (req, res, next) => {
+  try {
+    req.company = await req.db.get('company')
+    next()
+  }catch(e) {
+    res.status(401).json(e)
+  }
+}
 
 const ipMiddleware = function(req, res, next) {
   const r = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/;
@@ -81,6 +89,6 @@ router.use('/lombard', session, require('./lombard'))
 router.use('/user', session, require('./user'))
 router.use('/klients', session, require('./klient'))
 router.use('/reestr', session, require('./reestr'))
-router.use('/report', session, require('./report'))
+router.use('/report', session, company, require('./report'))
 
 module.exports = router

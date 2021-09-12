@@ -15,7 +15,7 @@ const options = {
   ],
   styles: [
     'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css',
-    // '@/assets/custom.css'
+    './custom.css'
   ]
 }
  

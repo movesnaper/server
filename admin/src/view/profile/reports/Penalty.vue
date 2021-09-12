@@ -1,12 +1,14 @@
 <template>
   <month-period v-model="params" @print="print">
-      <div id="printKassa"  v-if="params.month">
-        <h5 class="my-3">{{ title }}</h5>
+      <div id="printPenalty" v-if="params.month">
+        <header-table :value="title" class="mt-5"/>
+        <div v-if="currency" class="col" style="text-align: right; font-style: italic;">{{ currency }}</div>
         <report-table v-if="!loading"
-        class="table-striped table-sm mt-2" 
-        :header="header" :values="values"/>
+        class="mt-2" 
+        :header="header" 
+        :values="values"/>
         <b-skeleton-table v-else :rows="5" :columns="4" :table-props="{ bordered: true, striped: true }"/>  
-      </div>
+        </div>
   </month-period>
 </template>
 
@@ -14,14 +16,15 @@
 import { db } from '@/db'
 import MonthPeriod from './components/MonthPeriod.vue'
 import ReportTable from './components/ReportTable.vue'
-import printJS from "print-js";
+import HeaderTable from './components/HeaderTable.vue'
 export default {
-  components: { MonthPeriod, ReportTable },
+  components: { MonthPeriod, ReportTable, HeaderTable },
   data: () => ({
-    title: '',
+    title: {},
     header: [],
     values: [],
     params: {},
+    currency: '',
     loading: true
   }),
   watch: {
@@ -31,24 +34,17 @@ export default {
   },
   methods: {
     async print() {
-      printJS({
-        printable: "printKassa",
-        type: "html",
-        css: [
-        'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css',
-        './custom.css'
-        ],
-        scanStyles: false
-      });
+      await this.$htmlToPaper('printPenalty');
     },
     async refresh(params) {
       if(!params.month) return
       try {
         this.loading = true
-        const { title, header, values } = await db('/report').get(`/kassa`, { params })
+        const { title, header, values, currency } = await db('/report').get(`/penalty`, { params })
         this.title = title
         this.header = header
         this.values = values
+        this.currency = currency
       } catch(e) {
         console.error(e)
       } finally {
@@ -59,6 +55,6 @@ export default {
 }
 </script>
 
-<style >
+<style scoped>
 
 </style>

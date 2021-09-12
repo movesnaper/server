@@ -1,5 +1,5 @@
-const { lombard, values, limit } = require('../../../../selectors')
-const { toNumber } = require('../functions')
+const { lombard, values, limit } = require('../../selectors')
+const { toNumber } = require('../../functions')
 
 const getSumm = (values = []) => {
   return values.reduce((cur, { dt, ct, summ } = {}) => {

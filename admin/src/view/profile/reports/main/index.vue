@@ -7,12 +7,12 @@
         {{$t('btn.print')}}
       </b-button>
     </div>
-    <report-header class="print mt-4" :title="title"/>
+    <report-header class="mt-4" :title="title"/>
     <div v-if="period">
       <b-card v-if="!loading" no-body class="company">
         <b-tabs v-model="active" small card class="company_tabs">
           <b-tab v-for="(item, i) in tabs" :key="i" :title="$t(`reports.company.menu.${item}`)">
-            <component class="print p-3" :is="item" 
+            <component  class="p-3" :is="item" 
             :company="company"
             :period="quarterRange"
           />
@@ -30,6 +30,12 @@
     <div v-else class="border center flex-center grey" style="height: 40vh">
       Пожалуйста, выберите переод отчёта...
     </div>
+    <div v-if="period" id="print">
+      <component  v-for="(item, i) in tabs" :key="i" :is="item"
+      class="p-5" 
+      :company="company"
+      :period="quarterRange"/> 
+    </div>  
   </div>
 </template>
 
@@ -38,6 +44,7 @@ import { db } from '@/db'
 import components from './index'
 import QuorterRange from '../../../reports/QuorterRange.vue'
 import { moment } from '@/functions'
+import printJS from "print-js";
 const format = 'YYYY-MM-DD'
 
 export default {
@@ -93,8 +100,16 @@ export default {
     },
   },
   methods: {
-    print(v) {
-      console.log(v);
+    async print() {
+      printJS({
+        printable: "print",
+        type: "html",
+        css: [
+        'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css',
+        './custom.css'
+        ],
+        scanStyles: false
+      });
     },
     async refresh() {
       this.loading = true
@@ -117,6 +132,9 @@ export default {
 </script>
 
 <style scoped>
+#print {
+  display: none;
+}
 .company_tabs >>> a {
   color: black  !important;
 }

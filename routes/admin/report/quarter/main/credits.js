@@ -1,4 +1,4 @@
-const {moment, summ} = require('../functions')
+const {moment, summ} = require('../../functions')
 
 module.exports = async ({ values, used, query }) => {
   const issued = values.filter((v) => v.dt === '377')

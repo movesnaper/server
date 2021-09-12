@@ -95,11 +95,11 @@ import BalanceDetails from './BalanceDetails.vue'
 export default {
   props: ['active'],
   components: { BalanceDetails },
-  data() {
+  data(vm) {
     return {
       fields: [ 'start', 'dt', 'ct', 'end' ],
       items: [],
-      dateStart: '',
+      dateStart:  '',
       dateEnd: ''
     }
   },
@@ -111,7 +111,7 @@ export default {
     }
   },
   created() {
-    this.dateStart = this.company.settings.date
+    // this.dateStart = this.company.settings.date
   },
   computed: {
     ...mapGetters({

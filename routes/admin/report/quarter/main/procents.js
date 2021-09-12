@@ -1,4 +1,4 @@
-const {summ} = require('../functions')
+const {summ} = require('../../functions')
 
 module.exports = async ({ values }) => {
   const procents = values.filter((v) => v.ct === '703').reduce(summ, 0)

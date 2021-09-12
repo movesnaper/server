@@ -1,5 +1,5 @@
-const { values, limit } = require('../../../../selectors')
-const { summ } = require('../functions')
+const { values, limit } = require('../../selectors')
+const { summ } = require('../../functions')
 const accounts = ['377', '703', '704']
 
 module.exports = async (req, res, next) => {

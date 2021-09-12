@@ -1,14 +1,19 @@
 <template>
   <div class="reports accordion">
-    <b-card no-body v-for="({ tabs, key }, i) in menu" :key="i">
-      <b-card-header v-b-toggle="key">
-        {{ $t(`reports.periods.${key}`) }}
+    <b-card no-body v-for="(item, i) in menu" :key="i">
+      <b-card-header v-b-toggle="item.key">
+        {{ item.text }}
       </b-card-header>
-      <b-collapse :id="key" accordion="reports">
+      <b-collapse :id="item.key" accordion="reports">
         <b-card-body>
           <b-tabs pills class="tab" vertical>
-            <b-tab :title="$t(`reports.${tab}.name`)" v-for="(tab, i) in tabs" :key="i">
-              <component class="m-3" :is="`report-${tab}`" :tab="tab"/>
+            <b-tab v-for="(schema) in item.tabs" :key="schema.key" :title="schema.text">
+              <component 
+              class="m-3" 
+              :is="`template-${schema.is || 'table'}`"
+              :period="item.period"
+              :schema="schema"
+              />
             </b-tab>
           </b-tabs>
         </b-card-body>
@@ -18,23 +23,29 @@
 </template>
 
 <script>
-import ReportMain from './main/index.vue'
-import ReportKassa from './Kassa'
-import ReportOstatki from './Ostatki'
+import TemplateTable from './TemplateTable.vue'
+import TemplateMain from './main/index.vue'
+import { db } from '@/db'
 
 export default {
   components: {
-    ReportMain,
-    ReportKassa,
-    ReportOstatki
+    TemplateTable,
+    TemplateMain
   },
   data: () => ({
-    menu: [
-      { key: 'month', tabs: [ 'kassa', 'ostatki' ] },
-      { key: 'quarter', tabs: [ 'main' ]}
-    ],
-    
-  })
+    menu: [],
+    loading: false
+  }),
+  async created() {
+    try {
+      this.loading = true
+      this.menu = await db('/report').get(`/`) 
+    } catch (e) {
+      console.error(e);
+    } finally {
+      this.loading = false
+    }
+  }
 }
 </script>
 

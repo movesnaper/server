@@ -79,7 +79,7 @@ export default {
     },
     totalOcenca({ dataValues }) {
       return summ(...dataValues.map(v => v.ocenca || 0))
-    },
+    }
   },
   methods: {
     async refresh() {
@@ -87,7 +87,7 @@ export default {
       const params = { year: this.year, month: this.month }
       this.dataValues = await db('/report').get(`/ostatki/${this.route}`, { params })
       this.loading = false
-    },
+    }
   }
 
 }
