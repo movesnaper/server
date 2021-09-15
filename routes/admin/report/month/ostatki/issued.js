@@ -5,7 +5,7 @@ module.exports = async (req, res, next) => {
   try {
     const selector = values({ 
       lombard: req.query.lombard || { $exists: true }, 
-      end: req.month.end.add(1, 'd')
+      end: req.period.end.add(1, 'd')
     })
     const { docs } = await req.db.find({
       selector: { 

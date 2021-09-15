@@ -27,8 +27,7 @@
             </thead>
             <table-row 
             :fields="fields"
-            :value="settings[tab] || []" 
-            :loading="loading"
+            :settings="settings[tab]"
             @change="(v) => onChange({...settings, [tab]: v })"/>
           </table>
         </div>

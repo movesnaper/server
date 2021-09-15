@@ -1,6 +1,10 @@
-module.exports = { 
-  key: 'kassa', 
-  text: 'Касса ломбардов',
-  append: 'По состоянию на',
-  minfin: ''
+const headers = require('./headers')
+
+module.exports = ({ lombard }) => {
+  return { 
+    key: 'kassa', 
+    text: 'Касса ломбардов',
+    lombard,
+    headers
+  }
 }

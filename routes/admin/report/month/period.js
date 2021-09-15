@@ -1,13 +1,14 @@
-const { getYear, getMonths, getMonth, getDays } = require('../functions')
+const { moment } = require('../functions')
 
 module.exports = (req, res, next) => {
   if(!req.query.period) throw new Error('no period specified')
   try {
-    const date = req.date = req.company.settings.date
-    const year = req.year = getYear(date)
-    req.months = [...getMonths(year)]
-    const month = req.month = getMonth(year, req.query.period)
-    req.days = [...getDays(month)]
+    const date = req.date = moment(req.company.settings.date)
+    const month = date.clone().month(req.query.period - 1)
+    req.period = {
+      start: month.clone().startOf('month'),
+      end: month.clone().endOf('month'),
+    }
     next()
   } catch(e) {
     console.error(e);

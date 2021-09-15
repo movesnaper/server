@@ -3,12 +3,10 @@ const router = express.Router()
 
 router.get('/', 
   require('../period'),
-  require('./header'),
-  require('./payed'),
   require('./issued'),
   require('./values'),
-  async ({ header, values }, res) => {
-  res.json({ header, values })
+  async ({ values }, res) => {
+  res.json({ values })
 })
 
 module.exports = router

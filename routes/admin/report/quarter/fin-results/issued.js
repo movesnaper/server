@@ -1,34 +1,30 @@
 const { values, limit } = require('../../selectors')
 const { toNumber, moment } = require('../../functions')
 
-const penalty = (date) => (v) => {
-  const vDate = (v) => moment(v.date).add(v.days, 'days')
-  const diff = date.diff(vDate(v), 'days')
-  const penalty = toNumber(v.ssuda) * toNumber(v.xPen) / 100 * diff
-  return {...v, diff, penalty, count: 1 }
-} 
 module.exports = async (req, res, next) => {
+
   try {
-    const getValues = async (date) => {
-      const selector = values({ lombard: req.query.lombard || { $exists: true } , end: date })
-      const payed = (await req.db.find({
-        selector: { ...selector, ref: { $exists: true } },
-        fields: ['ref'],
-        limit
-      })).docs.filter(v => v.ref)
+    const getValues = async (start, end) => {
+      const selector = values({ lombard: req.query.lombard || { $exists: true } , start, end })
+
       const { docs } = await req.db.find({
-        selector: { ...selector, days: { $exists: true }, 
-        // _id: { $nor: payed } 
-      },
-        fields: ['date', 'days', 'number', 'ssuda', 'procent', 'xPen', 'zalog'],
+        selector,
+        fields: ['values', 'zalog', 'ocenca', 'procent'],
         limit
       })
-      return docs.map(penalty(date))
+      return docs.reduce((cur, v) => {
+        return [...cur, ...v.values.map((value) => {
+          const ssuda = [value.dt, value.ct].includes('377') && toNumber(value.summ)
+          const procent = [value.dt, value.ct].includes('703') && (value.ct === '703' ? toNumber(value.summ) : toNumber(value.summ) * -1)
+          const penalty = [value.ct].includes('704') && toNumber(value.summ)
+          const income = toNumber(procent) + toNumber(penalty)
+          return {...v, ...value, ssuda, procent, penalty, income }
+        })]
+      }, [])
     }
-
     req.issued = { 
-      start: await getValues(req.month.start),
-      end: await getValues(req.month.end)
+      start: await getValues(moment(req.date), req.period.end),
+      end: await getValues(req.period.start, req.period.end)
     }
     next()
   } catch(e) {

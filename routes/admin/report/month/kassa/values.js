@@ -1,16 +1,17 @@
 const { values, limit } = require('../../selectors')
-const { summ } = require('../../functions')
+const { summ, moment, toDouble } = require('../../functions')
 const accounts = ['377', '703', '704']
 
 module.exports = async (req, res, next) => {
   try {
     const selector = values({ 
       lombard: req.query.lombard || { $exists: true }, 
-      start: req.month.start, 
-      end: req.month.end.add(1, 'd')
+      start: req.period.start, 
+      end: req.period.end
     })
     const { docs } = await req.db.find({ selector, fields: ['date', 'values'], limit})
-    req.values = req.days.map((date) => {
+    const range = moment().range(req.period.start, req.period.end)
+    req.values = [...range.by('days')].map((date, i, arr) => {
       const values = docs.filter((v) => date.isSame(v.date, 'day'))
         .reduce((cur, { values }) => [...cur, ...values], [])
       const prixod = values.filter((v) => v.dt === '301' && !accounts.includes(v.ct)).reduce(summ, 0)
@@ -22,23 +23,24 @@ module.exports = async (req, res, next) => {
       const dt377 = values.filter((v) => v.ct === '301' && v.dt === '377').reduce(summ, 0)
       const dt703 = values.filter((v) => v.ct === '301' && v.dt === '703').reduce(summ, 0)
       const totalCt = [rasxod, dt377, dt703].map(summ => ({ summ })).reduce(summ, 0)
-
       return {
         date,
-        prixod,
-        ct377,
-        ct703,
-        ct704,
-        totalDt,
-        rasxod,
-        dt377,
-        dt703,
-        totalCt
+        prixod: toDouble(prixod),
+        ct377: toDouble(ct377),
+        ct703: toDouble(ct703),
+        ct704: toDouble(ct704),
+        totalDt: toDouble(totalDt),
+        rasxod: toDouble(rasxod),
+        dt377: toDouble(dt377),
+        dt703: toDouble(dt703),
+        totalCt: toDouble(totalCt),
+        ok: totalDt - totalCt
       }
-    }).map((v, i, arr) => { // maping ok
-      const summTotals = (cur, { totalDt, totalCt }) => cur + totalDt - totalCt
-      const ok = arr.filter(({ date }) => date.isSameOrBefore(v.date, 'day')).reduce(summTotals, req.ok)
-      return {...v, ok}
+    })
+    .map((v, i, arr) => {
+      const total = (cur, value) => cur += value.ok
+      const ok = arr.filter(({ date }) => date.isSameOrBefore(v.date, 'day')).reduce(total, req.ok)
+      return {...v, ok: toDouble(ok), date: v.date.format('DD.MM.YYYY')}
     })
     next()
   } catch(e) {

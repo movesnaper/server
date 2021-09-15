@@ -1,36 +1,37 @@
 <template>
-  <month-period v-model="selected" :filters="filters" @print="print">
-      <div :id="schema.key" v-if="selected.period">
-        <header-table 
-          v-bind="schema"
-          :company="company"
-          :period="period.values.find((v) => v.value === selected.period)"
-          class="mt-5"/>
+  <report-period v-model="selected" :filters="filters" @print="print">
+    <div :id="schema.key" v-if="selected.period">
+      <report-header
+        v-bind="schema"
+        :company="company"
+        :period="period.values.find((v) => v.value === selected.period)"
+        class="mt-5"/>
+      <div v-if="!loading" class="mt-2">
         <div class="col" style="text-align: right; font-style: italic;">{{ schema.currency }}</div>
-        <report-table v-if="!loading"
-        class="mt-2" 
-        :header="header" 
-        :values="values"/>
-        <b-skeleton-table v-else :rows="5" :columns="4" :table-props="{ bordered: true, striped: true }"/>  
+        <report-table :headers="schema.headers" :values="values" :footer="footer"/>
+        <report-sign :sign="schema.sign"/>       
       </div>
-      <div v-else class="border center flex-center grey mt-3" style="height: 40vh">
-        {{ $t(`reports.periods.no_period`)}}
-      </div>
-  </month-period>
+      <b-skeleton-table v-else :rows="5" :columns="4" :table-props="{ bordered: true, striped: true }"/>  
+    </div>
+    <div v-else class="border center flex-center grey mt-3" style="height: 40vh">
+      {{ $t(`reports.periods.no_period`)}}
+    </div>
+  </report-period>
 </template>
 
 <script>
 import { db } from '@/db'
-import MonthPeriod from './components/MonthPeriod.vue'
-import ReportTable from './components/ReportTable.vue'
-import HeaderTable from './components/HeaderTable.vue'
+import ReportPeriod from './components/Period.vue'
+import ReportHeader from './components/Header.vue'
+import ReportTable from './components/Table.vue'
+import ReportSign from './components/Sign.vue'
 import printJS from "print-js";
 
 export default {
-  components: { MonthPeriod, ReportTable, HeaderTable },
+  components: { ReportPeriod, ReportHeader, ReportTable, ReportSign },
   props: ['schema', 'period'],
   data: () => ({
-    header: [],
+    footer: [],
     values: [],
     selected: {},
     loading: false
@@ -65,9 +66,9 @@ export default {
     async refresh(params) {
       try {
         this.loading = true
-        const { header, values } = await db('/report').get(`/${this.schema.key}`, { params })
-        this.header = header
+        const { values, footer } = await db('/report').get(`/${this.schema.key}`, { params })
         this.values = values
+        this.footer = footer
       } catch(e) {
         console.error(e)
       } finally {

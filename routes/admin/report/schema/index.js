@@ -5,10 +5,8 @@ router.get('/',
   require('./period'), 
   require('./lombard'), 
   async (req, res) => {
-    console.log();
     try {
       const period = { key: 'period', label: 'Период'}
-      const minfin = req.company.minfin
       const company = {
         schema: [
           { label: 'Наименование финансового учреждения', key: 'title'},
@@ -17,17 +15,21 @@ router.get('/',
         title: req.company.name,
         kod: req.company.kod,
       }
+      const sign = [
+
+      ]
+      const values = (v) => ({company, sign, ...v })
       res.json([
         { key: 'month', text: 'Месячный', period: {...period, values: req.month }, tabs: [ 
-            require('../month/kassa/schema'),
-            require('../month/ostatki/schema'),
-            require('../month/penalty/schema'),
-          ].map((v) => ({company, minfin, lombard: req.lombard, ...v }))
+            require('../month/kassa/schema')(req),
+            require('../month/ostatki/schema')(req),
+            require('../month/penalty/schema')(req)
+          ].map(values)
         },
         { key: 'quarter', text: 'Квартальный', period: {...period, values: req.quarter }, tabs: [
-            require('../quarter/main/schema'),
-            require('../quarter/fin-results/schema'),
-          ].map((v) => ({company, minfin, lombard: req.lombard, ...v }))
+            require('../quarter/main/schema')(req),
+            require('../quarter/fin-results/schema')(req)
+          ].map(values)
         }
       ])
     } catch(e) {

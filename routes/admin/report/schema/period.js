@@ -1,4 +1,4 @@
-const {  getYear, getQuarters, getMonths, moment } = require('../functions')
+const { moment } = require('../functions')
 
 const months = [
   'Январь',
@@ -24,14 +24,7 @@ const quarters = [
 
 module.exports = (req, res, next) => {
   try {
-    // const year = getYear(req.company.settings.date)
     const date = moment(req.company.settings.date)
-    // const monthPeriod = (month) => {
-    //   const { end }  = year.month().range('month')
-    //   const value = month.format('MM')
-    //   const title = `По состоянию на ${end.format('DD.MM.YYYY')} г.`
-    //   return { value, text: months[value], title }
-    // }
     const period = (key, getIndex = (i) => i) => (text, i) => {
       const end  = date[key](getIndex(i)).endOf(key)
       const title = `По состоянию на ${end.format('DD.MM.YYYY')} г.`

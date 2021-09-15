@@ -27,8 +27,8 @@ module.exports = async (req, res, next) => {
     }
 
     req.issued = { 
-      start: await getValues(req.month.start),
-      end: await getValues(req.month.end)
+      start: await getValues(req.period.start),
+      end: await getValues(req.period.end)
     }
     next()
   } catch(e) {

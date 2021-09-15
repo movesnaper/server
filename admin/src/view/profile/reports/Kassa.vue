@@ -12,8 +12,8 @@
 
 <script>
 import { db } from '@/db'
-import MonthPeriod from './components/MonthPeriod.vue'
-import ReportTable from './components/ReportTable.vue'
+import MonthPeriod from './components/Period.vue'
+import ReportTable from './components/Table.vue'
 import printJS from "print-js";
 export default {
   components: { MonthPeriod, ReportTable },

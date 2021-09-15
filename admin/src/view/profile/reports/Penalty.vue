@@ -14,9 +14,9 @@
 
 <script>
 import { db } from '@/db'
-import MonthPeriod from './components/MonthPeriod.vue'
-import ReportTable from './components/ReportTable.vue'
-import HeaderTable from './components/HeaderTable.vue'
+import MonthPeriod from './components/Period.vue'
+import ReportTable from './components/Table.vue'
+import HeaderTable from './components/Header.vue'
 export default {
   components: { MonthPeriod, ReportTable, HeaderTable },
   data: () => ({
