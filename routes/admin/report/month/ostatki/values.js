@@ -1,20 +1,24 @@
-const { toNumber } = require('../../functions')
-
-const byNumber = ({ number: a = 0 }, { number: b = 0 } ) => Number(a) - Number(b)
+const { toDouble, toNumber, moment } = require('../../functions')
 
 module.exports = async (req, res, next) => {
+  const total = (key) => req.issued.reduce((cur, v) => cur += toNumber(v[key]), 0)
   try {
-    const obespechenie = (cur, v, index ) => {
+    const obespechenie = (cur, v) => {
       const obespechenie = (v.obespechenie || []).map((obespechenie, i) => {
-          const { family = '', name = '', sername = '' } = req.klients.find(({ _id }) => _id === v.klient) || {}
-          const klient = `${family} ${name.charAt(0)}. ${sername.charAt(0)}.`
-          const value = { date: v.date || '', number: v.number, ssuda: toNumber(v.ocenca), klient }
-          const ocenca = toNumber(obespechenie.ocenca)
-          return !i ? { ...obespechenie, ocenca, ...value, index: index + 1 } : obespechenie
+          const klient = req.klients.find((klient) => klient._id === v.klient) || {}
+          return i ? obespechenie : { ...v, ...obespechenie,
+            klient: `${klient.family} ${klient.name.charAt(0)}. ${klient.sername.charAt(0)}.`,
+            ssuda: toDouble(v.ocenca),
+            ocenca: toDouble(obespechenie.ocenca), 
+            date: v.date ? moment(v.date).format('DD.MM.YYYY') : ''
+          }
         })
       return [...cur, ...obespechenie ]
     } 
-    req.values = req.issued.sort(byNumber).reduce(obespechenie, [])
+    req.values = [
+      ...req.issued.reduce(obespechenie, []),
+      { ssuda: toDouble(total('ocenca')), number: 'Итого' }
+    ]
     next()
   } catch(e) {
     res.status(500).json({ values: e.message })

@@ -8,8 +8,7 @@ router.get('/',
   require('./values'),
   async ({ values, ok }, res) => {
     const total = (key) => toDouble(values.reduce((cur, v) => cur += toNumber(v[key]), 0))
-    res.json({ 
-      values: [ { 
+    res.json([ { 
         ok: toDouble(ok) }, 
         ...values, 
         {
@@ -23,8 +22,7 @@ router.get('/',
           rasxod: total('rasxod'),
           totalCt: total('totalCt'),
         }
-      ],
-    })
+      ])
 })
 
 module.exports = router

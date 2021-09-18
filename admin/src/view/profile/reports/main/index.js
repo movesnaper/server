@@ -1,4 +1,4 @@
-import ReportHeader from './Header'
+// import ReportHeader from './Header'
 import CommonInfo from './common'
 import AverageValues from './average'
 import BalanceInfo from './balance'
@@ -7,7 +7,7 @@ import GoldGuaranty from './guaranty'
 import MoneyOperations from './money'
 
 export default {
-  ReportHeader,
+  // ReportHeader,
   CommonInfo,
   AverageValues,
   BalanceInfo,

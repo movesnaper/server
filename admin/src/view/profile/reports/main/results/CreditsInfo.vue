@@ -37,11 +37,11 @@
       </div>
     </div>
     <div class="row text-center">
-      <div class="col-4 border">{{ value.issued || '-' }}</div>
+      <div class="col-4 border">{{ current.ssuda || '-' }}</div>
       <div class="col">
         <div class="row">
-          <div class="col border">{{ value.credits || '-'  }}</div>
-          <div class="col border">{{ value.overDate || '-'  }}</div>
+          <div class="col border">{{ credits.ssuda || '-'  }}</div>
+          <div class="col border">{{ credits.overDate || '-'  }}</div>
         </div>
       </div>
     </div>
@@ -50,7 +50,15 @@
 
 <script>
 export default {
-  props: ['value']
+  props: ['values'],
+  computed: {
+    current() {
+      return this.values.current || {}
+    },
+    credits() {
+      return this.values.credits || {}
+    },
+  }
 }
 </script>
 

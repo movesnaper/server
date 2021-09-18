@@ -2,14 +2,14 @@
   <report-period v-model="selected" :filters="filters" @print="print">
     <div :id="schema.key" v-if="selected.period">
       <report-header
+        class="mt-5"
         v-bind="schema"
         :company="company"
-        :period="period.values.find((v) => v.value === selected.period)"
-        class="mt-5"/>
+        :period="period.values.find((v) => v.value === selected.period)"/>
       <div v-if="!loading" class="mt-2">
         <div class="col" style="text-align: right; font-style: italic;">{{ schema.currency }}</div>
-        <report-table :headers="schema.headers" :values="values" :footer="footer"/>
-        <report-sign :sign="schema.sign"/>       
+        <component :is="`report-${schema.is || 'table'}`" :headers="schema.headers" :values="values"/>
+        <report-sign :schema="schema.sign"/> 
       </div>
       <b-skeleton-table v-else :rows="5" :columns="4" :table-props="{ bordered: true, striped: true }"/>  
     </div>
@@ -24,14 +24,14 @@ import { db } from '@/db'
 import ReportPeriod from './components/Period.vue'
 import ReportHeader from './components/Header.vue'
 import ReportTable from './components/Table.vue'
+import ReportMain from './main/index.vue'
 import ReportSign from './components/Sign.vue'
 import printJS from "print-js";
 
 export default {
-  components: { ReportPeriod, ReportHeader, ReportTable, ReportSign },
+  components: { ReportPeriod, ReportHeader, ReportTable, ReportMain, ReportSign },
   props: ['schema', 'period'],
   data: () => ({
-    footer: [],
     values: [],
     selected: {},
     loading: false
@@ -46,7 +46,7 @@ export default {
       return [this.period, this.schema.lombard].filter((v) => v)
     },
     company() {
-      const lombard = this.schema.lombard.values
+      const lombard = this.schema.lombard ? this.schema.lombard.values : []
         .find((v) => v.value === this.selected.lombard)
       return {...this.schema.company, ...lombard }
     }
@@ -66,9 +66,8 @@ export default {
     async refresh(params) {
       try {
         this.loading = true
-        const { values, footer } = await db('/report').get(`/${this.schema.key}`, { params })
-        this.values = values
-        this.footer = footer
+        this.values = await db('/report').get(`/${this.schema.key}`, { params })
+        console.log(this.values);
       } catch(e) {
         console.error(e)
       } finally {

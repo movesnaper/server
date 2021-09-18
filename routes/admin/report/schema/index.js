@@ -16,7 +16,8 @@ router.get('/',
         kod: req.company.kod,
       }
       const sign = [
-
+        { post: 'Бухгалтер', fio: req.company.bookkeeper },
+        { post: 'Директор', fio: req.company.director },
       ]
       const values = (v) => ({company, sign, ...v })
       res.json([

@@ -6,7 +6,7 @@ router.get('/',
   require('./issued'),
   require('./values'),
   async ({ values }, res) => {
-  res.json({ values })
+  res.json(values)
 })
 
 module.exports = router

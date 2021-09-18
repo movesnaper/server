@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading">
+  <div>
     <div class="text-center">
       <h6>
         3. Средневзвешенные значения полной стоимости займов некредитной
@@ -39,8 +39,8 @@
         металлов и драгоценных камней
       </div>
       <div class="col border center flex-center">-</div>
-      <div class="col border center flex-center">{{ gold.summ || '-' }}</div>
-      <div class="col border center flex-center">{{ gold.count || '-' }}</div>
+      <div class="col border center flex-center">{{ gold.summ }}</div>
+      <div class="col border center flex-center">{{ gold.count }}</div>
     </div>    
     <div class="row">
       <div class="col-1 border grey center flex-center">2</div>
@@ -57,8 +57,8 @@
         Займы с обеспечением в виде залога бытовой техники
       </div>
       <div class="col border center flex-center">-</div>
-      <div class="col border center flex-center">{{ things.summ || '-' }}</div>
-      <div class="col border center flex-center">{{ things.count || '-' }}</div>
+      <div class="col border center flex-center">{{ things.summ }}</div>
+      <div class="col border center flex-center">{{ things.count }}</div>
     </div>    
     <div class="row">
       <div class="col-1 border grey center flex-center">4</div>
@@ -70,29 +70,22 @@
       <div class="col border center flex-center">-</div>
     </div>    
   </div>
-  <div v-else>
-    <b-skeleton-table 
-    :rows="5"
-    :columns="4"
-    :table-props="{ bordered: true, striped: true }"
-    ></b-skeleton-table>
-  </div>
 </template>
 
 <script>
 import mixins from '../mixins'
 
 export default {
-  mixins: [mixins],
-  data: () => ({
-    report: 'average'
-  }),
+  props: ['values'],
   computed: {
-    gold({ value }) {
-      return value.gold || {}
+    current() {
+      return this.values.current || {}
     },
-    things({ value }) {
-      return value.things || {}
+    gold({ current }) {
+      return current.gold || {}
+    },
+    things({ current }) {
+      return current.things || {}
     }
   }
 }

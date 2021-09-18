@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!loading">
+  <div>
     <div class="text-center">
       <h6>
         2. Основные показатели деятельности некредитной финансовой организации,
@@ -9,11 +9,11 @@
     <div class="text-center">
       <h6> 1. Сведения о займах </h6>
     </div>
-    <credits-info class="mt-3" :value="value.credits || {}"/>
-    <procents class="mt-3" :value="value.procents"/>
-    <credits-payed class="mt-3" :value="value.payed"/>
-    <dogovor-info class="mt-3" :value="value.dogovor || {}"/>
-    <other-dogovor-info class="mt-3"/>
+    <credits-info class="mt-3" :values="values"/>
+    <procents class="mt-3" :values="values"/>
+    <credits-payed class="mt-3" :values="values"/>
+    <dogovor-info class="mt-3" :values="values"/>
+    <other-dogovor-info class="mt-3" :values="values"/>
     <div class="text-center mt-3">
       <h6> 
         2. Сведения о денежных средствах физических лиц-участников (учредителей)
@@ -32,17 +32,9 @@
     </div>
     <insurance-info class="mt-3"/>
   </div>
-  <div v-else>
-    <b-skeleton-table 
-    :rows="5"
-    :columns="4"
-    :table-props="{ bordered: true, striped: true }"
-    ></b-skeleton-table>
-  </div>
 </template>
 
 <script>
-import { db } from '@/db'
 import CreditsInfo from './CreditsInfo.vue'
 import Procents from './Procents.vue'
 import CreditsPayed from './CreditsPayed.vue'
@@ -60,28 +52,7 @@ export default {
     InsuranceInfo,
     MoneyInfo
   },
-  props: ['period'],
-  data: () => ({
-    loading: false,
-    value: {}
-  }),
-  created() {
-    this.refresh()
-  },
-  methods: {
-    async refresh() {
-      this.loading = true
-      try {
-        this.value = await db('/report').get(`/main`, { 
-          params: this.period
-        })
-      } catch({ message }) {
-        this.$alert({ message, title: 'report-main-results'})
-      } finally {
-        this.loading = false
-      }
-    }
-  }
+  props: ['values']
 }
 </script>
 

@@ -36,7 +36,7 @@
       </div>
     </div>
     <div class="row text-center">
-      <div class="col-4 border">{{ value }}</div>
+      <div class="col-4 border">{{ current.procents }}</div>
       <div class="col">
         <div class="row">
           <div class="col border">-</div>
@@ -49,7 +49,15 @@
 
 <script>
 export default {
-  props: ['value']
+  props: ['values'],
+  computed: {
+    current() {
+      return this.values.current || {}
+    },
+    credits() {
+      return this.values.credits || {}
+    },
+  }
 }
 </script>
 

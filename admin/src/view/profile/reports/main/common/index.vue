@@ -21,7 +21,13 @@ export default {
     CompanyProps, 
     BankDetails, 
     InsuranceOrganizftions },
-  props: ['company']
+  props: ['values'],
+  computed: {
+    company() {
+      const company = this.values && this.values.company
+      return company || {}
+    }
+  }
 }
 </script>
 

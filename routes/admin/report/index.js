@@ -62,9 +62,9 @@ const company = async (req, res, next) => {
 //schema
 router.get('/', company, require('./period'), require('./schema'))
 // router.get('/main', values, used, require('./main'))
-router.get('/average', values, require('./average'))
-router.get('/money', company, values, require('./money'))
-router.get('/balance', company, values, require('./balance'))
+// router.get('/average', values, require('./average'))
+// router.get('/money', company, values, require('./money'))
+// router.get('/balance', company, values, require('./balance'))
 // router.get('/ensuarance', request, require('./ensuarance'))
 
 // month reports
@@ -72,10 +72,10 @@ router.use('/kassa', require('./month/kassa'))
 router.use('/ostatki', require('./month/ostatki'))
 router.use('/penalty', require('./month/penalty'))
 // quarter repotrs
+router.use('/main', require('./quarter/main'))
 router.use('/fin-results', require('./quarter/fin-results'))
 
-
-router.use('/fin-result', require('./fin-result'))
+// router.use('/fin-result', require('./fin-result'))
 
 module.exports = router
 

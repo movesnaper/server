@@ -16,7 +16,6 @@ export default {
         this.value = await db('/report').get(`/${this.report}`, { 
           params: this.period
         })
-        console.log(this.value);
       } catch({ message }) {
         this.$alert({ message, title: `report-${this.report}`})
       } finally {

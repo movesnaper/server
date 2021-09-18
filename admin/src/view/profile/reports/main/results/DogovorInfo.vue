@@ -43,20 +43,28 @@
     <div class="row text-center">
       <div class="col">
         <div class="row">
-          <div class="col border">{{ value.count || '-' }}</div>
-          <div class="col border">{{ value.before || '-' }}</div>
-          <div class="col border">{{ value.after || '-' }}</div>
+          <div class="col border">{{ credits.count }}</div>
+          <div class="col border">{{ credits.countBefore }}</div>
+          <div class="col border">{{ credits.countAfter }}</div>
         </div>
       </div>
-      <div class="col-2 border">{{ value.klients || '-' }}</div>
-      <div class="col-2 border">{{ value.issued || '-' }}</div>
+      <div class="col-2 border">{{ credits.klients }}</div>
+      <div class="col-2 border">{{ current.count }}</div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['value']
+  props: ['values'],
+  computed: {
+    current() {
+      return this.values.current || {}
+    },
+    credits() {
+      return this.values.credits || {}
+    },
+  }
 }
 </script>
 

@@ -17,30 +17,15 @@
             {{ value[key] }}
           </component>
         </tr>
-        <!-- <tr>
-          <component v-for="({ text, type, is }, i) in footer" :key="i" :is="is || 'td'">
-            {{ getValue(text, type) }}
-          </component>
-        </tr> -->
       </tbody>
     </table>
   </div>
 </template>
 
 <script>
-import { toDouble, moment } from '@/functions'
 
 export default {
-  props: ['headers', 'values', 'footer'],
-  // methods: {
-  //   getValue(value, type) {
-  //     switch(type) {
-  //       case 'date': return moment(value).format('L')
-  //       case 'double': return toDouble(value)
-  //       default:  return value
-  //     } 
-  //   }
-  // }
+  props: ['headers', 'values']
 }
 </script>
 

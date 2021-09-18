@@ -1,13 +1,37 @@
-const {moment, summ} = require('../../functions')
+const { values, limit } = require('../../selectors')
+const { moment } = require('../../functions')
 
-module.exports = async ({ values, used, query }) => {
-  const issued = values.filter((v) => v.dt === '377')
-  const credits = issued.filter(({ _id }) => !used.includes(_id))
-  const overDate = credits.filter(({ date, days }) => 
-    moment(query.end).diff(moment(date), 'days') >= Number(days))
-  return {
-    issued: Math.round(issued.reduce(summ, 0) / 1000),
-    credits: Math.round(credits.reduce(summ, 0) / 1000),
-    overDate: Math.round(overDate.reduce(summ, 0) / 1000),
+module.exports = async (req, res, next) => {
+  const penalty = (v) => {
+    const vDate = (v) => moment(v.date).add(v.days, 'days')
+    const diff = req.period.end.diff(vDate(v), 'days')
+    return {...v, diff }
+  }   
+  try {
+    const selector = values({ end: req.period.end })
+
+    const { docs: payed } = await req.db.find({
+      selector: { ...selector, ref: { $exists: true } },
+      fields: ['ref'],
+      limit
+    })
+
+    const { docs } = await req.db.find({
+      selector: { ...selector, 
+        ref: { $exists: false },
+        number: { $exists: true },
+        _id: { $nor: payed.map(v => v.ref) } 
+      },
+      fields: ['date', 'days', 'number', 'ssuda', 'procent', 'xPen', 'zalog', 'values', 'klient'],
+      limit
+    })
+    req.credits = docs.filter((v) => v.values.length).map(penalty).reduce((cur, value) => {
+      const values = value.values.map((v) => ({...value, ...v}))
+      return [...cur, ...values]
+    }, [])
+    next()
+  } catch(e) {
+    res.status(500).json({ credits: e.message })
+    console.error(e);
   }
 }

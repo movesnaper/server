@@ -33,17 +33,25 @@
       <div class="col border"><strong>24</strong></div>
     </div>
     <div class="row text-center">
-      <div class="col border">{{ value }}</div>
-      <div class="col border">-</div>
-      <div class="col border">-</div>
-      <div class="col border">-</div>
+      <div class="col border">{{ current.payed }}</div>
+      <div class="col border">{{ current.procents }}</div>
+      <div class="col border">{{ sell.ssuda }}</div>
+      <div class="col border">{{ sell.procents }}</div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['value']
+  props: ['values'],
+  computed: {
+    current() {
+      return this.values.current || {}
+    },
+    sell() {
+      return this.values.sell || {}
+    },
+  }
 }
 </script>
 

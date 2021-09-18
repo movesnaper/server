@@ -8,12 +8,7 @@
         <b-card-body>
           <b-tabs pills class="tab" vertical>
             <b-tab v-for="(schema) in item.tabs" :key="schema.key" :title="schema.text">
-              <component 
-              class="m-3" 
-              :is="`template-${schema.is || 'table'}`"
-              :period="item.period"
-              :schema="schema"
-              />
+                <template-table :period="item.period" :schema="schema"/>            
             </b-tab>
           </b-tabs>
         </b-card-body>
@@ -24,14 +19,10 @@
 
 <script>
 import TemplateTable from './TemplateTable.vue'
-import TemplateMain from './main/index.vue'
 import { db } from '@/db'
 
 export default {
-  components: {
-    TemplateTable,
-    TemplateMain
-  },
+  components: { TemplateTable },
   data: () => ({
     menu: [],
     loading: false
