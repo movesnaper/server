@@ -1,8 +1,8 @@
 const { values, limit } = require('../../selectors')
 const { toNumber, moment } = require('../../functions')
 
-module.exports = async (req, res, next) => {
-
+module.exports = async (req, res) => {
+  const { start, end } = require('../period')(req, res)
   try {
     const getValues = async (start, end) => {
       const selector = values({ lombard: req.query.lombard || { $exists: true } , start, end })
@@ -22,11 +22,10 @@ module.exports = async (req, res, next) => {
         })]
       }, [])
     }
-    req.issued = { 
-      start: await getValues(moment(req.date), req.period.end),
-      end: await getValues(req.period.start, req.period.end)
+    return { 
+      start: await getValues(moment(req.date), end),
+      end: await getValues(start, end)
     }
-    next()
   } catch(e) {
     res.status(500).json({ issued: e.message })
     console.error(e);

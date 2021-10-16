@@ -1,11 +1,12 @@
 const { values, limit } = require('../../selectors')
 
 
-module.exports = async (req, res, next) => {
+module.exports = async (req, res) => {
+  const { end } = require('../period')(req, res)
   try {
     const selector = values({ 
       lombard: req.query.lombard || { $exists: true }, 
-      end: req.period.end
+      end
     })
 
     const { docs } = await req.db.find({
@@ -17,8 +18,7 @@ module.exports = async (req, res, next) => {
       limit
     }) 
 
-    req.payed = docs.map(v => v.ref)
-    next()
+    return docs.map(v => v.ref)
   } catch(e) {
     res.status(500).json({ payed: e.message })
     console.log(e);

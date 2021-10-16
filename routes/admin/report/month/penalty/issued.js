@@ -7,7 +7,8 @@ const penalty = (date) => (v) => {
   const penalty = diff > 0 && toNumber(v.ssuda) * toNumber(v.xPen) / 100 * diff
   return {...v, diff, penalty, count: 1 }
 } 
-module.exports = async (req, res, next) => {
+module.exports = async (req, res) => {
+  const { start, end  } = require('../period')(req, res)
   try {
     const getValues = async (date) => {
       const selector = values({ lombard: req.query.lombard || { $exists: true } , end: date })
@@ -30,11 +31,10 @@ module.exports = async (req, res, next) => {
       return docs.map(penalty(date)).filter((v) => v.penalty)
     }
 
-    req.issued = { 
-      start: await getValues(req.period.start),
-      end: await getValues(req.period.end)
+    return { 
+      start: await getValues(start),
+      end: await getValues(end)
     }
-    next()
   } catch(e) {
     res.status(500).json({ issued: e.message })
     console.error(e);

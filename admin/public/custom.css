@@ -5,11 +5,25 @@
     .table-striped tbody tr:nth-of-type(odd) th {
       background-color: rgba(0, 0, 0, .05)!important;
     } */
-    .grey {
+    /* .no-print, .no-print *
+    {
+      display: none !important;
+    }     */
+    /* .printOnly{
+      display: block;
+    } */
+    /* .grey {
       background-color: rgba(128, 128, 128, 0.096);
-    }
+    } */
   }
-
+  .absolute-bottom {
+    font-size: 12px;
+    position: absolute;
+    left: 0;
+    bottom: -20px;
+    width: 100%;
+    text-align: center;
+  }
   .flex-between {
     display: flex;
     justify-content: space-between;

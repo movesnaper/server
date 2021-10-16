@@ -1,17 +1,30 @@
 <template>
   <div class="table b-table table-sm">
-    <table v-bind="$attrs" >
+    <table style="width: 100%">
       <thead>
         <tr>
-          <th v-for="({ text, style }, i) in headers" :key="i" scope="col" :style="style">
+          <th v-for="({ text, style }, i) in attrs.headers" 
+          :key="i" 
+          scope="col" 
+          :style="style">
             {{ text }}
           </th>
         </tr>
       </thead>
-      <tbody>            
-        <tr v-for="(value, i) in values" :key="i">
+      <tbody v-if="!loading">            
+        <tr v-for="(value, i) in attrs.values" :key="i">
           <component 
-            v-for="({ key, is, style }) in headers"
+            v-for="({ key, is, style }) in attrs.headers"
+            :key="key" :is="is || 'td'"
+            :style="style || value.style">
+            {{ value[key] }}
+          </component>
+        </tr>
+      </tbody>
+      <tbody v-else>            
+        <tr v-for="(value, i) in attrs.values" :key="i">
+          <component 
+            v-for="({ key, is, style }) in attrs.headers"
             :key="key" :is="is || 'td'"
             :style="style || value.style">
             {{ value[key] }}
@@ -25,7 +38,12 @@
 <script>
 
 export default {
-  props: ['headers', 'values']
+  props: ['value', 'node', 'loading'],
+  computed: {
+    attrs() {
+      return this.node.attrs || {}
+    }
+  },
 }
 </script>
 

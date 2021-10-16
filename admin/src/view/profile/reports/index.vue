@@ -8,7 +8,7 @@
         <b-card-body>
           <b-tabs pills class="tab" vertical>
             <b-tab v-for="(schema) in item.tabs" :key="schema.key" :title="schema.text">
-                <template-table :period="item.period" :schema="schema"/>            
+              <report :schema="schema"/>     
             </b-tab>
           </b-tabs>
         </b-card-body>
@@ -18,11 +18,11 @@
 </template>
 
 <script>
-import TemplateTable from './TemplateTable.vue'
+import Report from './Report.vue'
 import { db } from '@/db'
 
 export default {
-  components: { TemplateTable },
+  components: { Report },
   data: () => ({
     menu: [],
     loading: false

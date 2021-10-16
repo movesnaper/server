@@ -1,24 +1,28 @@
 <template>
-  <div class="sign">
-    <div v-for="({ post, fio}, i) in schema" :key="i"  class="row mt-5">
-      <div class="col"></div>
-      <div class="col">
-        <div class="row">
-          <div class="col">{{ post }}</div>
-          <div class="col border-bottom"></div>
-          <div class="col ">{{ fio }}</div>
-        </div>
+    <div class="sign border-bottom relative">
+      <div class="sign-value end-text">
+        {{ attrs.value }}
+      </div>
+      <div class="absolute-bottom">
+        <i>{{ attrs.subtitle }}</i>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
 export default {
-  props: ['schema']
+  props: ['node'],
+  computed: {
+    attrs() {
+      return this.node.attrs || {}
+    }
+  }
 }
 </script>
 
 <style scoped>
-
+  .sign-value {
+    font-size: 18px;
+    font-weight: 600 !important;
+  }
 </style>

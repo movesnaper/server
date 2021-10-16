@@ -1,19 +1,13 @@
 <template>
   <div>
-    <b-card v-if="!loading" no-body class="company">
+    <b-card no-body class="company">
       <b-tabs v-model="active" small card class="company_tabs">
         <b-tab v-for="(item, i) in tabs" :key="i" :title="$t(`company.menu.${item}`)">
           <component :is="`profile-${item}`" :active="tabs[active]"/>
         </b-tab>
       </b-tabs>
     </b-card>
-    <div v-else>
-      <b-skeleton-table 
-      :rows="5"
-      :columns="4"
-      :table-props="{ bordered: true, striped: true }"
-      ></b-skeleton-table>
-    </div>
+
 
   </div>
 </template>
@@ -37,7 +31,6 @@ export default {
     ProfileReestr
   },
   data: () => ({
-    loading: false,
     active: 0,
     tabs: [
       'company',
@@ -48,17 +41,8 @@ export default {
       'reestr'
     ]
   }),
-  async created() {
-    this.loading = true
-    await this.update()
-    this.loading = false
-  },
-  methods: {
-    async update() {
-      // await this.$store.dispatch('updateCompany')
-      // await this.$store.dispatch('lombard/update')
-    }
-  }
+
+
 }
 </script>
 

@@ -9,17 +9,17 @@ const getSumm = (values = []) => {
   }, 0)
 }
 
-module.exports = async (req, res, next) => {
+module.exports = async (req, res) => {
+  const { start } = require('../period')(req, res)
   try {
     const { lombard: id } = req.query
     const lombards = id ? [{ _id: id }] : (await req.db.find({ selector: lombard(), fields: ['_id'], limit })).docs
     const summ = lombards.reduce((cur, { _id }) => {
       return cur +=  toNumber(req.company.settings.dt.find((v) => v.key === `301/${_id}`).summ)
     }, 0)
-    const selector = values({lombard: id || { $exists: true }, start: req.date, end: req.period.start })
+    const selector = values({lombard: id || { $exists: true }, start: req.date, end: start })
     const { docs } = await req.db.find({ selector, fields: ['values'], limit })
-    req.ok = docs.reduce((cur, { values }) => cur += getSumm(values), summ)
-    next()
+    return docs.reduce((cur, { values }) => cur += getSumm(values), summ)
   } catch(e) {
     console.log(e);
     res.status(500).json({ ok: e.message })
