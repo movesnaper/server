@@ -1,6 +1,4 @@
 
-const express = require('express')
-const router = express.Router()
 const title = `Форма 0201. Отчёт о деятельности некредитных финансовых организаци,
           осуществляющей деятельность ломбардов`
 const tabs = [
@@ -12,7 +10,8 @@ const tabs = [
   { key: 'guaranty', title: 'Информация о залогах' }
 ]
 
-router.get('/', async (req, res) => {
+const get = async (req, res) => {
+  console.log(req.query);
   const { value: period = '' } = require('../period')(req, res)
   const { header, selector } = await require(`../header`)(req, res)
   try {
@@ -25,18 +24,18 @@ router.get('/', async (req, res) => {
       ...header,
       period && { row: 'mt-3', children: [ { is: 'tabs', attrs: { 
           tabs, 
-          values: await require(`./tabs`)(req, res)
+          values: req.query.key && await require(`./${req.query.key}`)(req, res)
         }}
       ]},
       !period && require(`../../noPeriod`)
     ])
   } catch(e) {
-    res.status(500).json({ 'main': e.message })
+    res.status(500).json({ message: e.message })
     console.error(e);
   }
-})
+}
 
-router.get('/print', async (req, res) => {
+const print = async (req, res) => {
   const { value: period = '' } = require('../period')(req, res)
   if(!period) throw new Error('no period specified')
   const { header } = await require(`../header`)(req, res)
@@ -53,9 +52,9 @@ router.get('/print', async (req, res) => {
       ...require(`../../sign`)(req, res)
     ])
   } catch(e) {
-    res.status(500).json({ 'print': e.message })
+    res.status(500).json({ message: e.message })
     console.error(e);
   }
-})
+}
 
-module.exports = router
+module.exports = { get, print }

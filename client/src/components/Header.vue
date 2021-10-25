@@ -3,7 +3,7 @@
       <b-navbar-brand @click="reload" style="cursor: pointer">PShop</b-navbar-brand>
     <b-navbar-nav >
       <b-nav-item to="/" exact exact-active-class="active">Главнвя</b-nav-item>
-      <b-nav-item v-if="user" to="/profile" exact exact-active-class="active">Компания</b-nav-item>
+      <b-nav-item v-if="user" to="/company" exact exact-active-class="active">Компания</b-nav-item>
       <b-nav-item v-if="user" to="/lombards" active-class="active">Ломбард</b-nav-item>
       <b-nav-item v-if="user" to="/users" exact exact-active-class="active">Сотрудниики</b-nav-item>
     </b-navbar-nav>

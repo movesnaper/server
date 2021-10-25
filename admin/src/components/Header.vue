@@ -2,10 +2,11 @@
   <b-navbar type="dark" variant="info" class="px-5" fixed="top">
       <b-navbar-brand @click="reload" style="cursor: pointer">PShop</b-navbar-brand>
     <b-navbar-nav >
-      <b-nav-item to="/" exact exact-active-class="active">Главная</b-nav-item>
-      <b-nav-item v-if="user" to="/profile" exact exact-active-class="active">Компания</b-nav-item>
+      <b-nav-item to="/" >Главная</b-nav-item>
+      <b-nav-item v-if="user" to="/company" >Компания</b-nav-item>
       <b-nav-item v-if="user" to="/lombards" active-class="active">Ломбард</b-nav-item>
-      <b-nav-item v-if="user" to="/users" exact exact-active-class="active">Сотрудниики</b-nav-item>
+      <b-nav-item v-if="user" to="/users">Сотрудниики</b-nav-item>
+      <b-nav-item v-if="user" to="/report">Отчёты</b-nav-item>
     </b-navbar-nav>
     <b-navbar-nav  class="ml-auto">
       <b-nav-item-dropdown v-if="user" :text="user" right>

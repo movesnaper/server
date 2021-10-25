@@ -1,5 +1,4 @@
-const express = require('express')
-const router = express.Router()
+
 const title = 'Касса ломбардов'
 const headers = [
   { key: 'date', text: 'Дата', is: 'th', type: 'date' },
@@ -15,7 +14,7 @@ const headers = [
   { key: 'ok', text: 'Ок', is: 'th' }
 ]
 
-router.get('/', async (req, res) => {
+const get = async (req, res) => {
   const { value: period = '' } = require('../period')(req, res)
   const { header, selector } = await require(`../header`)(req, res)
   try {
@@ -28,6 +27,7 @@ router.get('/', async (req, res) => {
       ...header,
       { row: 'my-3', children: [ { is: 'report-table', attrs: { 
           headers,
+          hovered: 'row',
           values: period && await require('./values')(req, res)
         }}
       ]},
@@ -37,9 +37,9 @@ router.get('/', async (req, res) => {
     console.log(e);
     res.status(500).json({ kassa: e.message })
   }
-});
+};
 
-router.get('/print', async (req, res) => {
+const print = async (req, res) => {
   try {
   const { value: period } = require('../period')(req, res)
   if (!period) throw new Error('no period specified')
@@ -50,7 +50,8 @@ router.get('/print', async (req, res) => {
         { value: `По состоянию на ${period}`}
       ]},
       ...header,
-      { row: 'my-3', children: [ { is: 'report-table', attrs: { 
+      { row: 'my-3', children: [
+         { is: 'report-table', attrs: {
           headers,
           values: await require('./values')(req, res)
         }}
@@ -59,8 +60,8 @@ router.get('/print', async (req, res) => {
     ])
   } catch(e){
     console.log(e);
-    res.status(500).json({ 'kassa-print': e.message })
+    res.status(500).json({ message: e.message })
   }
-})
+}
 
-module.exports = router
+module.exports = { get, print }

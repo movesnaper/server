@@ -6,19 +6,33 @@ const company = async (req, res, next) => {
   try {
     req.company = await req.db.get('company')
     next()
-  }catch(e) {
+  } catch(e) {
     res.status(401).json(e)
   }
 }
 
-router.get('/', company, require('./schema'))
-router.use('/kassa', require('./month/kassa'))
-router.use('/ostatki', require('./month/ostatki'))
-router.use('/penalty', require('./month/penalty'))
-router.use('/main', require('./quarter/main'))
-router.use('/fin-results', require('./quarter/fin-results'))
+router.get('/', company, (req, res) => {
+  res.json([
+    { key: 'report/balance', text: 'Баланс' },
+    { key: 'month', text: 'Месячный', children: [ 
+      { text: 'Касса ломбарда', key: 'report/kassa' },
+      { text: 'Ведомость остатков', key: 'report/ostatki' },
+      { text: '0203 Задолжность по кредитам', key: 'report/penalty' }
+      ]
+    },
+    { key: 'quarter', text: 'Квартальный', children: [
+        { text: '0201 Отчёт о деятельности', key: 'report/main' },
+        { text: '0202. Финансовый результат', key: 'report/fin-results' }
+      ]
+    }
+  ])
+})
+router.get('/:key/:period?', (req, res) => 
+  require(`./${req.params.period || ''}/${req.params.key}`).get(req, res))
+router.get('/print/:key/:period', (req, res) => 
+  require(`./${req.params.period || ''}/${req.params.key}`).print(req, res))
+router.post('/:dir/:file?', (req, res) => 
+  require(`./${req.params.dir}/${req.params.file}`)(req, res))
 
 
 module.exports = router
-
-

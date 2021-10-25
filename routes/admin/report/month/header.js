@@ -13,7 +13,10 @@ module.exports = async (req, res) => {
         ...lombards.map((v) => ({ key: v._id, value: v.name }))
       ] }},
       {},
-      { col: 'col-2', is: 'print', attrs: { label: "Печать" }}
+      { col: 'col-2', is: 'print', attrs: { 
+        label: "Печать",
+        url:  `/print/${req.params.key}/${req.params.period}`
+      }}
     ]
   }
 }

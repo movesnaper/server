@@ -1,5 +1,4 @@
-const express = require('express')
-const router = express.Router()
+
 const title = 'Ведомость остатков'
 const right="text-align: right"
 const headers = [
@@ -15,7 +14,7 @@ const headers = [
   { key: 'ocenca', text: 'Оценка', style: right }
 ]
 
-router.get('/', async (req, res) => {
+const get = async (req, res) => {
   const { value: period = '' } = require('../period')(req, res)
   const { header, selector } = await require(`../header`)(req, res)
   try {
@@ -37,9 +36,9 @@ router.get('/', async (req, res) => {
     console.log(e);
     res.status(500).json({ 'ostatki': e.message })
   }
-});
+}
 
-router.get('/print', async (req, res) => {
+const print = async (req, res) => {
   try {
   const { value: period } = require('../period')(req, res)
   if (!period) throw new Error('no period specified')
@@ -59,7 +58,7 @@ router.get('/print', async (req, res) => {
     ])
   } catch(e){
     console.log(e);
-    res.status(500).json({ 'ostatki-print': e.message })
+    res.status(500).json({ message: e.message })
   }
-})
-module.exports = router
+}
+module.exports = { get, print }

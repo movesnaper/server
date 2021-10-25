@@ -4,7 +4,9 @@ const { COUCHDB, PASSWORD, SECRET_OR_KEY } = process.env
 const auth = { username: 'admin', password: PASSWORD }
 const PouchDB = require("pouchdb")
 PouchDB.plugin(require('pouchdb-authentication'))
-PouchDB.plugin(require('pouchdb-find'));
+PouchDB.plugin(require('pouchdb-quick-search'))
+PouchDB.plugin(require('pouchdb-find'))
+
 const  verify = async (token) =>  {
   const value = jwt.verify(token, SECRET_OR_KEY)
   if (!value) throw 'bad_token'

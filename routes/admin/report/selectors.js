@@ -10,5 +10,3 @@ module.exports = {
     })
   }
 }
-    // const selector = values({ start, end, lombard: req.query.lombard || { $exists: true }})
-    // const { docs } = await req.db.find({ selector, fields: ['date', 'values'], limit})

@@ -11,7 +11,7 @@
             </b-dropdown>
           </div>
         </template>
-        <b-card-body @click="onLogin(name).then(() => $router.push('/profile'))">
+        <b-card-body @click="onLogin(name).then(() => $router.push('/company'))">
           <b-card-title>{{ name }}</b-card-title>
           <b-card-text>{{ description }}</b-card-text>
         </b-card-body>

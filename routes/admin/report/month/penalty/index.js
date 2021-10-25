@@ -1,5 +1,4 @@
-const express = require('express')
-const router = express.Router()
+
 const title = `Форма 0203. Отчёт о наличии задолжности по финансовым кредитам,
  не возвращённых в срок, указанный в договоре (ежемесячный)`
 const center = 'text-align: center;'
@@ -10,7 +9,7 @@ const headers = [
   { key: 'end', text: 'На конец отчётного месяца', style: center }
 ]
 
-router.get('/', async (req, res) => {
+const get = async (req, res) => {
   const { value: period = '' } = require('../period')(req, res)
   const { header, selector } = await require(`../header`)(req, res)
   try {
@@ -32,9 +31,9 @@ router.get('/', async (req, res) => {
     console.log(e);
     res.status(500).json({ 'penalty': e.message })
   }
-});
+}
 
-router.get('/print', async (req, res) => {
+const print = async (req, res) => {
   try {
   const { value: period } = require('../period')(req, res)
   if (!period) throw new Error('no period specified')
@@ -54,8 +53,8 @@ router.get('/print', async (req, res) => {
     ])
   } catch(e){
     console.log(e);
-    res.status(500).json({ 'penalty-print': e.message })
+    res.status(500).json({ message: e.message })
   }
-})
+}
 
-module.exports = router
+module.exports = { get, print }

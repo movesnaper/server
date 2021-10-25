@@ -8,7 +8,7 @@ export default {
   beforeEnter: async (to, from, next) => {
     // store.dispatch('updateDbs')
     const user = await store.dispatch('updateUser')
-    user ? next('/profile') : next()
+    user ? next('/company') : next()
   }
 
 }
