@@ -6,17 +6,19 @@ module.exports = async ({ body, db }, res) => {
   try {
     // await db.createIndex({ index: { fields: ['date'] }})
     // const result = await db.find({ selector, fields, sort: [{ date: 'desc' }], limit: Number(limit), skip })
-
-    const result = await db.query('my_index/values_dt', {
+    console.log(body);
+    const { rows } = await db.query('my_index/values_dt', {
       startkey: ['377'],
       endkey: ['377', {}],
       // descending: true,
       include_docs: true,
       limit: Number(limit),
-      sort: [{ date: 'desc' }],
+      // sort: [{ date: 'desc' }],
       skip
     })
-
+    const result = rows.map(({ value, doc}) => {
+      return {...doc, value }
+    })
 
     res.json(result)
   } catch(e) {

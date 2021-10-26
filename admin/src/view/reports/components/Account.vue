@@ -1,5 +1,5 @@
 <template>
-  <div @click="showDialog">
+  <div class="account" @click="showDialog">
     <span >{{ value[header.key] }}</span>
   </div>
 </template>
@@ -10,12 +10,12 @@ export default {
   props: ['header', 'value'],
   methods: {
     async showDialog() {
-     this.$modal.show(AccountDialog, this.$props )
+     this.$modal.show(AccountDialog, {...this.$props }, { height: 'auto'} )
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>

@@ -20,7 +20,7 @@ const options = {
 }
  
 Vue.use(VueHtmlToPaper, options);
-Vue.use(VModal, { dynamic: true, injectModalsContainer: true })
+Vue.use(VModal, { dynamic: true, injectModalsContainer: true, height: 'auto' })
 Vue.use(VueSidebarMenu)
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
