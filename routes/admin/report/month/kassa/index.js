@@ -1,17 +1,17 @@
 
 const title = 'Касса ломбардов'
 const headers = [
-  { key: 'date', text: 'Дата', is: 'th', type: 'date' },
-  { key: 'prixod', text: 'Приход'},
-  { key: 'ct377', text: 'Ссуда'},
-  { key: 'ct703', text: 'Процент'},
-  { key: 'ct704', text: 'Пеня'},
-  { key: 'totalDt', text: 'Итого Дт', is: 'th'},
-  { key: 'dt377', text: 'Ссуда'},
-  { key: 'dt703', text: 'Процент'},
-  { key: 'rasxod', text: 'Расход'},
-  { key: 'totalCt', text: 'Итого Кт', is: 'th'},
-  { key: 'ok', text: 'Ок', is: 'th' }
+  { key: 'date', value: 'Дата' },
+  { key: 'prixod', value: 'Приход'},
+  { key: 'ct377', value: 'Ссуда'},
+  { key: 'ct703', value: 'Процент'},
+  { key: 'ct704', value: 'Пеня'},
+  { key: 'totalDt', value: 'Итого Дт', is: 'th'},
+  { key: 'dt377', value: 'Ссуда'},
+  { key: 'dt703', value: 'Процент'},
+  { key: 'rasxod', value: 'Расход'},
+  { key: 'totalCt', value: 'Итого Кт', is: 'th'},
+  { key: 'ok', value: 'Ок', is: 'th' }
 ]
 
 const get = async (req, res) => {

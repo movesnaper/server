@@ -1,7 +1,7 @@
 
 const express = require('express')
 const router = express.Router()
-
+const dirLevel = '/:p1?/:p2?/:p3?'
 const company = async (req, res, next) => {
   try {
     req.company = await req.db.get('company')
@@ -31,8 +31,17 @@ router.get('/:key/:period?', (req, res) =>
   require(`./${req.params.period || ''}/${req.params.key}`).get(req, res))
 router.get('/print/:key/:period', (req, res) => 
   require(`./${req.params.period || ''}/${req.params.key}`).print(req, res))
-router.post('/:dir/:file?', (req, res) => 
-  require(`./${req.params.dir}/${req.params.file}`)(req, res))
+
+router.post(dirLevel, (req, res) => {
+  const path = Object.values(req.params).join('/')
+  return require(`./${path}`)(req, res)
+})
+
+router.get(dirLevel, (req, res) => {
+  const path = Object.values(req.params).join('/')
+  return require(`./${path}`)(req, res)
+})
+
 
 
 module.exports = router
