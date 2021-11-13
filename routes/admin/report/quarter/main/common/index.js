@@ -1,7 +1,6 @@
-module.exports = async (req, res) => {
+const get = async (req, res) => {
   try {
-    return [
-      // ... await require("./header")(req, res),
+    const values = [
       { col: 'my-3 center-text', is: 'h6', value: `1. Общие сведения о некредитной финансовой организации,
        осуществляющей деятельность ломбардов`},
       ... await require("./company")(req, res),
@@ -12,9 +11,12 @@ module.exports = async (req, res) => {
        страхование имущества, переданного некредитной финансовой организации
         осуществляющей деятельность ломбардов, в залог`},
       ... await require("./insuarance")(req, res),
-  ]
+    ]
+    res.status(200).json(values)
   } catch(e) {
     console.error(e);
     res.status(500).json({ common: e.message })
   }
 }
+
+module.exports = { get }

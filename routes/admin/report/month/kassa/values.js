@@ -1,10 +1,10 @@
 const { find } = require('../../selectors')
-const { summ, moment, toDouble, toNumber } = require('../../functions')
+const { summ, moment, toDouble } = require('../../functions')
 const dt = (...acc) => (v) => v.dt === '301' && !acc.length || acc.includes(v.ct)
 const ct = (...acc) => (v) => v.ct === '301' && !acc.length || acc.includes(v.dt)
 const accounts = (key) => (v) => !['377', '703', '704'].includes(v[key])
 
-module.exports = async (req, res) => {
+const get = async (req, res) => {
   const startOk = await require('./ok')(req, res)
   const { start, end } = require('../period')(req, res)
   try {
@@ -46,14 +46,14 @@ module.exports = async (req, res) => {
         date.isSameOrBefore(v.date, 'day')).reduce(total, startOk)
       return {...v, ok: toDouble(ok), date: v.date.format('DD.MM.YYYY')}
     })
-    const total = ['prixod', 'ct377', 'ct703', 'ct704', 'totalDt', 'dt377', 'dt703', 'rasxod', 'totalCt']
-      .reduce((cur, key) => {
-        const value = values.reduce((cur, v) => cur += toNumber(v[key]), 0)
-        return { ...cur, [key]: toDouble(value) }
-      }, {})
-    return [ { ok: toDouble(startOk) }, ...values, total ]
+    res.status(200).json({
+      values: [ { ok: toDouble(startOk) }, ...values ],
+      footer: require('./footer')(values)
+    })
   } catch(e) {
     res.status(500).json({ values: e.message })
     console.log(e);
   }
 }
+
+module.exports = { get }

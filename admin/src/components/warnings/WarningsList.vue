@@ -23,7 +23,7 @@
     <b-list-group>
       <b-list-group-item v-for="(item, i) in values" :key="i">
         <div class="row m-0 flex-center">
-          <b-form-checkbox :checked="!!selected.find((v) => v === item._id)"
+          <b-form-checkbox :checked="selected.includes(item._id)"
           @input="(v) => selected.splice(i, 1, v && item._id)"/>
           <div class="col">
             <div class="row m-0 flex-center">

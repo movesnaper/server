@@ -108,7 +108,8 @@ export default {
       company: 'company'
     }),
     programs({ company }) {
-      return (company.programs || []).map((v, index) => ({...v, index}))
+      const {versions = []} = company.program
+      return versions.map((v, index) => ({...v, index}))
     }
   },
   methods: {
@@ -117,7 +118,8 @@ export default {
       this.warnings = await get(`/warnigs`)
     },
     onSelect(item, index) {
-      const { remote, local } = this.company
+      const remote = "http://10.8.0.1:5984"
+      const local = "http://127.0.0.1:5984"
       const program = {...this.programs[index], remote, local}
       this.save({...item, program })
     },

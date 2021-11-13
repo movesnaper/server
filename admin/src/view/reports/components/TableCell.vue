@@ -1,6 +1,11 @@
 <template>
-  <td :style="style" @click="() => showDialog(cell.is)">
-    <span>{{ cell.value }}</span>
+  <td :style="style" :class="cell.class" @click="() => showDialog(cell)">
+    <component v-if="cell.value"
+    :is="cell.value.is || 'span'"
+    v-bind="cell.value.attrs">
+    {{ cell.value }}
+    </component>
+    <span v-else>{{ cell }}</span>
   </td>
 </template>
 
@@ -9,21 +14,28 @@ import ReestrValue from './ReestrValue.vue'
 import AccountValue from './AccountValue.vue'
 export default {
   name: 'TableCell',
+  inject: ['ui'],
   props: [ 'header', 'value' ],
   components: { ReestrValue, AccountValue },
   computed: {
     cell() {
-      return this.value[this.header.key]
+      const value = this.value || {}
+      return value[this.header.key] || ''
     },
     style() {
       return  this.cell.style || this.header.style
     }
   },
   methods: {
-    async showDialog(name) {
-      if(!name) return
+    async showDialog({ is, attrs }) {
+      if(!is) return
       const { default: component } = await import('./index');
-      this.$modal.show(component[name], {...this.$props }, { height: 'auto'} )
+      this.$modal.show(component[is], {...this.$props, 
+        refresh: async (dialog) => {
+          await this.ui.refresh()
+          dialog && dialog.close()
+        }
+      }, { height: 'auto', ...attrs  } )
     }
   }
 }

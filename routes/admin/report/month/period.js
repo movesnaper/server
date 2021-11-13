@@ -23,7 +23,7 @@ module.exports = (req, res) => {
       value,
       periods,
       start: month && month.clone().startOf('month'),
-      end: month && month.clone().endOf('month')
+      end: month && month.clone().endOf('month'),
     }
   } catch(e) {
     console.error(e);

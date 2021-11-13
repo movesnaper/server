@@ -1,4 +1,5 @@
-const {toDouble, toNumber, moment} = require('../../../functions')
+
+const {toDouble, toNumber, moment, $_} = require('../../../functions')
 const getDate = (date) => moment(date)
 const getYear = (date) => moment(getDate(date).year(), 'YYYY')
 const getQuarters = (year) => moment(year).range('year').by('quarters')
@@ -12,6 +13,7 @@ module.exports = {
   moment,
   toDouble,
   toNumber,
+  $_,
   getDate,
   getYear,
   getQuarters,

@@ -13,6 +13,7 @@
     "bootstrap-vue": "^2.21.2",
     "deep-equal": "^1.0.1",
     "jwt-decode": "^2.2.0",
+    "lodash": "^4.17.21",
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
     "print-js": "^1.6.0",

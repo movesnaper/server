@@ -5,10 +5,10 @@ const gold = ({ dt, zalog }) => [dt].includes('377') && [zalog].includes('gold')
 const before = ({ diff }) => diff > 0 && diff <= 30
 const after = ({ diff }) => diff > 30
 
-module.exports = async (req, res) => {
+const get = async (req, res) => {
   const credits = (await require('../credits')(req, res)).filter(gold)
   try {
-    return [
+    const values = [
       { col: 'my-3 center-text', is: 'h6', value: `6. Информация о ломе и изделиях из драгоценных
        металлов и драгоценных камней, прнятых некредитной финансовой организацией, осуществляющей
         деятельность ломбардов, в залог`},
@@ -36,8 +36,11 @@ module.exports = async (req, res) => {
         { col: 'col border flex-center center-text', value: toThousand(credits.filter(after).reduce(summ, 0)) },
       ]}
   ]
+  res.status(200).json(values)
   } catch(e) {
     console.error(e);
     res.status(500).json({ guaranty: e.message })
   }
 }
+
+module.exports = { get }

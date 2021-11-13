@@ -1,13 +1,13 @@
 const toThousand = (v) => Math.round(v / 1000) || '-'
 const other = ['62', '68', '69', '70', '71']
 
-module.exports = async (req, res) => {
+const get = async (req, res) => {
   const { dt, ct } = await require('../values')(req, res)
   const getValue = (method, ...accounts) => 
     toThousand(accounts.map((acc) => 
       method(acc).end).reduce((cur, v) => cur += v, 0))
   try {
-    return [
+    const values = [
       { col: 'my-3 center-text', is: 'h6', value: `5. Балансовые показатели`},
        { row: 'grey', children: [
         { col: 'col-1 border flex-center center-text', value: `Номер строки` },
@@ -46,7 +46,7 @@ module.exports = async (req, res) => {
         { key: '3.2', value: '-', title: `прочие обязательства`},
         
       ]}
-    ].reduce((cur, { key, title, rows }, i) => {
+      ].reduce((cur, { key, title, rows }, i) => {
         return [...cur, { children: [
               { col: 'col-1 border grey', is: 'strong', value: key },
               { col: 'col border grey', is: 'strong', value: title },
@@ -61,9 +61,12 @@ module.exports = async (req, res) => {
           })
         ]
       }, [])
-  ]
+    ]
+    res.status(200).json(values)
   } catch(e) {
     console.error(e);
     res.status(500).json({ balance: e.message })
   }
 }
+
+module.exports = { get }

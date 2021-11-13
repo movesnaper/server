@@ -1,4 +1,5 @@
 
+const $_ = require('lodash')
 const Moment = require('moment')
 const extendMoment = require('moment-range').extendMoment
 const numberFormat = require('./numberFormat')
@@ -23,5 +24,6 @@ const summ = (...values) => toDouble(values.reduce((a, b) => a + toNumber(b), 0)
   getYear,
   monthRange,
   summ,
-  numberFormat
+  numberFormat,
+  $_,
  }

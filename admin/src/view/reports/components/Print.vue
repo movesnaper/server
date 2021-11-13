@@ -1,11 +1,11 @@
 <template>
   <div>
     <b-button variant="primary" @click="print" class="relative" 
-    :disabled="loading || !params.period">
+      :disabled="loading || !params.period">
         <b-spinner v-if="loading" class="absolute-center"/>
-        {{ attrs.label }}
+        Печать
     </b-button>
-    <div :id="attrs.url" class="printOnly">
+    <div :id="url" class="printOnly">
       <node v-for="(node, i) in values" :key="i" :node="node"/>
     </div>
   </div>
@@ -29,17 +29,19 @@ export default {
     attrs() {
       return this.node.attrs || {}
     },
+    url() {
+      return this.$route.path
+    },
     params() {
       return this.$route.query
     }
   },
   methods: {
     async print() {
-      const values = await this.getValues()
-      this.values = values && values.filter((v) => v)
-      if (values) setTimeout(() => {
+      this.values = await this.getValues()
+      setTimeout(() => {
         printJS({
-            printable: this.attrs.url,
+            printable: this.url,
             type: "html",
             css: [
             'https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css',
@@ -52,7 +54,7 @@ export default {
     async getValues() {
       try {
         this.loading = true
-        return  await db('/report').get(this.attrs.url, { params: this.params })
+        return await db(this.url).get('/print', { params: this.params })
       } catch(err) {
         this.$alert({err})
       } finally {

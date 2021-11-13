@@ -1,5 +1,5 @@
 <template>
-  <preloader v-if="loading && loading.values"/>
+  <preloader v-if="loading"/>
   <div v-else class="table b-table table-sm">
     <table style="width: 100%">
       <thead>
@@ -20,12 +20,18 @@
         </tr>
       </thead>
       <tbody >            
-        <tr :class="hovered.row" v-for="(value, i) in attrs.values" :key="i">
+        <tr :class="hovered.row" v-for="(value, i) in values" :key="i">
           <table-cell v-for="(header) in headers" :key="header.key"
           :header="header" :value="value" :class="hovered.cell">
           </table-cell>
         </tr>
       </tbody>
+      <tfoot>
+        <tr>
+          <table-cell v-for="(header) in headers" :key="header.key"
+          :header="header" :value="footer"/>
+        </tr>
+      </tfoot>
     </table>
   </div>
 </template>
@@ -34,10 +40,24 @@
 import TableCell from './TableCell.vue'
 import DatePicker from './DatePicker.vue'
 import Preloader from './Skeleton.vue'
-
+import { db } from '@/db'
 export default {
   components: { TableCell, DatePicker, Preloader },
-  props: ['value', 'node', 'loading'],
+  props: ['value', 'node'],
+  data: () => ({
+    loading: false,
+    values: [],
+    footer: {}
+  }),
+  watch: {
+    '$route.query': {
+      handler(query) {
+      if (Object.keys(query).length)
+        this.refresh()
+      },
+      immediate: true
+    }
+  },
   computed: {
     attrs() {
       return this.node.attrs || {}
@@ -52,6 +72,23 @@ export default {
       return { [this.attrs.hovered]: 'hovered' }
     }
   },
+  methods: {
+    async refresh() {
+      const { key, period = '' } = this.$route.params
+      const url = key && `/${key}/${period}`
+      if(!url) return
+      try {
+        this.loading = true
+        const { values, footer } = await db('/report').get(`${url}/values`, { params: this.$route.query })
+        this.values = values
+        this.footer = footer
+      } catch(e) {
+        console.error(e)
+      } finally {
+        this.loading = false
+      }
+    }
+  }
 }
 </script>
 
@@ -65,7 +102,6 @@ export default {
     width: 100%;
   }
   .table >>> thead th {
-    /* vertical-align: bottom; */
     border-bottom: none
 }
 </style>

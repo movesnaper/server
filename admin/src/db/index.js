@@ -2,8 +2,6 @@ import axios from 'axios'
 import { store } from '@/setup'
 
 axios.interceptors.response.use((response) => {
-  
-
   return response;
 }, async (error) => {
   if(error.response.status === 401) {
@@ -15,9 +13,13 @@ axios.interceptors.response.use((response) => {
   }
   return Promise.reject(error.message);
 })
-
+const config = {
+  headers: {
+    "Content-Type": "application/json;charset=utf-8" 
+  }
+}
 const query = (method, url, params) => {
-  return axios[method](url, params)
+  return axios[method](url, params, config)
     .then(res => res.data)
 }
 
@@ -35,7 +37,8 @@ export const getToken = (name) => {
 export const db = (name = '') => {
   const baseUrl = '/api' + name
   return {
-    get: (method, params) => query('get', baseUrl + method, params),
-    post: (method, params) => query('post', baseUrl + method, params)
+    get: (url, params) => query('get', `${baseUrl}${url}`, params),
+    post: (url, params) => query('post', `${baseUrl}${url}`, params),
+    remove: (url, params) => query('delete', `${baseUrl}${url}`, params)
   }
 }

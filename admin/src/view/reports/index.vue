@@ -17,7 +17,7 @@
             <b-nav  vertical class="px-0">
               <b-nav-item v-for="({ text, key: url }) in children" :key="url"
               :visible="isActive(`/${url}/${key}`)"
-              :to="`/${url}/${key}`">
+              :to="`/${url}`">
                 {{ text }}
               </b-nav-item>
             </b-nav>

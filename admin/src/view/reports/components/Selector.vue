@@ -4,13 +4,14 @@
       {{ attrs.label }}
     </label>
     <b-form-select class="col"
-    :value="query[key] || null"
-    @input="(value) => setValue(key, value)"
+    :value="attrs.value || query[key] || null"
+    v-on="$listeners"
+    @change="(value) => setValue(key, value)"
     text-field="value"
     value-field="key"
     v-bind="attrs">
       <template #first v-if="attrs['no-selected']">
-        <b-form-select-option :value="null">{{ attrs['no-selected'] }}</b-form-select-option>
+        <b-form-select-option>{{ attrs['no-selected'] }}</b-form-select-option>
       </template>
     </b-form-select>
   </div>
@@ -18,10 +19,10 @@
 
 <script>
 export default {
-  props: ['node'],
   computed: {
     attrs() {
-      return this.node.attrs || {}
+      const { attrs } = this.$attrs.node || {}
+      return attrs || this.$attrs
     },
     key() {
       return this.attrs.key
@@ -32,7 +33,7 @@ export default {
   },
   methods: {
     setValue(key, value) {
-      const query = {...this.query, [key]: value }
+      const query = {...this.query, [key]: value !== null ? value : undefined }
       this.$router.push({ query })
     }
   }

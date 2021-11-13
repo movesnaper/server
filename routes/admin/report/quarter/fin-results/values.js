@@ -35,7 +35,7 @@ const padding = 'padding-left: 50px;'
 const summ = (key) => (cur, v) => cur += toNumber(v[key])
 const count = (cur) => cur += 1
 
-module.exports = async (req, res) => {
+const get = async (req, res) => {
   const issued = require('./issued')(req, res)
   const getSumm = (key, ...filters) => {
     const getFilter = (v) => filters.every((key) => {
@@ -60,7 +60,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    return [
+    res.status(200).json([
       { title: '1 Данные о кредитной деятельности', style: bold },
       { kod: `10`, title: ru['ssuda-issued'], style: bold, ...getSumm('ssuda', 'issued') },
       { kod: `11`, title: ru['gold'], style: padding, ...getSumm('ssuda', 'issued', 'gold') },
@@ -85,9 +85,11 @@ module.exports = async (req, res) => {
       { kod: `102`, title: ru['things'], style: padding, ...getCount('issued', 'things') },
       { kod: `107`, title: ru['count-payed-by-sell'], style: bold, ...getCount('payed', 'bySell') },
       // { kod: `110`, title: ru['rate-issued'], style: bold, ...getRate() },
-    ]
+    ])
   } catch(e) {
     res.status(500).json({ values: e.message })
     console.error(e);
   }
 }
+
+module.exports = { get }

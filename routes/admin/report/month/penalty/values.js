@@ -29,7 +29,7 @@ const center = 'text-align: center;'
 
 const padding = 'padding-left: 50px;'
 
-module.exports = async (req, res) => {
+const get = async (req, res) => {
   const { start = [], end = [] } = await require('./issued')(req, res)
   try {
     const gitItems = (key, filter = () => true) => {
@@ -46,15 +46,19 @@ module.exports = async (req, res) => {
         { kod: `0${kod + 3}`, title: title['after'], style: padding, ...gitItems(key, filter['after']) },
       ]
     }
-    return [
-      { title: 1, kod: 2, start: 3, end: 4, style: bold + center },
-      ...getValues('ssuda', 10).map(toThousand),
-      ...getValues('procent', 20).map(toThousand),
-      ...getValues('penalty', 30).map(toThousand),
-      ...getValues('count', 40)     
-    ]
+    res.status(200).json({
+      values: [
+        { title: 1, kod: 2, start: 3, end: 4, style: bold + center },
+        ...getValues('ssuda', 10).map(toThousand),
+        ...getValues('procent', 20).map(toThousand),
+        ...getValues('penalty', 30).map(toThousand),
+        ...getValues('count', 40)     
+      ]
+    })
   } catch(e) {
     res.status(500).json({ values: e.message })
     console.error(e);
   }
 }
+
+module.exports = { get }

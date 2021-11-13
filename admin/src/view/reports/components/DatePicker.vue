@@ -3,18 +3,22 @@
   <label v-if="attrs.label" class="flex-center mr-3" for="input">
     {{ attrs.label }}
   </label>
-  <b-form-input class="date-picker col-2" type="date"
+  <b-form-input class="date-picker col-2" :type="attrs.type || 'date'"
     :placeholder="'attrs.placeholder'"
-    :value="query[key] || null"
-    @change="(value) => setValue(key, value)"/>
+    :value="query[key] || attrs.value"
+    v-on="$listeners"
+    @input="(value) => $listeners.input ? $emit('input', value) : setValue(key, value)"/>
   </div>
 </template>
 
 <script>
 export default {
   name: 'DatePicker',
-  props: ['attrs'],
   computed: {
+    attrs() {
+      const { attrs } = this.$attrs.node || {}
+      return attrs || this.$attrs
+    },
     key() {
       return this.attrs.key
     },
