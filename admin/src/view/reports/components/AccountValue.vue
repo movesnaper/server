@@ -104,7 +104,7 @@
 <script>
 import { db } from '@/db'
 export default {
-  props: ['header', 'value'],
+  props: ['header', 'value', 'ui'],
   components: {  },
   data() {
     return {
@@ -135,10 +135,10 @@ export default {
   },
   methods: {
     async remove() {
-      const dialog = await this.$confirm({ name: this.account.key }) 
+      await this.$confirm({ name: this.account.key }) 
       await db('/report').post('/balance/reestr/account', {...this.account, _deleted: true } )
-      dialog.close()
-      this.$attrs.refresh(this)
+      await this.ui.refresh(true)
+      this.close()
     },
     close() {
       this.$emit('close')
@@ -148,7 +148,8 @@ export default {
         this.saving = true
         const payload = {...this.account, document: this.document}
         await db('/report').post('/balance/reestr/account', payload )
-        await this.$attrs.refresh(this)
+        await this.ui.refresh(true)
+        this.close()
       } catch(e) {
         console.error(e);
       } finally {

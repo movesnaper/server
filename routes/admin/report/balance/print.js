@@ -3,7 +3,7 @@ const get = async (req, res) => {
   try {
     res.json([
       ...schema,
-      { row: 'my-3', children: [{ col: 'col-4'}, { col: 'col', children: require(`../../sign`)(req, res) }]}
+      { row: 'my-3', children: [{ col: 'col-4'}, { col: 'col', children: require(`../sign`)(req, res) }]}
     ])
   } catch(e){
     console.log(e);

@@ -16,6 +16,7 @@
       background-color: rgba(128, 128, 128, 0.096);
     } */
   }
+
   .absolute-bottom {
     font-size: 12px;
     position: absolute;
@@ -84,4 +85,7 @@
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
   }
+  .end-text {
+    text-align: end;
+}
   

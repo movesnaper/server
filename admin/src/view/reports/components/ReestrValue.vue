@@ -9,7 +9,7 @@
         <b-button v-if="Object.values(selected).some((v) => v)"
         class="danger p-0" variant="link" @click="remove">Удалить</b-button>
       </transition>
-      <button type="button" class="close" @click="$emit('close')">
+      <button type="button" class="close" @click="close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
@@ -35,7 +35,7 @@ import ReestrTable from './ReestrTable.vue'
 import Skeleton from './Skeleton.vue'
 
 export default {
-  props: ['header', 'value'],
+  props: ['header', 'value', 'params', 'ui'],
   components: {InfiniteLoading, ReestrTable, Skeleton},
   data() {
     return {
@@ -65,33 +65,33 @@ export default {
     },
     key() {
       return this.header.key
-    },
-    params() {
-      return { ...this.$route.query, key: this.key, value: this.account.value }
     }
   },
   methods: {
-
+    close() {
+      this.$emit('close')
+    },
     async remove() {
       const values = Object.keys(this.selected).filter((key) => this.selected[key])
       try {
         await db('/report').remove('/balance/reestr/values', { data: { values } })
         this.values = this.values.filter((v) => !this.selected[v.id])
-        this.$attrs.refresh()
+        this.ui.refresh(true)
         this.selected = {}
       } catch(e) {
         console.error(e);
       }
     },
     async save(value, index = this.values.length) {
+      console.log('save');
       try {
         this.saving = true
         const { id } = await db('/report').post('/balance/reestr/values', {
-          value: {...value, [this.key]: this.account.value },
-          params: this.params
-        } )
+          params: { ...this.$route.query, key: this.key, value: this.account.value },
+          value: {...value, [this.key]: this.account.value }
+        })
         this.values.splice(index, 1, {...value, id })
-        this.$attrs.refresh()
+        await this.ui.refresh(true)
       } catch(e) {
         console.error(e);
       } finally {
@@ -99,7 +99,7 @@ export default {
       }      
     },
     async infiniteHandler($state) {
-      const params = {...this.params, page: this.page }
+      const params = {...this.params, value: this.account.value, page: this.page }
       const res = await db('/report').get('/balance/reestr/values', { params } )
       if (res.rows.length) {
         this.page += 1

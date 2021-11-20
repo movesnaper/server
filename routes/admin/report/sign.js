@@ -4,25 +4,25 @@ module.exports = (req, res) => {
   try {
     return [
       { row: 'my-4', children: [
-        { col: 'col-3', value: `Руководитель` },
-        { col: 'col-5', is: 'sign', attrs: {
+        { col: 'col', value: `Руководитель` },
+        { col: 'col', is: 'sign', attrs: {
           subtitle: '(фамилия, инициалы)',
           value: director
         } }
       ]},
       { row: 'my-4', children: [
-        { col: 'col-3', value: `Главный бухгалтер` },
-        { col: 'col-5', is: 'sign', attrs: {
+        { col: 'col', value: `Главный бухгалтер` },
+        { col: 'col', is: 'sign', attrs: {
           subtitle: '(фамилия, инициалы)',
           value: bookkeeper
         } },
       ]},
       { row: 'my-4', children: [
-        { col: 'col-3', value: `Дата составления` },
-        { col: 'col-5', style: {'border-bottom': '1px solid #8080804f' }},
+        { col: 'col', value: `Дата составления` },
+        { col: 'col', style: {'border-bottom': '1px solid #8080804f' }},
       ]},
       { row: 'my-4', children: [
-        { col: 'col-5', is: 'sign', attrs: {
+        { col: 'col', is: 'sign', attrs: {
           subtitle: `(фамилия, имя, отчество работника, составившего отчёт, номер телефона)`
         } },
       ]}

@@ -1,7 +1,7 @@
 const { toNumber, toDouble, summ } = require('../functions')
 const { between } = require('../filters')
 const strong = 'font-weight: 600;'
-const modal = {is: 'reestr-value', attrs: { width: '70%' }}
+const modal = (params) => ({is: 'reestr-value', attrs: { width: '70%', params }})
 
 const get = async (req, res) => {
   const { settings } = req.company
@@ -9,8 +9,8 @@ const get = async (req, res) => {
   try {
     const { rows: accounts } = await req.db.query(`account/values`)
     const { rows } =  await req.db.query(`my_index/values`)
-    const reduce = (target, account, filter, initial = 0) => rows
-      .filter(({ value }) => value[target] === account)
+    const reduce = (target, account, filter, initial = 0) => 
+      rows.filter(({ value }) => value[target] === account)
         .filter(({ key }) => filter(key))
           .reduce((cur, {value}) => summ(cur, value), toNumber(initial))
     const values = accounts.map(({ key, value }) => {
@@ -20,15 +20,33 @@ const get = async (req, res) => {
       const ct = reduce('ct', key, between(start, end))
       return { 
         account: { is: 'account-value', value: key },
-        startDt: { ...modal, value: toDouble(value.active && startDt - startCt) },
-        startCt: { ...modal, value: toDouble(value.passive && startCt - startDt) },
-        dt: { ...modal, value: toDouble(dt) },
-        ct: { ...modal, value: toDouble(ct) },
-        endDt: { ...modal, value: toDouble(value.active && startDt + dt - ct) },
-        endCt: { ...modal, value: toDouble(value.passive && startCt + ct - dt) }
+        startDt: { 
+          value: toDouble(value.active && startDt - startCt), 
+          ...modal({ key: 'dt', startkey: [key, start], endkey: [key] }) 
+        },
+        startCt:  { 
+          value: toDouble(value.passive && startCt - startDt), 
+          ...modal({ key: 'ct', startkey: [key, start], endkey: [key] }) 
+        },
+        dt: { 
+          value: toDouble(dt), 
+          ...modal({ key: 'dt', startkey: [key, end], endkey: [key, start] }) 
+        },
+        ct: { 
+          value: toDouble(ct), 
+          ...modal({ key: 'ct', startkey: [key, end], endkey: [key, start] }) 
+        },
+        endDt: { 
+          value: toDouble(value.active && startDt + dt - ct), 
+          ...modal({ key: 'dt', url: 'values', startkey: [key, end] }) 
+        },
+        endCt: { 
+          value: toDouble(value.passive && startCt + ct - dt), 
+          ...modal({ key: 'ct', url: 'values', startkey: [key, end] }) 
+        }
       }
     })
-    const total = (key) => values.reduce((cur, value) => cur += toNumber(value[key].value), 0)
+    const total = (key) => values.reduce((cur, value) => cur += value[key] && toNumber(value[key].value), 0)
     res.status(200).json({
       values,
       footer: {

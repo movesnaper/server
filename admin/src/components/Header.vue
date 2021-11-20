@@ -2,11 +2,8 @@
   <b-navbar type="dark" variant="info" class="px-5" fixed="top">
       <b-navbar-brand @click="reload" style="cursor: pointer">PShop</b-navbar-brand>
     <b-navbar-nav >
-      <b-nav-item to="/" >Главная</b-nav-item>
-      <b-nav-item v-if="user" to="/company" >Компания</b-nav-item>
-      <b-nav-item v-if="user" to="/lombards" active-class="active">Ломбард</b-nav-item>
-      <b-nav-item v-if="user" to="/users">Сотрудниики</b-nav-item>
-      <b-nav-item v-if="user" to="/report">Отчёты</b-nav-item>
+      <b-nav-item to="/" :active="$route.path === '/'">Главная</b-nav-item>
+      <b-nav-item v-for="({ key, value }) in menu" :key="key" :to="key" :active="$route.path === key">{{ value}}</b-nav-item>
     </b-navbar-nav>
     <b-navbar-nav  class="ml-auto">
       <b-nav-item-dropdown v-if="user" :text="user" right>
@@ -26,7 +23,14 @@ import {mapGetters, mapActions} from 'vuex'
 
 export default {
   data: () => ({
-    loading: false
+    loading: false,
+    menu: [
+      { key: '/company', value: 'Компания'},
+      { key: '/lombards', value: 'Ломбард'},
+      { key: '/users', value: 'Сотрудниики'},
+      { key: '/report', value: 'Отчёты'},
+      { key: '/program', value: 'Программа'},
+    ]
   }),
   computed: {
     ...mapGetters(['user'])

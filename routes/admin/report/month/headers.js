@@ -1,6 +1,6 @@
 
 module.exports = (req, res) => {
-  const { value: period } = require('../period')(req, res)
+  const { value: period } = require('./period')(req, res)
   try {
     return [
       { row: 'my-3', children: [

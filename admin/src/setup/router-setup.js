@@ -10,6 +10,7 @@ import home from '@/routes/home'
 import lombards from '@/routes/lombards'
 import users from '@/routes/users'
 import reports from '@/routes/reports'
+import program from '@/routes/program'
 
 Vue.use(Router)
 
@@ -22,7 +23,8 @@ const routes = [
   home,
   lombards,
   users,
-  reports
+  reports,
+  program
 ]
 
 export default new Router({

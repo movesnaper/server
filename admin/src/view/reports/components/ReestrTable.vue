@@ -23,6 +23,7 @@
           <component :is="field.is || 'b-input'" 
           v-bind="field"
           :value="value[field.key]"
+          @input="() => {}"
           @change="(v) => $listeners.change({...value, [field.key]: v}, index)"/>
         </td>
         <td style="vertical-align: middle;" >
@@ -39,7 +40,7 @@
           <component :is="field.is || 'b-input'" 
           v-bind="field"
           :value="tmp[field.key]"
-          @input="(value) => input(field.key, value)"/>
+          @input="(value) => setValue(field.key, value)"/>
         </td>
         <td style="vertical-align: middle;" >
           <b-button variant="outline-success" icon class="p-0 relative"
@@ -76,7 +77,7 @@ export default {
       const selected = (cur, { id }) => ({...cur, [id]: true })
       this.$emit('update:selected', v ? Object.values(this.values).reduce(selected, {}) : {} )
     },
-    async input(key, value) {
+    async setValue(key, value) {
       const date = this.tmp.date || moment().format('YYYY-MM-DD')
       this.tmp = {...this.tmp, date, [key]: value }
     },

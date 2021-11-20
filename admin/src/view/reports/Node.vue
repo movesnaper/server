@@ -1,12 +1,12 @@
 <template>
-  <div :class="[node.col || 'col']">
+  <div :class="[node.col || 'col']" :style="node.style">
     <component :is="node.is || 'span'" 
     :style="node.style"
     v-on="$parent.$listeners"
-    v-bind="{...$parent.$attrs, node }">
+    v-bind="{...$parent.$attrs, ...$attrs, node }">
       {{ value }}
     </component>
-    <div :class="['row', node.row]" v-if="node.children">
+    <div :class="className" v-if="node.children">
       <node v-for="(v, i) in node.children.filter((v) => v)" :node="v" :key="i"/>
     </div>
   </div>
@@ -21,6 +21,10 @@ export default {
   components,
   props: ['node'],
   computed: {
+    className() {
+      const { row, col } = this.node
+      return col ? ['col', col] : ['row', row]
+    },
     value() {
       const {value = {}} = this.node
       const getValue = (v) => typeof v === 'string' ? get(this, v) : v

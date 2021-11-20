@@ -1,6 +1,6 @@
-const get = async (req, res) => {
-  try {
-    const values = [
+
+const values = async (req, res) => {
+    return [
       { col: 'my-3 center-text', is: 'h6', value: `1. Общие сведения о некредитной финансовой организации,
        осуществляющей деятельность ломбардов`},
       ... await require("./company")(req, res),
@@ -12,11 +12,14 @@ const get = async (req, res) => {
         осуществляющей деятельность ломбардов, в залог`},
       ... await require("./insuarance")(req, res),
     ]
-    res.status(200).json(values)
+}
+const get = async (req, res) => {
+  try {
+    res.status(200).json(await values(req, res))
   } catch(e) {
     console.error(e);
     res.status(500).json({ common: e.message })
   }
 }
 
-module.exports = { get }
+module.exports = { get, values }

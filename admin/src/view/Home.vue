@@ -1,5 +1,5 @@
 <template>
-  <div class="m-5">
+  <div class="p-5">
     <div v-if="!loading">
       <companies v-if="dbs.length" :items="dbs"/>
     </div>

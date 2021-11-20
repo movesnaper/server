@@ -1,21 +1,20 @@
 
-const { tabs, title } = require('./header')
+const { title, tabs } = require('./header')
+
 
 const get = async (req, res) => {
-  const { value: period = '' } = require('../period')(req, res)
-  if(!period) throw new Error('no period specified')
-  const { header } = await require(`../header`)(req, res)
-  const getValues = ({key}) => require(`./${key}`)(req, res)
+  const { periods, header } = await require(`../header`)(req, res)
+  const getValues = ({key}) => require(`./${key}`).values(req, res)
   const values = await Promise.all(tabs.map(getValues))
   try {
     res.json([
-      { row: 'my-3', children: [ 
-        { is: 'strong', value: title },
-        { value: `По состоянию на ${period}`}
-      ]},
-      ...header,
+      { row: 'my-3', children: [
+        { col: 'col', style: 'max-width: fit-content;', is: 'strong', value: title },
+        { col: 'col-2', is: 'selector', attrs: { key: 'period', options: periods }},
+      ] },
+      { col: 'my-3', children: header},
       ...values.reduce((cur, v) => [...cur, ...v], []),
-      ...require(`../../sign`)(req, res)
+      { row: 'my-3', children: [{ col: 'col-2' }, { col: 'col', children: require(`../../sign`)(req, res) }] }
     ])
   } catch(e) {
     res.status(500).json({ message: e.message })

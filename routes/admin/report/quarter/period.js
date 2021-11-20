@@ -7,7 +7,7 @@ const periods = [
 ]
 module.exports = (req, res) => {
   try {
-    const { value } = periods.find((v) => v.key == req.query.period) || {}
+    const { value } = periods.find((v) => v.key == req.query.period || 1) || {}
     const date = req.date = moment(req.company.settings.date)
     const quarter = req.query.period && date.clone().quarter(req.query.period)
     const start = quarter && quarter.clone().startOf('quarter')

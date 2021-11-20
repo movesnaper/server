@@ -18,10 +18,10 @@ const get =  async ({ query, db }, res) => {
   try {
     const [schema] = await accounts(db, {key: query.value})
     // console.log(query, \uffff);
-    const key = { dt: 'dt', ct: 'ct', startDt: 'dt', startCt: 'ct', endDt: 'dt', endCt: 'ct'}
-    const data = await db.query(`my_index/values_${key[query.key]}`, {
-      endkey: [`${query.value}`, `${query.start}`],
-      startkey: [`${query.value}`, `${query.end}`],
+
+    const data = await db.query(`my_index/values_${query.key}`, {
+      endkey: query.endkey,
+      startkey: query.startkey,
       descending: true,
       include_docs: true,
       limit,

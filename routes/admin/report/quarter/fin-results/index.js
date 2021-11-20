@@ -1,29 +1,16 @@
-
-const headers = [
-  { key: 'title', value: 'Наименование показателя' },
-  { key: 'kod', value: 'Код строки' },
-  { key: 'end', value: 'За отчётный квартал' },
-  { key: 'start', value: 'С начала года' }
-]
-
+const { title, headers } = require('./header')
+const values = (req, res) => require(`./schema`)({ title, headers})(req, res)
 const get = async (req, res) => {
-  const { selectors, period, header } = await require(`../header`)(req, res)
+  const {schema} = await values(req, res)
   try {
     res.json([
-      { row: 'my-3', children: [...selectors, { is: 'print' }] },
-      { is: 'strong', value: 'Форма 0202. Финансовый результат (ежеквартальный)' },
-      { row: 'my-3', children: period },
-      ...header,
-      { row: 'my-3', children: [ 
-        { col: 'col', is: 'report-table', attrs: { headers, hovered: 'row' }}
-      ]},
+      { row: 'my-3', children: [ {}, { col: 'col-1', is: 'print' } ] },      
+      ...schema
     ])
   } catch(e){
     console.log(e);
-    res.status(500).json({ message: e.message })
+    res.status(500).json({ kassa: e.message })
   }
-}
+};
 
-
-
-module.exports = { get }
+module.exports = { get, values }

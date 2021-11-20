@@ -14,7 +14,7 @@ const periods = [
   { key: 12, value: 'Декабрь'}
 ]
 module.exports = (req, res) => {
-  const { period } = req.query
+  const { period = 1 } = req.query
   const { value } = periods.find((v) => v.key == period) || {}
   try {
     const date = req.date = moment(req.company.settings.date)

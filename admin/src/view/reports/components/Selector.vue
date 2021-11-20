@@ -3,10 +3,11 @@
     <label v-if="attrs.label" class="flex-center mr-3" for="input">
       {{ attrs.label }}
     </label>
-    <b-form-select class="col"
-    :value="attrs.value || query[key] || null"
+    <span v-if="printMode">{{ printValue }}</span>
+    <b-form-select v-else class="col"
+    :value="value"
     v-on="$listeners"
-    @change="(value) => setValue(key, value)"
+    @input="(value) => $listeners.input ? $emit('input', value) : setValue(key, value)"
     text-field="value"
     value-field="key"
     v-bind="attrs">
@@ -19,6 +20,8 @@
 
 <script>
 export default {
+  name: 'Selector',
+  props: ['printMode'],
   computed: {
     attrs() {
       const { attrs } = this.$attrs.node || {}
@@ -29,6 +32,14 @@ export default {
     },
     query() {
       return this.$route.query || {}
+    },
+     value() {
+      return this.$attrs.value || this.query[this.key] || null
+    },   
+    printValue() {
+      const { options } = this.attrs
+      const { value } = options.find((v) => v.key == this.query[this.key]) || {}
+      return value
     }
   },
   methods: {

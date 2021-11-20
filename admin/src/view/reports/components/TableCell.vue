@@ -14,8 +14,7 @@ import ReestrValue from './ReestrValue.vue'
 import AccountValue from './AccountValue.vue'
 export default {
   name: 'TableCell',
-  inject: ['ui'],
-  props: [ 'header', 'value' ],
+  props: [ 'header', 'value', 'node', 'ui' ],
   components: { ReestrValue, AccountValue },
   computed: {
     cell() {
@@ -23,19 +22,14 @@ export default {
       return value[this.header.key] || ''
     },
     style() {
-      return  this.cell.style || this.header.style
+      return  (this.value && this.value.style) || this.header.style
     }
   },
   methods: {
     async showDialog({ is, attrs }) {
       if(!is) return
       const { default: component } = await import('./index');
-      this.$modal.show(component[is], {...this.$props, 
-        refresh: async (dialog) => {
-          await this.ui.refresh()
-          dialog && dialog.close()
-        }
-      }, { height: 'auto', ...attrs  } )
+      this.$modal.show(component[is], { ...this.$props, ...attrs }, { height: 'auto', ...attrs  } )
     }
   }
 }

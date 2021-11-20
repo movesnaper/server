@@ -1,11 +1,9 @@
 
-import Home from '@/view/Home'
 import store from '@/setup/store-setup'
-
 export default {
-  path: '/',
-  name: 'home',
-  component: Home,
+  path: '/program',
+  name: 'program',
+  component: () => import('@/view/program'),
   beforeEnter: async (to, from, next) => {
     await store.dispatch('updateUser')
     next()

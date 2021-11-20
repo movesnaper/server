@@ -46,17 +46,16 @@ const get = async (req, res) => {
         { kod: `0${kod + 3}`, title: title['after'], style: padding, ...gitItems(key, filter['after']) },
       ]
     }
-    res.status(200).json({
-      values: [
-        { title: 1, kod: 2, start: 3, end: 4, style: bold + center },
-        ...getValues('ssuda', 10).map(toThousand),
-        ...getValues('procent', 20).map(toThousand),
-        ...getValues('penalty', 30).map(toThousand),
-        ...getValues('count', 40)     
-      ]
-    })
+    const values = [
+      { title: 1, kod: 2, start: 3, end: 4, style: bold + center },
+      ...getValues('ssuda', 10).map(toThousand),
+      ...getValues('procent', 20).map(toThousand),
+      ...getValues('penalty', 30).map(toThousand),
+      ...getValues('count', 40)     
+    ]
+    res.status(200).json({values})
   } catch(e) {
-    res.status(500).json({ values: e.message })
+    res.status(500).json(e)
     console.error(e);
   }
 }

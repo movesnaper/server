@@ -6,11 +6,12 @@ module.exports = async (req, res) => {
     lombards.reduce((cur, v) => ({...cur, [v._id]: v[key]}), { undefined: req.company[key]}),
     '$route.query.lombard'
   ]
-  const queryPeriod = [
-    periods.reduce((cur, { key, value }) => ({...cur, [key]: value}), { undefined: ''}),
-    '$route.query.period'
-  ]
   return  {
+    periods,
+    lombards: [
+      { key: null, value: 'Все ломбарды'},
+      ...lombards.map((v) => ({ key: v._id, value: v.name }))
+    ],
     header: [
       { children: [
         { col: 'col border', value: `Наименование финансового учреждения`},
@@ -20,18 +21,6 @@ module.exports = async (req, res) => {
         { col: 'col border', value: `Код финансового учреждения`},
         { col: 'col border', value: { get: queryLombard('kod') }}
       ]}
-    ],
-    selectors:  [ 
-      { col: 'col', is: 'selector', attrs: { key: 'period', label: "Период", options: periods }},
-      { col: 'col', is: 'selector', attrs: { key: 'lombard', options: [
-          { key: null, value: 'Все ломбарды'},
-          ...lombards.map((v) => ({ key: v._id, value: v.name }))
-        ]}
-      }
-    ],
-    period: [ 
-      { col: 'mx-2', value: 'По состоянию на' },
-      { col: 'mx-2', value: { get: queryPeriod }}
     ]
   }
 }

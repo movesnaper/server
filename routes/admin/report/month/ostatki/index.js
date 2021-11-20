@@ -1,20 +1,20 @@
-const { headers } = require('./header')
+const { title, headers } = require('./header')
+const values = (req, res) => require(`../schema`)({ title, headers})(req, res)
 const get = async (req, res) => {
-  const { selectors, period, header } = await require(`../header`)(req, res)
   try {
+    const {schema, lombards} = await values(req, res)
     res.json([
-      { row: 'my-3', children: [...selectors, { is: 'print' }] },
-      { is: 'strong', value: 'Ведомость остатков' },
-      { row: 'my-3', children: period },
-      ...header,
-      { row: 'my-3', children: [ 
-        { col: 'col', is: 'report-table', attrs: { headers, hovered: 'row' }}
-      ]},
-    ].filter((v) => v))
+      { row: 'my-3', children: [
+        {},    
+        { col: 'col-3', is: 'selector', attrs: { key: 'lombard', options: lombards } },
+        { col: 'col-1', is: 'print' }
+      ] },
+      ...schema
+    ])
   } catch(e){
     console.log(e);
-    res.status(500).json({ ostatki: e.message })
+    res.status(500).json(e)
   }
 };
 
-module.exports = { get }
+module.exports = { get, values }

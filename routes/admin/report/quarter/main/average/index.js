@@ -2,7 +2,8 @@
 const { summ, toThousand } = require("../../../functions")
 const { credits, gold, transport, things, other } = require("../../../filters")
 
-const get = async (req, res) => {
+
+const values = async (req, res) => {
   const {values} = await require('../values')(req, res)
   const getValue = (filter) => {
     const creditsValues = values.filter(credits).filter(filter)
@@ -15,8 +16,7 @@ const get = async (req, res) => {
     }
   }
   
-  try {
-    const values = [
+    return [
       { col: 'my-3 center-text', is: 'h6', value: `3. Средневзвешенные значения полной стоимости
        займов некредитной финансовой организации, осуществляющей деятельность ломбардов`},
        { row: 'grey', children: [
@@ -53,11 +53,14 @@ const get = async (req, res) => {
         ]}
       })
     ]
-    res.status(200).json(values)
+}
+const get = async (req, res) => {
+  try {
+    res.status(200).json(await values(req, res))
   } catch(e) {
     console.error(e);
     res.status(500).json({ average: e.message })
   }
 }
 
-module.exports = { get }
+module.exports = { get, values }

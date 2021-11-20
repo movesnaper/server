@@ -1,12 +1,11 @@
 <template>
-  <preloader v-if="loading"/>
-  <div v-else class="table b-table table-sm">
+  <div class="table b-table table-sm">
     <table style="width: 100%">
       <thead>
         <tr>
           <th v-for="({ children, value, is = 'span', attrs }, i) in attrs.headers" :key="i"
           :colspan="children ? children.length : 1">
-            <component v-if="children" :is="is" :attrs="attrs" >
+            <component v-if="children" :is="is" v-bind="$attrs" :node="{attrs}" >
               {{ value }}
             </component>
           </th>
@@ -20,16 +19,29 @@
         </tr>
       </thead>
       <tbody >            
-        <tr :class="hovered.row" v-for="(value, i) in values" :key="i">
+        <tr v-if="loading">
+          <td :colspan="headers.length">
+            <preloader />
+          </td>
+        </tr>
+        <tr v-else :class="hovered.row" v-for="(value, i) in values" :key="i">
           <table-cell v-for="(header) in headers" :key="header.key"
-          :header="header" :value="value" :class="hovered.cell">
+          :ui="ui"
+          :node="node"          
+          :class="hovered.cell"
+          :header="header" 
+          :value="value" 
+          >
           </table-cell>
         </tr>
       </tbody>
       <tfoot>
         <tr>
           <table-cell v-for="(header) in headers" :key="header.key"
-          :header="header" :value="footer"/>
+          :ui="ui"
+          :node="node"
+          :header="header" 
+          :value="footer"/>
         </tr>
       </tfoot>
     </table>
@@ -50,15 +62,20 @@ export default {
     footer: {}
   }),
   watch: {
-    '$route.query': {
-      handler(query) {
-      if (Object.keys(query).length)
-        this.refresh()
-      },
-      immediate: true
+    '$route.query'(v) {
+      const {path} = this.$route
+      const value = JSON.parse(localStorage.getItem('report') || '{}')
+      localStorage.setItem('report', JSON.stringify({ ...value, [path]: v}))
+      this.refresh()
     }
   },
+  created() {
+    this.refresh()
+  },
   computed: {
+    ui() {
+      return this
+    },
     attrs() {
       return this.node.attrs || {}
     },
@@ -73,13 +90,12 @@ export default {
     }
   },
   methods: {
-    async refresh() {
+    async refresh(silent) {
       const { key, period = '' } = this.$route.params
-      const url = key && `/${key}/${period}`
-      if(!url) return
+      const url = [key, period].filter((v) => v).join('/')
       try {
-        this.loading = true
-        const { values, footer } = await db('/report').get(`${url}/values`, { params: this.$route.query })
+        if(!silent) this.loading = true
+        const { values, footer } = await db('/report').get(`/${url}/values`, { params: this.$route.query })
         this.values = values
         this.footer = footer
       } catch(e) {

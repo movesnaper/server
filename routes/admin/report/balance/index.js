@@ -1,29 +1,17 @@
+const { headers } = require('./header')
 
-const headers = [
-  { key: 'account', value: 'Счёт', width: '10%' },
-  { value: 'На начало периода', children: [
-    { key: 'startDt', value: 'Дт', width: '10%' },
-    { key: 'startCt', value: 'Кт', width: '10%' },
-  ]},
-  { key: 'dt', value: 'Дт', width: '10%' },
-  { key: 'ct', value: 'Кт', width: '10%' },
-  { value: 'На конец периода', children: [
-    { key: 'endDt', value: 'Дт', width: '10%' },
-    { key: 'endCt', value: 'Кт', width: '10%' }
-  ]}
-]
-
+const values = async (req, res) => {
+    const schema = [
+      { is: 'report-table', attrs: { hovered: 'cell', headers }},
+    ]
+    return { schema }
+}
 const get = async (req, res) => {
-  const { date } = req.company.settings
-  const selectors = [ 
-    { col: 'col', is: 'date-picker', attrs: { key: 'start', value: date }},
-    { col: 'col', is: 'date-picker', attrs: { key: 'end' } }
-  ]  
   try {
+    const {schema} = await values(req, res)
     res.json([
-      { row: 'my-3', children: [...selectors, { is: 'print' }] },
-      { is: 'strong', value: 'Баланс' },
-      { is: 'report-table', attrs: { hovered: 'cell', headers }}
+      { row: 'my-3', children: [{}, { col: 'col-1', is: 'print' }] },
+      ...schema
     ])
   } catch(e){
     console.log(e);
@@ -31,4 +19,4 @@ const get = async (req, res) => {
   }
 }
 
-module.exports = { get }
+module.exports = { get, values }
