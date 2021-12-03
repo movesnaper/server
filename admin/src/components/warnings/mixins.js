@@ -1,11 +1,16 @@
 
 export default {
-  methods: {
-    getVariant(type) {
-      switch(type) {
-        case 'deleted': return 'danger'
-        default: return 'warning'
+  computed: {
+    variants() {
+      return {
+        deleted: 'danger',
+        warning: 'warning'
       }
+    }
+  },  
+  methods: {
+    getVariant({ deleted }) {
+      return deleted ? 'deleted' : 'warning'
     }    
   }
 }

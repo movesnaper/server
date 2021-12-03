@@ -11,12 +11,12 @@
     <input type="text" class="form-control" v-model="confirm">
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" @click="close">{{ t('cansel') }}</button>
+    <button type="button" class="btn btn-secondary" @click="close">Отмена</button>
     <button type="button" 
     :class="['btn btn-primary', 'btn-danger', 'relative']" 
     @click="onClick" :disabled="disabled">
     <b-spinner v-if="loading" class="absolute-center"/>
-    {{ title || $t('btn.remove') }}
+    {{ title || 'Удалить' }}
     </button>
   </div>
 </div>

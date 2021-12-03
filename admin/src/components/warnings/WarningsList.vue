@@ -1,107 +1,75 @@
 <template>
-  <b-collapse
-    :id="`info-${index}`" 
-    @input="(v) => $emit('input', v)">
-    <div class="row m-0 flex-center p-2">
+  <div>
+    <div class="row m-0 flex-center p-1 warning-list-row">
       <div class="col">
         <b-form-checkbox 
         :checked="checked"
         @change="toggleAll">
-          {{ $t(`btn.select_all`) }}
+          Выбрать все
         </b-form-checkbox>
       </div>
-      <input-search class="col" v-model="search"/>
-      <b-button class="relative"
-      variant="outline-danger"
-      :disabled="disabled"
-      @click="onRemove">
-      {{ $t('btn.remove') }}
-      <b-badge variant="light">{{ selected.filter((v) => v).length }}</b-badge>
-      <b-spinner v-if="loading" class="absolute-center"/>
-      </b-button>
+      <slot name="remove-btn" :selected="selected"></slot>
     </div>
     <b-list-group>
-      <b-list-group-item v-for="(item, i) in values" :key="i">
+      <b-list-group-item v-for="(item, i) in values" :key="i" class="py-0">
         <div class="row m-0 flex-center">
           <b-form-checkbox :checked="selected.includes(item._id)"
           @input="(v) => selected.splice(i, 1, v && item._id)"/>
           <div class="col">
             <div class="row m-0 flex-center">
-              <div class="col-2">{{ item.date }}</div>
-              <div class="col">{{ item.klient }}</div>
-              <div class="mr-2">{{ item.number }}</div>
-              <i class="mr-2">{{ item.account }}</i>
-              <div>{{ item.summ }}</div>
-              <b-button variant="outline" :id="`warnings-${i + 1}`">
-                <b-icon icon="info-circle-fill"
-                :variant="getVariant(item.type)"
-                @click="showModal(item)"/>
-              </b-button>
-              <b-tooltip 
-              :target="`warnings-${i + 1}`"
-              :variant="getVariant(item.type)">
-                {{ item.warning }}
-              </b-tooltip>
+              <div class="col-1 p-0">{{ item.date }}</div>
+              <div class="col-4">
+                  {{ item.number }}
+                  <i class="mr-2">{{ item.account }}</i>
+                  <span>{{ item.summ }}</span>
+              </div>
+              <div class="col">
+                <b-button variant="outline">
+                  <b-icon icon="info-circle-fill"
+                  :variant="variants[getVariant(item)]"/>
+                </b-button>
+                <span :class="variants[getVariant(item)]">{{item.deleted || item.warning}}</span>        
+              </div>              
             </div>
           </div>
         </div>
       </b-list-group-item>
     </b-list-group>
-  </b-collapse>
+  </div>
 </template>
 
 <script>
 import { InputSearch } from '@/widjets'
-import { toSearchString, firstChar, moment } from '@/functions'
+import { moment } from '@/functions'
 import mixins from './mixins'
 
 export default {
   mixins: [mixins],
   components: { InputSearch },
-  props: ['value', 'items', 'index', 'remove' ],
-  data: (vm) => ({
+  props: ['warnings'],
+  data: () => ({
     selected: [],
-    search: '',
     loading: false
   }),
   computed: {
-    values({ items }) {
-      const str = toSearchString(this.search)
-      return items.map((v) => {
+    values() {
+      return this.warnings.map((v) => {
         const date = moment(v.date).format('L')
-        const klient = this.shortName(v.klient)
         const { account, summ } = this.getAccount(v.values)
-        return {...v, date, klient, account, summ }
-      }).filter(({ date, klient, number, account, summ }) => 
-          toSearchString(date, klient, number, account, summ).includes(str))
+        return {...v, date, account, summ }
+      })
     },
-    checked({ items, selected }) {
-      const {length} = selected.filter((v) => v)
-      return items.length === length
+    checked() {
+      const {length} = this.selected.filter((v) => v)
+      return this.warnings.length === length
     },
     disabled({ loading, selected }) {
       return loading || !selected.some(v => v)
     }
   },
   methods: {
-    showModal(v) {
-      this.$alert({ variant: 'info', message: 'test'})
-    },
     toggleAll(checked) {
-      this.selected = checked ? this.items.map((v) => v._id) : []
-    },
-    async onRemove() {
-      this.loading = true
-      try {
-        await this.remove(this.selected.filter((v) => v))
-      } catch({ message }) {
-        this.$alert({ message })
-      } finally {
-        this.loading = false
-      }
-    },
-    shortName({ family = '', name = '', sername = '' }) {
-      return `${family} ${firstChar(name)}. ${firstChar(sername)}.`
+      this.selected = checked ? this.warnings.map((v) => v._id) : []
     },
     getAccount([{ dt, ct, summ }]) {
       const acc = dt !== '301' ? `dt.${dt}` : `ct.${ct}`
@@ -112,6 +80,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+  .warning-list-row {
+    height: 40px;
+  }
 </style>

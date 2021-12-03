@@ -85,10 +85,12 @@ router.post('/replicate', session, async ({ db, body }, res) => {
 
 router.use('/profile', session, require('./profile'))
 router.use('/company', session, require('./company'))
-router.use('/lombard', session, require('./lombard'))
+// router.use('/lombard', session, require('./lombard'))
+router.use('/lombards', session, require('./lombards'))
 router.use('/user', session, require('./user'))
 router.use('/klients', session, require('./klient'))
 router.use('/reestr', session, require('./reestr'))
 router.use('/report', session, company, require('./report'))
+router.use('/program', session, company, require('./program'))
 
 module.exports = router

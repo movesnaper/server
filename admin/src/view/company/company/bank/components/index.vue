@@ -1,40 +1,40 @@
 <template>
-  <div>
-    <b-card no-body class="company">
-      <b-tabs v-model="active" small>
-        <b-tab v-for="(item, i) in tabs" :key="i" :title="$t(`company.menu.${item}`)">
-          <component class="p-3" 
-          :is="`component-${item}`" 
-          :value="value" 
-          :change="onChange"/>
-        </b-tab>
-      </b-tabs>
-    </b-card>
-  </div>  
+  <b-tabs v-model="active" small>
+    <b-tab v-for="({ key, value: text }) in schema.tabs" :key="key" :title="text">
+      <component 
+        class="p-3" 
+        :is="`component-${key}`" 
+        :value="value"
+        :schema="schema[key]"
+        v-on="$listeners"/>
+    </b-tab>
+  </b-tabs>
 </template>
 
 <script>
-import ComponentAccount from './Account'
-import ComponentBank from './Bank'
-import ComponentAddress from './Address'
+import { db } from '@/db'
 
 export default {
-  components: {ComponentAccount, ComponentBank, ComponentAddress},
+  components: {
+    ComponentAccount: () => import('./Account'),
+    ComponentBank: () => import('./Bank'),
+    ComponentAddress: () => import('./Address')
+  },
   props: ['value'],
   data: () => ({
     active: 0,
-    tabs: ['account', 'bank', 'address']
+    schema: {}
   }),
-  methods: {
-    onChange(name, value) {
-      this.$emit('change', {...this.value, [name]: value })
-    }
+  async created() {
+    try {
+      this.schema = await db('/company').get('/banks/schema')
+    } catch(e) {
+      this.$alert(e)
+    } 
   }
 }
 </script>
 
 <style scoped>
-  .company >>> .nav-tabs {
-    padding: 10px 10px 0;
-  }
+
 </style>

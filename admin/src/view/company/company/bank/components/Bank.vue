@@ -1,35 +1,22 @@
 <template>
-  <div>
-    <div v-for="({ name, is, type }, i) in items" :key="i" 
-    class="form-group row m-0 mt-2">
-      <label class="col-sm-4 col-form-label" >{{$t(`bank_account.${name}`)}}</label>
-      <component 
-      class="col"
-      :is="is"
-      :type="type"
-      :value="bank[name]"
-      @change="(value) => onChange(name, value)"
-      />
-    </div>
-  </div>
+  <fields-inputs :fields="schema" :value="bank"  @change="save"/>
 </template>
 
 <script>
-import mixins from '../components/mixins'
+import {FieldsInputs} from '@/widjets'
 
 export default {
-  mixins: [mixins],
-  data: () => ({
-    fields: ['name', 'idn']
-  }),
+  props: ['value', 'schema'],
+  components: {FieldsInputs},
   computed: {
-    bank({ value }) {
-      return value.bank || {}
+    bank() {
+      return this.value.bank || {}
     }
   },
   methods: {
-    onChange(key, value) {
-      this.change('bank', {...this.bank, [key]: value })
+    save({key, value}) {
+      const bank = {...this.bank, [key]: value}
+      this.$emit('save', {...this.value, bank })
     }
   }
 

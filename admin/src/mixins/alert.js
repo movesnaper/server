@@ -1,11 +1,11 @@
 
-export default function(props) {
-  const {variant = 'danger', err, message, title, toaster} = props
-  this.$bvToast.toast(message || err.message, {
+export default function(err) {
+  const {variant, message, title, toaster} = err
+  console.error(err);
+  this.$bvToast.toast(message, {
     title,
-    variant: variant,
+    variant: variant || 'danger',
     solid: true,
     toaster: toaster || 'b-toaster-bottom-right'
-  }),
-  variant === 'danger' && console.error(err || message)  
+  })
 }

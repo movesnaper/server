@@ -3,20 +3,27 @@
   :fields="fields" 
   :value="address"
   :translate="(v) => $t(`address.${v}`)"
-  @change="({ name, value }) => onChange('address', {...address, [name]: value })"/>
+  @change="save"/>
 </template>
 
 <script>
-import mix from './mix'
+import {FieldsInputs} from '@/widjets'
 
 export default {
-  mixins: [mix],
+  components: { FieldsInputs },
+  props: ['lombard'],
   data: () => ({
     fields: ['city', 'district', 'street', 'home']
   }),
   computed: {
     address({ lombard }) {
       return lombard.address || {}
+    }
+  },
+  methods: {
+    save({ name, value }) {
+      const address = {...this.address, [name]: value}
+      this.$emit('save', {...this.lombard, address})
     }
   }
 }

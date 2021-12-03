@@ -30,10 +30,6 @@
 <script>
 export default {
   props: ['fields', 'items'],
-  // props: {
-  //   fields: Object,
-  //   items: Array,
-  // },
   data () {
     return {
       active: false,
@@ -66,11 +62,6 @@ export default {
   tr.active{
     background-color: #0000001a;
   }
-  /* .mba-table .index {
-    text-align: center;
-    width: 10px;
-  } */
-
   .vue-context li:hover {
     background-color: #0000000a;
   }

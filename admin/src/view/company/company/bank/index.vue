@@ -1,94 +1,70 @@
 <template>
-  <div>
- <div class="accordion" role="tablist">
-    <b-card v-for="(item, i) in items" :key="i" no-body>
-      <b-card-header class="py-0 pointer" role="tab" v-b-toggle="`program-${i}`">
+  <div class="accordion" role="tablist">
+    <b-card v-for="(item, index) in banks" :key="index" no-body>
+      <b-card-header class="py-0 pointer" role="tab" v-b-toggle="`program-${index}`">
         <div class="row" style="font-size: 18px">
-          <div class="col-1 flex-center">
-            {{ i + 1 }}
-          </div>
-          <div class="col-3 flex-center">
-            {{ item.number }}
-          </div>
-          <div class="col flex-center" >
-            {{ item.bank && item.bank.name }}
-          </div>
-          <div>
-            <b-button  variant="outline" :id="`remove-${i}`" :disabled="loading || disabled">
-              <b-icon icon="trash" @click.stop="remove(item, i)" variant="danger"/>
-            </b-button>
-            <b-tooltip :target="`remove-${i}`" variant="danger">
-              {{ $t('btn.remove')}}
-            </b-tooltip>
-          </div>
+          <div class="col-1 flex-center">{{ index + 1 }}</div>
+          <div class="col-3 flex-center">{{ item.number }}</div>
+          <div class="col flex-center">{{ item.bank && item.bank.name }}</div>
+          <b-button  variant="outline" :disabled="loading">
+            <b-icon icon="trash" @click.stop="remove(index, item)" variant="danger"/>
+          </b-button>
         </div>
       </b-card-header>
-      <b-collapse
-       v-model="visible[i]"
-      :id="`program-${i}`" 
-      :ref="`program-${i}`" 
-      accordion="accordion" 
-      role="tabpanel">
+      <b-collapse v-model="visible[index]" accordion="accordion" role="tabpanel" :id="`program-${index}`" >
         <b-card-body>
-          <bank-component :value="item" @change="(v) =>onChange(v, i)"/>
+          <bank-component :value="item" @save="(value) => save(index, value)"/>
         </b-card-body>
       </b-collapse>
     </b-card>
-    <b-button variant="outline" @click="add" class="relative" 
-    :disabled="loading || disabled">
+    <b-button variant="outline" @click="save(banks.length, {})" class="relative" :disabled="loading">
       <b-icon icon="plus-circle" variant="success"/>
       <b-spinner v-if="loading" class="absolute-center"/>
     </b-button>
   </div>
-  </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import BankComponent from './components'
+import { db } from '@/db'
 
 export default {
-  components: { BankComponent },
+  components: { 
+    BankComponent: () => import('./components/index.vue')
+  },
+  
   data: () => ({
     loading: false,
-    visible: {},
+    banks: [],
+    visible: {}
   }),
 
-  computed: {
-    ...mapGetters({
-      company: 'company'
-    }),
-    items({ company }) {
-      return company.bank || []
-    },
-    disabled({ company }) {
-      const bank = company.bank || []
-      return !bank.length
-    }
+  created() {
+    this.refresh()
   },
+
   methods: {
-    ...mapActions({ 
-      save: 'save',
-      update: 'update' 
-    }),
-    async onChange(value, index) {
-      this.items.splice(index, 1, value)
-      await this.save({...this.company, bank: this.items })
-      this.update()
+    async refresh() {
+      try {
+        this.banks = await db('/company').get('/banks')
+      } catch(e) {
+        this.$alert(e)
+      } 
     },
-    async add() {
-      this.loading = true
-      const items = [...this.items, {}]
-      await this.save({...this.company, bank: items })
-      this.loading = false
-      this.visible[this.items.length - 1] = true
+
+    async save(index, value) {
+      try {
+        const { _id } = await db('/company').post('/banks', value)
+        this.banks.splice(index, 1, {...value, _id})
+      } catch(e) {
+        this.$alert(e)
+      }
     },
-    async remove({ number }, index) {
-      const dialog = await this.$confirm({ name: number })
-      const items = this.items.filter((_, i) => i !== index)
-      await this.save({...this.company, bank: items })
-      dialog && dialog.close()
-      this.update()
+
+    async remove(index, { account = {}, _id }) {
+      const dialog = await this.$confirm({ name: account.number })
+      await db('/company').remove('/banks', { data: { _id }})
+      this.banks.splice(index, 1)
+      dialog.close()
     }
   }
 }
@@ -101,7 +77,6 @@ export default {
     box-shadow: none;
   }
   .simple >>>  .dropdown-menu {
-    /* margin-left: 15px; */
     width: 100%;
   }
 </style>

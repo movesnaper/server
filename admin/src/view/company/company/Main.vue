@@ -1,26 +1,26 @@
 <template>
-  <div>
-    <div v-for="({ name, is, type }, i) in items" :key="i" class="form-group row m-0 mt-2">
-      <label class="col-sm-4 col-form-label" >{{ $t(`company.${name}`) }}</label>
-      <component 
-      class="col"
-      :is="is"
-      :type="type"
-      :value="company[name]"
-      @change="(value) => onChange(name, value)"
-      />
-    </div>
-  </div>
+  <fields-inputs :fields="schema" :value="company"
+    @change="({ key, value }) => $emit('save', {...lombard, [key]: value})"/>
 </template>
 
 <script>
-import mixins from '../../company/mixins'
+import { db } from '@/db'
+import {FieldsInputs} from '@/widjets'
 
 export default {
-  mixins: [mixins],
+  props: ['company'],
+  components: {FieldsInputs},
   data: () => ({
-    fields: ['name', 'idn', 'director', 'bookkeeper', 'phone']
-  })
+    schema: []
+  }),
+  async created() {
+    try {
+      const params = { key: 'main' }
+      this.schema = await db('/company').get('/schema', { params })
+    } catch(e) {
+      this.$alert(e)
+    } 
+  }
 }
 </script>
 

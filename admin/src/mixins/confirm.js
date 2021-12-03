@@ -1,8 +1,8 @@
 import Confirm from '@/widjets/Confirm.vue'
 
 export default function({ name } = {}, title) {
-      const header = name && this.$t('confirm.to_confirm')
-      const html = name && `<p>${this.$t('confirm.enter')} 
+      const header = name && 'Подтвердите удаление'
+      const html = name && `<p> Для подтверждения введите
         <strong style='color: red;'>${name}</strong>
       </p>`
       const validate = (v) => !name || v === name
