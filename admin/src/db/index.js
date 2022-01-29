@@ -1,21 +1,22 @@
 import axios from 'axios'
-import { store } from '@/setup'
+import { store, router } from '@/setup'
 
 axios.interceptors.response.use((response) => {
-  return response;
+  return response
 }, async (error) => {
-  if(error.response.status === 401) {
-    const user = await store.dispatch('updateUser')
-    user && store.dispatch('logout', true)
+  if (error.response.status === 401) {
+    // await store.dispatch('logout')
+    await query('post', `/api/auth/logout`)
+    router.push('/')
   }
   if (error.response && error.response.data) {
-      return Promise.reject(error.response.data);
+    return Promise.reject(error.response.data)
   }
-  return Promise.reject(error.message);
+  return Promise.reject(error.message)
 })
 const config = {
   headers: {
-    "Content-Type": "application/json;charset=utf-8" 
+    'Content-Type': 'application/json;charset=utf-8'
   }
 }
 const query = (method, url, params) => {

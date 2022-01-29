@@ -15,8 +15,8 @@
     </div>
     <div class="modal-body pt-0">
       <skeleton v-if="loading"></skeleton>
-      <reestr-table v-else :schema="schema" 
-        :values="values" 
+      <reestr-table v-else :schema="schema"
+        :values="values"
         :selected.sync="selected"
         @change="save">
         <!-- <b-progress v-if="saving" class="progress"  height="2px" :value="loadValue"></b-progress> -->
@@ -25,19 +25,20 @@
     </div>
     <div class="modal-footer">
     </div>
-  </div>    
+  </div>
 </template>
 
 <script>
 import { db } from '@/db'
-import InfiniteLoading from 'vue-infinite-loading'
-import ReestrTable from './ReestrTable.vue'
-import Skeleton from './Skeleton.vue'
 
 export default {
   props: ['header', 'value', 'params', 'ui'],
-  components: {InfiniteLoading, ReestrTable, Skeleton},
-  data() {
+  components: { 
+    InfiniteLoading: () => import('vue-infinite-loading'),
+    ReestrTable: () => import('./ReestrTable.vue'),
+    Skeleton: () => import('./Skeleton.vue')
+  },
+  data () {
     return {
       schema: [],
       values: [],
@@ -48,70 +49,74 @@ export default {
       selected: {}
     }
   },
-  async created() {
+  async created () {
     try {
       this.loading = true
-      this.schema = await db('/report').get('/balance/reestr/schema', { params: this.params })
+      this.schema = await db('/company/balance').get('/reestr/schema', { params: this.params })
       this.refresh()
-    } catch(e) {
-      console.error(e);
+    } catch (e) {
+      console.error(e)
     } finally {
       this.loading = false
     }
   },
   computed: {
-    account() {
+    account () {
       return this.value.account
     },
-    key() {
+
+    key () {
       return this.header.key
     }
   },
   methods: {
-    close() {
+    close () {
       this.$emit('close')
     },
-    async remove() {
+
+    async remove () {
       const values = Object.keys(this.selected).filter((key) => this.selected[key])
       try {
-        await db('/report').remove('/balance/reestr/values', { data: { values } })
+        await db('/company/balance').remove('/reestr/values', { data: { values } })
         this.values = this.values.filter((v) => !this.selected[v.id])
         this.ui.refresh(true)
         this.selected = {}
-      } catch(e) {
-        console.error(e);
+      } catch (e) {
+        console.error(e)
       }
     },
-    async save(value, index = this.values.length) {
-      console.log('save');
+
+    async save (value, index = this.values.length) {
       try {
         this.saving = true
-        const { id } = await db('/report').post('/balance/reestr/values', {
+        const { id } = await db('/company/balance').post('/reestr/values', {
           params: { ...this.$route.query, key: this.key, value: this.account.value },
-          value: {...value, [this.key]: this.account.value }
+          value: { ...value, [this.key]: this.account.value }
         })
-        this.values.splice(index, 1, {...value, id })
+        this.values.splice(index, 1, { ...value, id })
         await this.ui.refresh(true)
-      } catch(e) {
-        console.error(e);
+      } catch (e) {
+        console.error(e)
       } finally {
         this.saving = false
-      }      
+      }
     },
-    async infiniteHandler($state) {
-      const params = {...this.params, value: this.account.value, page: this.page }
-      const res = await db('/report').get('/balance/reestr/values', { params } )
+
+    async infiniteHandler ($state) {
+      const params = { ...this.params, value: this.account.value, page: this.page }
+      const res = await db('/company/balance').get('/reestr/values', { params })
       if (res.rows.length) {
         this.page += 1
         this.values.unshift(...res.rows.reverse())
         $state.loaded()
       } else $state.complete()
     },
-    refresh() {
+
+    refresh () {
       this.page = 0
       this.values = []
       this.infiniteId += 1
-    },
+    }
   }
 }
 </script>

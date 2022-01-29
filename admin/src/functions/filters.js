@@ -5,9 +5,6 @@ const reestr = ({ type }) => type === 'reestr'
 const dt377 = ({ values = [] }) => values.filter(({ dt }) => dt === '377').length
 const ct377 = ({ values = [] }) => values.filter(({ ct }) => ct === '377').length
 
-
-
-
 export default {
   users,
   klients,

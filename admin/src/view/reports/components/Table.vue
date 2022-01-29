@@ -11,37 +11,34 @@
           </th>
         </tr>
         <tr>
-          <th v-for="({ value = '', style, width }, i) in headers" :key="i" 
+          <th v-for="({ value = '', style, width }, i) in headers" :key="i"
           :width="width"
           :style="style">
             {{ value }}
           </th>
         </tr>
       </thead>
-      <tbody >            
+      <tbody >
         <tr v-if="loading">
           <td :colspan="headers.length">
             <preloader />
           </td>
         </tr>
         <tr v-else :class="hovered.row" v-for="(value, i) in values" :key="i">
-          <table-cell v-for="(header) in headers" :key="header.key"
-          :ui="ui"
-          :node="node"          
-          :class="hovered.cell"
-          :header="header" 
-          :value="value" 
-          >
-          </table-cell>
+          <td v-for="(header) in headers" :key="header.key" :class="hovered.cell" >
+            <slot name="cell" v-if="value[header.key]" :item="value[header.key]" :header="header" :value="value">
+              {{ value[header.key] }}
+            </slot>
+          </td>
         </tr>
       </tbody>
-      <tfoot>
+      <tfoot v-if="footer">
         <tr>
-          <table-cell v-for="(header) in headers" :key="header.key"
-          :ui="ui"
-          :node="node"
-          :header="header" 
-          :value="footer"/>
+          <td v-for="(header) in headers" :key="header.key" v-bind="footer[header.key]">
+            <slot name="footer" v-if="footer[header.key]" :item="footer[header.key]" :header="header" :value="footer">
+              {{ footer[header.key].value }}
+            </slot>
+          </td>          
         </tr>
       </tfoot>
     </table>
@@ -49,12 +46,14 @@
 </template>
 
 <script>
-import TableCell from './TableCell.vue'
-import DatePicker from './DatePicker.vue'
-import Preloader from './Skeleton.vue'
 import { db } from '@/db'
+
 export default {
-  components: { TableCell, DatePicker, Preloader },
+  components: { 
+    DatePicker: () => import('./DatePicker.vue'), 
+    Preloader: () => import('./Skeleton.vue'),
+    // AccountValue: () => import('./AccountValue.vue'),
+  },
   props: ['value', 'node'],
   data: () => ({
     loading: false,
@@ -62,43 +61,46 @@ export default {
     footer: {}
   }),
   watch: {
-    '$route.query'(v) {
-      const {path} = this.$route
-      const value = JSON.parse(localStorage.getItem('report') || '{}')
-      localStorage.setItem('report', JSON.stringify({ ...value, [path]: v}))
-      this.refresh()
+    '$route.query': {
+      handler (v) {
+        const value = JSON.parse(localStorage.getItem('reports') || '{}')
+        localStorage.setItem('reports', JSON.stringify({ ...value, [this.$attrs.url]: v }))
+        this.refresh()
+      },
+      immediate: true
     }
   },
-  created() {
-    this.refresh()
-  },
+
   computed: {
-    ui() {
+    ui () {
       return this
     },
-    attrs() {
+
+    attrs () {
       return this.node.attrs || {}
     },
-    headers() {
+
+    headers () {
       return this.attrs.headers.reduce((cur, v) => {
         const value = v.children || [v]
         return [...cur, ...value]
       }, [])
     },
-    hovered() {
+
+    hovered () {
       return { [this.attrs.hovered]: 'hovered' }
     }
   },
   methods: {
-    async refresh(silent) {
-      const { key, period = '' } = this.$route.params
-      const url = [key, period].filter((v) => v).join('/')
+
+    async refresh (silent) {
       try {
-        if(!silent) this.loading = true
-        const { values, footer } = await db('/report').get(`/${url}/values`, { params: this.$route.query })
+        if (!silent) this.loading = true
+        const params = this.$route.query
+        const { values, footer } = await db(this.$attrs.url).get(`/values`, { params })
         this.values = values
         this.footer = footer
-      } catch(e) {
+      } catch (e) {
         console.error(e)
       } finally {
         this.loading = false

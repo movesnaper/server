@@ -8,8 +8,7 @@ import AccountValue from './AccountValue'
 import ReestrValue from './ReestrValue'
 import DatePicker from './DatePicker'
 
-
-export default  {
+export default {
   Selector,
   InputValue,
   Print,

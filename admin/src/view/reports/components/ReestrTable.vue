@@ -8,9 +8,6 @@
           {{ field.text }}
         </th>
         <th width="5%" >
-          <!-- <b-form-checkbox
-            :checked="Object.values(selected).some((v) => v)"
-            @change="toggleAll"/> -->
         </th>
       </tr>
     </thead>
@@ -20,14 +17,14 @@
       </tr>
       <tr v-for="(value, index) in values" :key="index">
         <td class="px-1" v-for="(field) in schema" :key="field.key">
-          <component :is="field.is || 'b-input'" 
+          <component :is="field.is || 'b-input'"
           v-bind="field"
           :value="value[field.key]"
           @input="() => {}"
           @change="(v) => $listeners.change({...value, [field.key]: v}, index)"/>
         </td>
         <td style="vertical-align: middle;" >
-          <b-form-checkbox 
+          <b-form-checkbox
             :checked="selected[value.id]"
             @change="(v) => $emit('update:selected', {...selected, [value.id]: v })"/>
         </td>
@@ -37,7 +34,7 @@
     <tfoot>
       <tr>
         <td class="px-1" v-for="(field) in schema" :key="field.key">
-          <component :is="field.is || 'b-input'" 
+          <component :is="field.is || 'b-input'"
           v-bind="field"
           :value="tmp[field.key]"
           @input="(value) => setValue(field.key, value)"/>
@@ -56,38 +53,40 @@
 </template>
 
 <script>
-import DatePicker from './DatePicker.vue'
-import Selector from './Selector.vue'
 import moment from 'moment'
+
 export default {
   props: [ 'values', 'schema', 'selected' ],
-  components: {DatePicker, Selector},
+  components: { 
+    DatePicker: () => import('./DatePicker.vue'),
+    Selector: () => import('./Selector.vue')
+  },
   data: () => ({
     status: -1,
     tmp: {},
     loading: false
   }),
   computed: {
-    disabled() {
+    disabled () {
       return this.schema.some((v) => !this.tmp[v.key])
     }
   },
   methods: {
-    toggleAll(v) {
-      const selected = (cur, { id }) => ({...cur, [id]: true })
-      this.$emit('update:selected', v ? Object.values(this.values).reduce(selected, {}) : {} )
+    toggleAll (v) {
+      const selected = (cur, { id }) => ({ ...cur, [id]: true })
+      this.$emit('update:selected', v ? Object.values(this.values).reduce(selected, {}) : {})
     },
-    async setValue(key, value) {
+    async setValue (key, value) {
       const date = this.tmp.date || moment().format('YYYY-MM-DD')
-      this.tmp = {...this.tmp, date, [key]: value }
+      this.tmp = { ...this.tmp, date, [key]: value }
     },
-    async save() {
+    async save () {
       try {
         this.loading = true
         await this.$listeners.change(this.tmp)
         this.tmp = {}
-      } catch(e) {
-        console.error(e);
+      } catch (e) {
+        console.error(e)
       } finally {
         this.loading = false
       }
@@ -104,7 +103,5 @@ export default {
 .sticky {
     position: sticky;
     top: -2px;
-    /* border: none !important; */
-    /* border-bottom: 1px solid gray; */
 }
 </style>

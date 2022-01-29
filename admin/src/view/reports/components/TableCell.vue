@@ -10,26 +10,28 @@
 </template>
 
 <script>
-import ReestrValue from './ReestrValue.vue'
-import AccountValue from './AccountValue.vue'
+
 export default {
-  name: 'TableCell',
+  // name: 'TableCell',
   props: [ 'header', 'value', 'node', 'ui' ],
-  components: { ReestrValue, AccountValue },
+  components: { 
+    ReestrValue: () => import('./ReestrValue.vue'), 
+    AccountValue: () => import('./AccountValue.vue')
+  },
   computed: {
-    cell() {
+    cell () {
       const value = this.value || {}
       return value[this.header.key] || ''
     },
-    style() {
-      return  (this.value && this.value.style) || this.header.style
+    style () {
+      return (this.value && this.value.style) || this.header.style
     }
   },
   methods: {
-    async showDialog({ is, attrs }) {
-      if(!is) return
-      const { default: component } = await import('./index');
-      this.$modal.show(component[is], { ...this.$props, ...attrs }, { height: 'auto', ...attrs  } )
+    async showDialog ({ is, attrs }) {
+      if (!is) return
+      const { default: component } = await import('./index')
+      this.$modal.show(component[is], { ...this.$props, ...attrs }, { height: 'auto', ...attrs })
     }
   }
 }

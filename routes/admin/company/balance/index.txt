@@ -1,0 +1,24 @@
+const { headers } = require('./header')
+
+const values = async (req, res) => {
+    const schema = [
+      { is: 'report-table', attrs: { hovered: 'cell', headers }},
+    ]
+    return { schema }
+}
+
+const get = async (req, res) => {
+  try {
+    const {schema} = await values(req, res)
+    return schema
+    // [
+    //   { row: 'my-3', children: [{}, { col: 'col-1', is: 'print' }] },
+    //   ...schema
+    // ]
+  } catch(e){
+    console.log(e);
+    res.status(500).json({ message: e.message })
+  }
+}
+
+module.exports = { get, values }

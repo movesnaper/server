@@ -22,9 +22,9 @@ const schema = {
   ]
 }
 
-const get =  async ({ db, query }, res) => {
+const get =  async (req, res) => {
   try {
-    res.status(200).json(schema)
+    return schema
   } catch(e) {
     console.error(e);
     res.status(500).json(e)

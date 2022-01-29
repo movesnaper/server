@@ -21,9 +21,9 @@
 export default {
   props: ['node'],
   computed: {
-    attrs() {
+    attrs () {
       return this.node.attrs || {}
-    },
+    }
     // key() {
     //   return this.attrs.key
     // },

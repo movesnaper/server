@@ -2,7 +2,7 @@ import Confirm from '../Confirm.vue'
 
 export default {
   methods: {
-    confirm(v, title) {
+    confirm (v, title) {
       const t = (v) => this.$t(`confirm.${v}`)
       const header = t('to_confirm')
       const html = `<p>${t('enter')} <strong style='color: red;'>${v.name}</strong></p>`

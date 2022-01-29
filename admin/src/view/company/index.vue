@@ -1,60 +1,76 @@
 <template>
-  <b-card no-body class="company p-5">
-    <b-tabs v-model="active" small card class="company-tabs">
-      <b-tab v-for="({ key, value}, i) in tabs" :key="i" :title="value">
-        <component class="p-3" :is="`component-${key}`" :company="company" @save="save"/>
-      </b-tab>
-    </b-tabs>
-  </b-card>
+  <div class="m-5">
+    <b-card v-if="!loading" no-body class="company">
+      <b-tabs v-model="active" small card class="company-tabs">
+        <b-tab v-for="({ key, value, is = 'company'}, i) in schema" :key="i" :title="value">
+          <component :is="is" v-model="company" :field-key="key" @change="saveSync"/>
+        </b-tab>
+      </b-tabs>
+    </b-card>
+    <div v-else>
+      <b-skeleton-table
+      :rows="5"
+      :columns="4"
+      :table-props="{ bordered: true, striped: true }"
+      ></b-skeleton-table>
+    </div>
+  </div>
 </template>
-
 
 <script>
 
 import { db } from '@/db'
+import { debounce } from 'vue-debounce'
 
 export default {
-  components: { 
-    ComponentCompany: () => import('./company/Main'), 
-    ComponentAddress: () => import('./company/Address'), 
-    ComponentBank: () => import('./company/bank') 
-  },  
-  data: () => ({
+  components: {
+    Company: () => import('./Company.vue'),
+    Bank: () => import('./bank')
+  },
+  data: (vm) => ({
     active: 0,
-    tabs: [
-      { key: 'company', value: 'Компания'},
-      { key: 'address', value: 'Адрес' },
-      { key: 'bank', value: 'Банк' }
-    ],
-    company: {}
+    loading: false,
+    company: {},
+    schema: [],
+    saveSync: debounce(vm.save, 3000)
   }),
   watch: {
     '$route.params': {
-      handler() {
+      handler () {
         this.refresh()
       },
       immediate: true
     }
   },
+  async created () {
+    try {
+      const params = { key: 'tabs' }
+      this.schema = await db('/company').get('/schema', { params })
+    } catch (e) {
+      this.$alert(e)
+    }
+  },
   methods: {
-    async refresh() {
+    async refresh () {
       try {
         this.loading = true
         this.company = await db('/company').get('/values')
-      } catch(e) {
+      } catch (e) {
         this.$alert(e)
       } finally {
         this.loading = false
       }
     },
-    async save(value) {
+
+    async save() {
       try {
-        await db('/company').post('/values', value)
-      } catch(e) {
+        const { id } = await db('/company').post('/values', this.company)
+        this.company = {...this.company, _id: id }
+      } catch (e) {
         this.$alert(e)
       }
-    }    
-  }  
+    }
+  }
 
 }
 </script>

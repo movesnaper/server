@@ -1,6 +1,6 @@
 <template>
   <div :class="[node.col || 'col']" :style="node.style">
-    <component :is="node.is || 'span'" 
+    <component :is="node.is || 'span'"
     :style="node.style"
     v-on="$parent.$listeners"
     v-bind="{...$parent.$attrs, ...$attrs, node }">
@@ -21,15 +21,15 @@ export default {
   components,
   props: ['node'],
   computed: {
-    className() {
+    className () {
       const { row, col } = this.node
       return col ? ['col', col] : ['row', row]
     },
-    value() {
-      const {value = {}} = this.node
+    value () {
+      const { value = {} } = this.node
       const getValue = (v) => typeof v === 'string' ? get(this, v) : v
       return value.get ? value.get.map(getValue)
-        .reduce((cur, v) => get(cur , v, cur)) : this.node.value
+        .reduce((cur, v) => get(cur, v, cur)) : this.node.value
     }
   }
 }

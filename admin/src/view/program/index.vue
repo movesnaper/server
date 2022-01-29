@@ -1,6 +1,6 @@
 <template>
-  <div class="p-5">
-    <div class="accordion" role="tablist">
+  <div class="m-5">
+    <div v-if="!loading" class="accordion" role="tablist">
       <b-card v-for="(item, index) in items" :key="index" no-body>
         <b-card-header class="py-0 pointer" role="tab" v-b-toggle="`program-${index}`">
           <program-item class="program-item" :item="item" @remove="() => remove(index)">
@@ -15,16 +15,23 @@
         </b-card-header>
         <b-collapse
         v-model="visible[index]"
-        :id="`program-${index}`" 
-        :ref="`program-${index}`" 
-        accordion="accordion" 
+        :id="`program-${index}`"
+        :ref="`program-${index}`"
+        accordion="accordion"
         role="tabpanel">
           <b-card-body>
             <program-settings :item="item" @change="(v) => change(index, v)"/>
           </b-card-body>
         </b-collapse>
       </b-card>
-      <add-btn icon="plus-circle" variant="success" @click="add"/>
+      <add-btn icon="plus-circle" variant="success" @click="() => add({})"/>
+    </div>
+    <div v-else>
+      <b-skeleton-table
+      :rows="5"
+      :columns="4"
+      :table-props="{ bordered: true, striped: true }"
+      ></b-skeleton-table>
     </div>
   </div>
 </template>
@@ -33,49 +40,60 @@
 import { db } from '@/db'
 export default {
   components: {
-    ProgramItem: () => import('./ProgramItem.vue'),
-    ProgramSettings: () => import('./ProgramSettings.vue'),
-    AddBtn: () => import('./Button.vue'),
+    ProgramItem: () => import('./components/ProgramItem.vue'),
+    ProgramSettings: () => import('./components/ProgramSettings.vue'),
+    AddBtn: () => import('./components/Button.vue')
   },
   data: () => ({
     visible: {},
     items: [],
     loading: false
   }),
-  created() {
-    this.refresh()
+  watch: {
+    '$route.params': {
+      handler () {
+        this.refresh()
+      },
+      immediate: true
+    }
   },
   methods: {
 
-    async save(items) {
+    async save (item) {
       try {
-        return db('/program').post('/values', items)
-      } catch(e) {
-        console.error(e);
+        const { id } = await db('/company').post('/programs', item)
+        return id
+      } catch (e) {
+        console.error(e)
       }
     },
-    async change(index, value) {
-      this.items[index] = value
-      await this.save(this.items)
+
+    async change (index, value) {
+      const item = this.items[index] = value
+      await this.save(item)
       return this.items.splice(index, 1, value)
     },
-    async refresh() {
+
+    async refresh () {
       try {
-        this.items = await db('/program').get('/values')
-      } catch(e) {
-        console.error(e);
+        this.loading = true
+        this.items = await db('/company').get('/programs')
+      } catch (e) {
+        this.$alert(e)
+      } finally {
+        this.loading = false
       }
     },
-    async remove(index) {
-      const items = this.items.filter((v, i) => i !== index)
-      await this.save(items)
-      return this.items.splice(index, 1)
+
+    async remove (index) {
+      await db('/company').remove('/programs', { data: this.items[index] })
+      this.items.splice(index, 1)
     },
-    async add({ settings }) {
-      const index = this.items.push({ settings })
-      await this.save(this.items)
-      return this.visible[index] = true
-      // return this.items.push({ })
+
+    async add ({ settings }) {
+      const _id = await this.save({ settings })
+      const index = this.items.push({ _id, settings })
+      this.visible[index] = true
     }
   }
 }

@@ -3,7 +3,7 @@
     <table class="table table-sm">
     <thead >
       <tr>
-        <th v-for="({name, width}, key) in fields" :key="key" 
+        <th v-for="({name, width}, key) in fields" :key="key"
         :class="key" :style="{width}">
           {{name}}
         </th>
@@ -12,7 +12,7 @@
     <tbody >
       <tr v-for="(item, index) in items"  :key="index"
         :class="{active: active === index}">
-      <td v-for="({ width }, key) in fields" :key="key" :class="['p-0', key]" 
+      <td v-for="({ width }, key) in fields" :key="key" :class="[key]"
       :style="{width, 'vertical-align': 'unset'}">
         <slot  :name="key" :item="{...item, index}" :index="index"></slot>
       </td>
@@ -20,10 +20,10 @@
       <tr class="footer">
       <td v-for="(name, key) in fields" :key="key" :class="key">
         <slot  :name="'footer_' + key"/>
-      </td>                
+      </td>
       </tr>
     </tbody>
-    </table> 
+    </table>
   </div>
 </template>
 
@@ -32,11 +32,11 @@ export default {
   props: ['fields', 'items'],
   data () {
     return {
-      active: false,
+      active: false
     }
   },
   methods: {
-    emit(name, data) {
+    emit (name, data) {
       this.active = false
       this.$emit(name, data)
     }

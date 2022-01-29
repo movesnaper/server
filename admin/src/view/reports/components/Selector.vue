@@ -23,28 +23,28 @@ export default {
   name: 'Selector',
   props: ['printMode'],
   computed: {
-    attrs() {
+    attrs () {
       const { attrs } = this.$attrs.node || {}
       return attrs || this.$attrs
     },
-    key() {
+    key () {
       return this.attrs.key
     },
-    query() {
+    query () {
       return this.$route.query || {}
     },
-     value() {
+    value () {
       return this.$attrs.value || this.query[this.key] || null
-    },   
-    printValue() {
+    },
+    printValue () {
       const { options } = this.attrs
-      const { value } = options.find((v) => v.key == this.query[this.key]) || {}
+      const { value } = options.find((v) => v.key === this.query[this.key]) || {}
       return value
     }
   },
   methods: {
-    setValue(key, value) {
-      const query = {...this.query, [key]: value !== null ? value : undefined }
+    setValue (key, value) {
+      const query = { ...this.query, [key]: value !== null ? value : undefined }
       this.$router.push({ query })
     }
   }

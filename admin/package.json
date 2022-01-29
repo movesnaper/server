@@ -5,9 +5,10 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint --fix"
   },
   "dependencies": {
+    "@babel/parser": "^7.7.5",
     "@babel/polyfill": "^7.12.1",
     "axios": "^0.18.0",
     "bootstrap-vue": "^2.21.2",

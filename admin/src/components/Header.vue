@@ -1,49 +1,82 @@
 <template>
   <b-navbar type="dark" variant="info" class="px-5" fixed="top">
-      <b-navbar-brand @click="reload" style="cursor: pointer">PShop</b-navbar-brand>
+      <b-navbar-brand style="cursor: pointer" to="/">PShop</b-navbar-brand>
     <b-navbar-nav >
-      <b-nav-item to="/" :active="$route.path === '/'">Главная</b-nav-item>
-      <b-nav-item v-for="({ key, value }) in menu" :key="key" active-class="active"
-       :to="`/${key}`">{{ value}}</b-nav-item>
+      <component v-for="({ key, value, children }) in schema" :key="key"
+        :is="!children ? 'b-nav-item' : 'b-nav-item-dropdown'"
+        right
+        :text="value"
+        active-class="active"
+        :to="`/${key}`">
+        <span v-if="!children">{{ value}}</span>
+        <template v-else>
+          <b-dropdown-item v-for="({key: sub, value}) in children" :key="sub" 
+          :to="`/${key}/${sub}`"
+          >{{ value }}</b-dropdown-item>
+        </template>
+       </component>
     </b-navbar-nav>
     <b-navbar-nav  class="ml-auto">
       <b-nav-item-dropdown v-if="user" :text="user" right>
-      <b-link class="dropdown-item" :disabled="loading" @click="onLogout">
+      <b-link class="dropdown-item" :disabled="loading" @click="logout">
         <b-spinner v-if="loading" class="absolute-center"/>
-        {{ $t('auth.logout') }}
+        Выйти
       </b-link>
       </b-nav-item-dropdown>
-      <b-nav-item v-else to="/login" exact exact-active-class="active">{{ $t('auth.login') }}</b-nav-item>
     </b-navbar-nav>
   </b-navbar>
-
 </template>
 
 <script>
-import {mapGetters, mapActions} from 'vuex'
+const { db } = require('@/db')
 
 export default {
   data: () => ({
     loading: false,
-    menu: [
-      { key: 'company', value: 'Компания'},
-      { key: 'lombard', value: 'Ломбард'},
-      { key: 'users', value: 'Сотрудниики'},
-      { key: 'report', value: 'Отчёты'},
-      { key: 'program', value: 'Программа'},
-    ]
+    user: '',
+    schema: null
   }),
-  computed: {
-    ...mapGetters(['user'])
+  watch: {
+    $route: {
+      handler () {
+        if (!this.schema) this.init()
+      },
+      immediate: true
+    }
   },
+
   methods: {
-    ...mapActions(['logout']),
+    async init() {
+      this.schema = await db('/company').get('/schema', { params: { key: 'menu' } })
+      this.user = localStorage.getItem('login')
+      const routes = this.schema && this.schema.map((v) => {
+        return {
+          name: v.key,
+          path: `/${v.key}/:id?`, 
+          component: () => import('@/view')
+        }
+      })
+      if(routes) this.$router.addRoutes(routes)
+    },
+
+    async update () {
+      try {
+        this.schema = await db('/company').get('/schema', { params: { key: 'menu' } })
+        this.user = localStorage.getItem('login')
+      } catch (e) {
+        this.$alert(e)
+      }
+    },
+
+    async logout () {
+      this.loading = true
+      await db('/auth').post('/logout')
+      localStorage.removeItem('login')
+      this.reload()
+    },
+
     reload() {
       window.location.reload()
-    },
-    onLogout() {
-      this.loading = true
-      this.logout()
     }
   }
 }

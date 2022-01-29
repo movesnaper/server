@@ -1,6 +1,6 @@
 <template>
   <b-tabs small card :class="['report-tabs']"
-  :value="attrs.values.findIndex((v) => v.key === query.tab)" 
+  :value="attrs.values.findIndex((v) => v.key === query.tab)"
   @input="setValue">
     <b-tab v-for="({ key, title }) in attrs.values" :key="key" :title="title">
       <skeleton v-if="loading"/>
@@ -24,40 +24,38 @@ export default {
   }),
   watch: {
     '$route.query': {
-      handler(v) {
-      const {path} = this.$route
-      const value = JSON.parse(localStorage.getItem('report') || '{}')
-      localStorage.setItem('report', JSON.stringify({ ...value, [path]: v}))
-      this.refresh()
+      handler (v) {
+        const value = JSON.parse(localStorage.getItem('reports') || '{}')
+        localStorage.setItem('reports', JSON.stringify({ ...value, [this.$attrs.url]: v }))
+        this.refresh()
       },
       immediate: true
     }
   },
 
   computed: {
-    attrs() {
+    attrs () {
       return this.node.attrs || {}
     },
-    query() {
+    query () {
       return this.$route.query
     }
   },
   methods: {
-    async refresh() {
+    async refresh () {
       const { tab: key, period } = this.$route.query
-      if(!key) return
       try {
         this.loading = true
-        this.values = await db(this.$route.path).get(`/${key}`, { params: { period } })
-      } catch(e) {
+        this.values = await db(this.$attrs.url).get(`/${key}`, { params: { period } })
+      } catch (e) {
         console.error(e)
       } finally {
         this.loading = false
       }
     },
-    setValue(index) {
-      const {key: tab } = this.attrs.values[index] || {}
-      const query = {...this.query, tab }
+    setValue (index) {
+      const { key: tab } = this.attrs.values[index] || {}
+      const query = { ...this.query, tab }
       this.$router.push({ query })
     }
   }

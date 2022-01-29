@@ -18,26 +18,26 @@ export default {
   name: 'DatePicker',
   props: ['printMode'],
   computed: {
-    attrs() {
+    attrs () {
       const { attrs } = this.$attrs.node || {}
       return attrs || {}
     },
-    key() {
+    key () {
       return this.attrs.key
     },
-    query() {
+    query () {
       return this.$route.query || {}
     },
-    value() {
+    value () {
       return this.$attrs.value || this.query[this.key]
     },
-    printValue() {
+    printValue () {
       return moment(this.value).format('DD.MM.YYYY')
     }
   },
   methods: {
-    setValue(key, value) {
-      const query = {...this.query, [key]: value }
+    setValue (key, value) {
+      const query = { ...this.query, [key]: value }
       this.$router.push({ query })
     }
   }

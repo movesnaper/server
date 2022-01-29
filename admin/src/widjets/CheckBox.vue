@@ -10,12 +10,12 @@ export default {
   props: ['value', 'placeholder'],
   computed: {
     model: {
-      get() {
+      get () {
         return this.value
       },
-      set(value) {
+      set (value) {
         const target = { value }
-        this.$emit('input', {target})
+        this.$emit('input', { target })
       }
     }
   }

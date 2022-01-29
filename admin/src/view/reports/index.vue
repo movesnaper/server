@@ -1,75 +1,67 @@
 <template>
-  <div v-if="!loading" class="row py-5 ">
-    <div class="col-2 reports accordion">
-      <b-card no-body v-for="({ text, children, key }, index) in menu" :key="key">
-        <b-card-header v-b-toggle="key">
-          <b-link v-if="!children"
-          style="padding: .3rem 1rem;"
-          :to="`/${key}`"
-          router-tag="div"
-          :active="isActive(`/${key}`)">
-            {{ text }}
-          </b-link>    
-          <span v-else>{{ text }}</span>
-        </b-card-header>
-        <b-collapse :visible="isActive(key) || index === 0" :id="key" accordion="reports">
-          <b-card-body v-if="children">
-            <b-nav  vertical class="px-0">
-              <b-nav-item v-for="({ text, key: url }) in children" :key="url"
-              :visible="isActive(`/${url}/${key}`)"
-              :to="`/${url}`">
-                {{ text }}
-              </b-nav-item>
-            </b-nav>
-          </b-card-body>
-        </b-collapse>
+  <div class="m-5">
+    <b-card-group v-if="!loading" deck >
+      <b-card v-for="({ key, value}, i) in menu" :key="i">
+        <b-card-body @click="() => $router.push(`/reports/${key}`)">
+          <!-- <b-card-title>{{ key }}</b-card-title> -->
+          <b-card-text>{{ value }}</b-card-text>
+        </b-card-body>
       </b-card>
-    </div>
-    <div class="col border">
-      <report-view />
+    </b-card-group>
+    <div v-else>
+      <b-skeleton-table
+      :rows="5"
+      :columns="4"
+      :table-props="{ bordered: true, striped: true }"/>
     </div>
   </div>
-  <preloader v-else/>
 </template>
 
 <script>
 import { db } from '@/db'
-import Node from './Node.vue'
-import ReportView from './Report.vue'
-import Preloader from './components/Skeleton.vue'
 
 export default {
-  components: { Node, Preloader, ReportView },
-  name: 'Report',
+  components: { 
+  },
   data: () => ({
     menu: [],
-    loading: false,
+    loading: false
   }),
-
-  async created() {
+  async created () {
     try {
       this.loading = true
-      this.menu = await db(`/report`).get(`/`)
+      const params = { key: 'menu' }
+      this.menu = await db(`/company/reports`).get(`/schema`, { params })
     } catch (e) {
-      console.error(e);
+      this.$alert(e)
     } finally {
       this.loading = false
     }
   },
   methods: {
-    isActive(url) {
-      return this.$route.path.includes(url)
-    }
+
   }
 }
 </script>
 
 <style scoped>
-  .border {
-    border: 1px solid rgb(187, 185, 185);
+  .card .card-body {
+    padding: 10px;
   }
-  .reports >>> .router-link-active {
-    background-color: rgb(209, 212, 212);
+  .card >>> .dropdown-toggle {
+    padding: 0;
   }
-
+  .card .card__menu {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .card >>> .card-body {
+    cursor: pointer;
+  }
+  .card >>> .card-body:hover {
+    background-color: #00000008;
+  }
+  .card-deck .card {
+    max-width: calc(25% - 30px);
+  }
 </style>

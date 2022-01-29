@@ -1,11 +1,19 @@
 {
 	"folders": [
 		{
+			"name": "nopriz-dev",
+			"path": "..\\..\\nopriz-dev"
+		},
+		{
 			"path": ".."
+		},
+		{
+			"path": "..\\..\\test"
 		}
 	],
 	"settings": {
 		"editor.fontLigatures": null,
-		"window.zoomLevel": 1
+		"window.zoomLevel": 1,
+		"liveServer.settings.multiRootWorkspaceName": "nopriz"
 	}
 }

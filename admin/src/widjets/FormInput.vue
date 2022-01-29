@@ -26,24 +26,24 @@ export default {
     err: ''
   }),
   watch: {
-    value(v) {
-      if(!v) this.clear()
+    value (v) {
+      if (!v) this.clear()
     }
   },
   methods: {
-    async onChange(v) {
-      if(!v) return
+    async onChange (v) {
+      if (!v) return
       this.loading = true
       try {
         await this.action(v)
         this.clear()
-      } catch({ message }) {
+      } catch ({ message }) {
         this.err = message
       } finally {
         this.loading = false
-      }      
+      }
     },
-    clear() {
+    clear () {
       this.value = ''
       this.err = ''
     }

@@ -12,8 +12,8 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" @click="close">Отмена</button>
-    <button type="button" 
-    :class="['btn btn-primary', 'btn-danger', 'relative']" 
+    <button type="button"
+    :class="['btn btn-primary', 'btn-danger', 'relative']"
     @click="onClick" :disabled="disabled">
     <b-spinner v-if="loading" class="absolute-center"/>
     {{ title || 'Удалить' }}
@@ -26,7 +26,7 @@
 
 export default {
   props: ['validate', 'action', 'value'],
-  data() {
+  data () {
     return {
       data: {},
       loading: false
@@ -34,36 +34,36 @@ export default {
   },
   computed: {
     confirm: {
-      get({ data }) {
-        return {...data}.confirm
+      get ({ data }) {
+        return { ...data }.confirm
       },
-      set(confirm) {
-        this.data = {...this.data, confirm}
+      set (confirm) {
+        this.data = { ...this.data, confirm }
       }
     },
-    html({ value }) {
-      return {...value}.html
+    html ({ value }) {
+      return { ...value }.html
     },
-    header({value }) {
+    header ({ value }) {
       return value.header || 'Подтвердите удаление'
     },
-    title({value }) {
+    title ({ value }) {
       return value.title
     },
-    isValid({ confirm = '' }) {
+    isValid ({ confirm = '' }) {
       return this.validate(confirm.trim())
     },
-    disabled({ isValid }) {              
+    disabled ({ isValid }) {
       const noValid = !isValid
       return [this.loading, noValid].some(v => v)
     }
   },
   methods: {
-    onClick() {
+    onClick () {
       this.loading = true
       this.action(this)
     },
-    t(name) {
+    t (name) {
       return this.$t(`btn.${name}`)
     },
     save () {

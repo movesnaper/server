@@ -1,0 +1,84 @@
+<template>
+  <b-modal ref="modal" hide-footer title="">
+    <div class="row m-0">
+      <b-input class="col mr-3" value="test"/>
+      <b-input class="col" value="test" type="date"/>
+    </div>
+    <div v-if="!loading">
+      <div v-for="(field, i) in fields" :key="i">
+        <div :class="['row', field.class]" >
+          <check-box
+            class="m-2 col form-control" 
+            :placeholder="field.key"
+            :value="value[field.key]" 
+            @input="({ target }) => setValue(target, field.key)"/>
+          <li class="col-8" style="line-height: 50px;">
+            {{field.info}}
+          </li>
+        </div>
+      </div>
+    </div>
+    <div v-else>
+      <b-skeleton-table
+      :rows="5"
+      :columns="4"
+      :table-props="{ bordered: true, striped: true }"
+      ></b-skeleton-table>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-primary"
+        :disabled="!value.name"
+        @click="copy(value)">Сохранить</button>
+    </div>
+  </b-modal>
+</template>
+
+<script>
+import { db } from '@/db'
+import { FieldsInputs } from '@/widjets'
+
+export default {
+  components: {
+    FieldsInputs,
+    CheckBox: () => import('@/widjets/CheckBox.vue')
+  },
+  data: () => ({
+    value: {},
+    fields: [],
+    loading: false
+  }),
+
+  methods: {
+    show (name) {
+      this.value = { name }
+      this.$refs['modal'].show()
+      this.refresh()
+    },
+    async copy (value) {
+      // await post('/replicate', value)
+      this.$refs['modal'].hide()
+      // this.updateDbs(true)
+    },
+    async refresh () {
+      this.loading = true
+      try {
+        this.fields = await db('/company/dbs').get('/info')
+      } catch (e) {
+        console.error(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    setValue ({ value }, key) {
+      this.value = { ...this.value, [key]: value }
+    }
+  }
+}
+</script>
+
+<style scoped>
+  .flex-center {
+    display: flex;
+    align-items: center;
+  }
+</style>
