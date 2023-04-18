@@ -29,6 +29,8 @@ const center = 'text-align: center;'
 
 
 const get = async (req, res) => {
+  const { period } = req.query
+  if (!period) return res.status(500).json({ message: 'no-period specified'})
   const { start = [], end = [] } = await require('./issued')(req, res)
   try {
     const gitItems = (key, filter = () => true) => {

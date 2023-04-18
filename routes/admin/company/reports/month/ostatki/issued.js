@@ -3,11 +3,10 @@ const byNumber = ({ number: a = 0 }, { number: b = 0 } ) => Number(a) - Number(b
 
 module.exports = async (req, res) => {
   const payed = await require('./payed')(req, res)
-  const { end } = require('../period')(req, res)
   try {
     const selector = values({ 
       lombard: req.query.lombard || { $exists: true }, 
-      end
+      end: req.query.date
     })
     const { docs } = await req.db.find({
       selector: { 

@@ -5,9 +5,11 @@ const ct = (...acc) => (v) => v.ct === '301' && !acc.length || acc.includes(v.dt
 const accounts = (key) => (v) => !['377', '703', '704'].includes(v[key])
 
 const get = async (req, res) => {
+  try {
+  const { period, year } = req.query
+  if (!period || !year) throw new Error('no-period specified')
   const startOk = await require('./ok')(req, res)
   const { start, end } = require('../period')(req, res)
-  try {
     const { docs } = await find(req.db)({ 
       fields: ['date', 'values'],
       selector: { start, end, lombard: req.query.lombard }
@@ -52,7 +54,7 @@ const get = async (req, res) => {
     }
   } catch(e) {
     res.status(500).json({ values: e.message })
-    console.log(e);
+    // console.log(e);
   }
 }
 

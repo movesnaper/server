@@ -1,14 +1,9 @@
 module.exports = ({title, headers}) => async (req, res) => {
-  const { periods, years, lombards, header } = await require(`./header`)(req, res)
+  const { lombards, header } = await require(`../header`)(req, res)
   const schema = [
     { row: 'my-3', children: [
       { col: 'col', style: 'max-width: fit-content;', is: 'strong', value: title },
-      { col: 'col', is: 'period', attrs: {
-        items: [
-          { is: 'selector', attrs: { key: 'period', options: periods }},
-          { is: 'selector', attrs: { key: 'year', options: years }},
-        ]
-      } },
+      { col: 'col-2', is: 'date-picker', attrs: { key: 'date' }},
       { col: 'col' },
       { col: 'col-2', is: 'selector', attrs: { key: 'lombard', options: lombards } }
     ] },

@@ -1,7 +1,8 @@
 
 module.exports = async (req, res) => {
-  const { periods } = require('./period')(req, res)
+  const { periods, years } = require('./period')(req, res)
   return  {
+    years,
     periods,
     header: [
       { children: [

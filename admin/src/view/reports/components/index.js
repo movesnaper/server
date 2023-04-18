@@ -7,6 +7,7 @@ import ReportTable from './Table.vue'
 import AccountValue from './AccountValue'
 import ReestrValue from './ReestrValue'
 import DatePicker from './DatePicker'
+import Period from './Period'
 
 export default {
   Selector,
@@ -17,5 +18,6 @@ export default {
   ReportTable,
   'account-value': AccountValue,
   'reestr-value': ReestrValue,
-  DatePicker
+  DatePicker,
+  Period,
 }

@@ -13,15 +13,21 @@ const periods = [
   { key: 11, value: 'Ноябрь'},
   { key: 12, value: 'Декабрь'}
 ]
+const years = [
+  { key: 2021, value: '2021 г.'},
+  { key: 2022, value: '2022 г.'},
+]
+
 module.exports = (req, res) => {
-  const { period = 1 } = req.query
+  const { period, year } = req.query
   const { value } = periods.find((v) => v.key == period) || {}
   try {
-    const date = req.date = moment(req.company.settings.date)
-    const month = period && date.clone().month(period - 1)
+    // const date = req.date = moment(year)
+    const month = period && moment(year).clone().month(period - 1)
     return {
       value,
       periods,
+      years,
       start: month && month.clone().startOf('month'),
       end: month && month.clone().endOf('month'),
     }

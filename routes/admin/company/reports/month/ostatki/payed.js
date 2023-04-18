@@ -2,11 +2,10 @@ const { values, limit } = require('../../selectors')
 
 
 module.exports = async (req, res) => {
-  const { end } = require('../period')(req, res)
   try {
     const selector = values({ 
       lombard: req.query.lombard || { $exists: true }, 
-      end
+      end: req.query.date
     })
 
     const { docs } = await req.db.find({

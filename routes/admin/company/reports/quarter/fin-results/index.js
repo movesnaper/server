@@ -1,20 +1,13 @@
 const { title, headers } = require('./header')
-const values = (req, res) => require(`./schema`)({ title, headers})(req, res)
 
 const get = async (req, res) => {
-  const {schema} = await values(req, res)
+  const {schema} = await require(`./schema`)({ title, headers})(req, res)
   try {
-    return [
-      { row: 'my-3', children: [ 
-        {}, 
-        // { col: 'col-1', is: 'print' } 
-      ] },      
-      ...schema
-    ]
+    return schema
   } catch(e){
     console.log(e);
     res.status(500).json({ kassa: e.message })
   }
 };
 
-module.exports = { get, values }
+module.exports = { get }

@@ -9,11 +9,14 @@
 		},
 		{
 			"path": "..\\..\\test"
+		},
+		{
+			"path": "..\\..\\Новый каталог"
 		}
 	],
 	"settings": {
 		"editor.fontLigatures": null,
 		"window.zoomLevel": 1,
-		"liveServer.settings.multiRootWorkspaceName": "nopriz"
+		"liveServer.settings.multiRootWorkspaceName": "test"
 	}
 }

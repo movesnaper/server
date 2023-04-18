@@ -2,7 +2,7 @@
   <div :class="[node.col || 'col']" :style="node.style">
     <component :is="node.is || 'span'"
     :style="node.style"
-    v-on="$parent.$listeners"
+    v-on="$listeners"
     v-bind="{...$parent.$attrs, ...$attrs, node }">
       {{ value }}
     </component>
