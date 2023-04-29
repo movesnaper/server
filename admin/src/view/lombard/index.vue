@@ -73,8 +73,7 @@ export default {
   }),
   async created () {
     try {
-      const params = { key: 'table-fields' }
-      this.schema = await db('/company').get('/lombards/schema', { params })
+      this.schema = await db('/schema').get('/lombards')
     } catch (e) {
       this.$alert(e)
     }
@@ -84,8 +83,8 @@ export default {
     async update () {
       try {
         this.loading = true
-        this.lombards = await db('/company').get('/lombards')
-        this.programs = await db('/company').get('/programs')
+        this.lombards = await db('/lombards').get()
+        this.programs = await db('/programs').get()
       } catch (e) {
         this.$alert(e)
       } finally {

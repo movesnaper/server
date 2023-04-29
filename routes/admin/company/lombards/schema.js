@@ -1,4 +1,5 @@
-
+const { nano } = require('../../../functions')
+const db = nano.use('lombards')
   const get =  async ({ db, query }, res) => {
     try {
       const { rows } = await db.query(`company/schema`, {key: 'lombard', include_docs: true})

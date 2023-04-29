@@ -38,7 +38,7 @@ export const getToken = (name) => {
 export const db = (name = '') => {
   const baseUrl = '/api' + name
   return {
-    get: (url, params) => query('get', `${baseUrl}${url}`, params),
+    get: (url = '', params) => query('get', `${baseUrl}${url}`, params),
     post: (url, params) => query('post', `${baseUrl}${url}`, params),
     remove: (url, params) => query('delete', `${baseUrl}${url}`, params)
   }

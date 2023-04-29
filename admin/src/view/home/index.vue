@@ -33,8 +33,8 @@
 import { db } from '@/db'
 
 export default {
-  components: { 
-    ModalLogin: () => import('@/view/auth'),
+  components: {
+    ModalLogin: () => import('@/view/auth')
     // ModalCopy: () => import('../../components/ModalCopy.vue')
   },
   data: () => ({
@@ -55,7 +55,7 @@ export default {
     async login (name) {
       await this.$refs['modal-login'].show(name)
       localStorage.setItem('login', name)
-    },
+    }
 
     // async copy (name) {
     //   await this.login(name)

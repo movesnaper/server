@@ -1,14 +1,12 @@
-const { COUCHDB, auth } = require('../../../functions')
-const axios = require('axios')
-const requestIp = require('request-ip');
+const { nano } = require('../../../functions')
+const users = nano.use('users')
+const admin = ({doc}) => doc.roles.includes('admin')
+const active = ({doc}) => !!doc.active
 
 const get = async (req, res) => {
   try {
-    const reg = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/;
-    const [clientIp] = requestIp.getClientIp(req).match(reg)
-    const { data } = await axios.get(`${COUCHDB}/_users/_all_docs`, { auth })
-    const rows = data.rows.map(v => v.key.split(':')[1]).filter(v => v)
-    return rows.map((name) => ({ name, description: req.clientIp }))    
+    const { rows } = await users.list({include_docs: true})
+    return rows.filter(active).filter(admin).map(v => v.doc)   
   } catch(e) {
     console.error(e);
     res.status(500).json(e)

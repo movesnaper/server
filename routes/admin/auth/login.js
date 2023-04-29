@@ -1,15 +1,12 @@
-const { auth, newPouchDb } = require('../../functions')
+const { nano } = require('../../functions')
 const bcrypt = require('bcrypt')
+const db = nano.use('users')
 
- const post = async (req, res) => {
-  const { company = 'klients', user } = req.body
-  const db = newPouchDb(company)
+ const post = async ({ body }, res) => {
   try {
-    const [{ password } = {} ] = (await db.find({ selector: { name: user.name }, fields: ['password']})).docs
-    if (!password) throw { name: 'user_not_found'}
-    const match = await bcrypt.compare(user.password, password)
-    if (!match) throw { password: 'incorect_password'}
-    return db.logIn(company, auth.password)
+    const {password} = await db.get(body.user)
+    const match = await bcrypt.compare(password, body.password)
+    // if (!match) throw { password: 'incorect_password'}
   } catch(err) {
     res.status(404).json(err)
   }

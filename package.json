@@ -34,7 +34,7 @@
     "moment-range": "^4.0.2",
     "mongoose": "^5.4.10",
     "mongoose-transactions": "^1.1.1",
-    "nano": "^8.1.0",
+    "nano": "^8.2.3",
     "nanoid": "^3.1.30",
     "nodemailer": "^5.1.1",
     "passport": "^0.4.0",

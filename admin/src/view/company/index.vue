@@ -2,8 +2,14 @@
   <div class="m-5">
     <b-card v-if="!loading" no-body class="company">
       <b-tabs v-model="active" small card class="company-tabs">
-        <b-tab v-for="({ key, value, is = 'company'}, i) in schema" :key="i" :title="value">
-          <component :is="is" v-model="company" :field-key="key" @change="saveSync"/>
+        <b-tab v-for="(tab, index) in schema.tabs || []" :key="index" 
+        :title="getTitle(tab)">
+          <fields-inputs
+          v-bind="tab"
+          :fieldKey="tab.key"
+          v-model="company[tab.key]" 
+          :schema="schema[tab.key]"
+          @change="() => saveSync(tab.key)"/>
         </b-tab>
       </b-tabs>
     </b-card>
@@ -18,21 +24,21 @@
 </template>
 
 <script>
-
 import { db } from '@/db'
 import { debounce } from 'vue-debounce'
 
 export default {
-  components: {
-    Company: () => import('./Company.vue'),
-    Bank: () => import('./bank')
+  name: 'Company',
+  components: { 
+    FieldsInputs: () => import('@/widjets/FieldsInputs.vue'), 
+    FieldsList: () => import('@/widjets/FieldsList.vue'),  
   },
   data: (vm) => ({
     active: 0,
     loading: false,
     company: {},
-    schema: [],
-    saveSync: debounce(vm.save, 3000)
+    schema: {},
+    saveSync: debounce(vm.save, 300)
   }),
   watch: {
     '$route.params': {
@@ -44,32 +50,36 @@ export default {
   },
   async created () {
     try {
-      const params = { key: 'tabs' }
-      this.schema = await db('/company').get('/schema', { params })
+      this.schema = await db('/schema').get('/company')
     } catch (e) {
       this.$alert(e)
     }
   },
   methods: {
+
+    getTitle({ value, key}) {
+      return value || key
+    },
     async refresh () {
       try {
         this.loading = true
-        this.company = await db('/company').get('/values')
+        this.company = await db('/company').get()
       } catch (e) {
         this.$alert(e)
       } finally {
         this.loading = false
       }
     },
-
-    async save() {
+    async save(key) {
+      console.log(this.company[key]);
       try {
-        const { id } = await db('/company').post('/values', this.company)
-        this.company = {...this.company, _id: id }
+        const {rev} = await db('/company').post(`/${key}`, this.company[key])
+        this.company[key] = {...this.company[key], _rev: rev}
       } catch (e) {
         this.$alert(e)
-      }
+      }      
     }
+
   }
 
 }
@@ -78,5 +88,8 @@ export default {
 <style scoped>
   .company-tabs {
     border: 1px solid #00000029;
+  }
+  .tabs >>> .card-body {
+    padding-top: 0;
   }
 </style>
