@@ -1,29 +1,31 @@
 <template>
   <div class="row" style="font-size: 16px">
-    <div v-for="(key) in schema" :key="key"
-      :class="['flex-center', key === 'index' ? 'col-1' : 'col-2']">
-        {{ getValue(key) }}
+    <div v-for="(v) in schema" :key="v.key"
+      :class="['flex-center', ...v.class]">
+        {{ v.key === 'index' ? index + 1 : value[v.key] }}
     </div>
-    <div class="col" style="text-align: right">
-      <b-dropdown variant="outline" class="dropdown px-0">
+    <div class="col-1 px-0 list-item">
+      <b-dropdown v-if="active" no-caret variant="outline">
         <template #button-content>
-          <b-icon icon="three-dots-vertical" variant="outline"/>
+          <b-icon icon="three-dots-vertical"></b-icon>
         </template>
-        <b-dropdown-item-button variant="danger"
-        @click.stop="$emit('remove', {index, name: value.account})">
-          <b-icon icon="trash-fill" aria-hidden="true"/> Delete
-        </b-dropdown-item-button>        
+        <b-dropdown-item-button @click="$emit('remove', index)">Удалить</b-dropdown-item-button>
       </b-dropdown>
-        <!-- <b-button variant="outline" :disabled="loading">
-            <b-icon icon="trash" @click.stop="$emit('remove', {index, name: value.account})" variant="danger"/>
-        </b-button> -->
     </div>
   </div>
 </template>
 
 <script>
 export default {
-    props: ['index', 'value', 'schema'],
+    name: 'HeaderList',
+    props: ['index', 'value', 'header', 'active'],
+    computed: {
+      schema() {
+        const keyValue = (v) => v.key ? v : ({ key: v })
+        const className = (v) => ({...v, class: v.class || ['col']})
+        return this.header && this.header.map(keyValue).map(className)
+      }
+    },
     methods: {
         getValue(key) {
             return key === 'index' ? this.index + 1 : this.value[key]
@@ -36,5 +38,9 @@ export default {
 <style scoped>
   .dropdown >>> .dropdown-toggle::after {
     display: none;
+  }
+  .list-item {
+    height: 45px;
+    text-align: right;
   }
 </style>

@@ -4,40 +4,38 @@
   :loading="loading"
   :value="value"
   @change="saveSync">
-    <template #test>
-      <h1>test</h1>
-    </template>
   </fields-tabs>
 </template>
 
 <script>
+
 import { db } from '@/db'
 import { debounce } from 'vue-debounce'
 
 export default {
-  name: 'Company',
+  name: 'Lombard',
   components: { 
     FieldsTabs: () => import('@/widjets/FieldsTabs.vue')
   },
-  data: (vm) => ({
-    loading: false,
-    value: {},
-    schema: {},
-    saveSync: debounce(vm.save, 300)
-  }),
+  data () {
+    return {
+      loading: false,
+      value: {},
+      schema: [],
+      saveSync: debounce(this.save, 300)
+    }
+  },
   watch: {
     '$route.params': {
-      async handler () {
-        this.loading = true
-        await this.refresh()
-        this.loading = false
+      handler () {
+        this.refresh()
       },
       immediate: true
     }
   },
   async created () {
     try {
-      this.schema = await db('/schema').get('/company')
+      this.schema = await db('/schema').get('/lombards')
     } catch (e) {
       this.$alert(e)
     }
@@ -45,26 +43,31 @@ export default {
   methods: {
     async refresh () {
       try {
-        this.value = await db('/company').get()
+        this.loading = true
+        this.value = await db('/lombards').get(`/${this.$route.params.id}`)
+      } catch (e) {
+        this.$alert(e)
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async save () {
+      console.log(this.value);
+      try {
+        const { rev } = await db('/lombards').post(`/${this.$route.params.id}`, this.value)
+        this.value = {...this.value, _rev: rev }
       } catch (e) {
         this.$alert(e)
       }
-    },
-    async save(key) {
-      console.log(key, this.value[key]);
-      try {
-        const {rev} = await db('/company').post(`/${key}`, this.value[key])
-        this.value[key] = {...this.value[key], _rev: rev}
-      } catch (e) {
-        this.$alert(e)
-      }      
     }
-
   }
 
 }
 </script>
 
 <style scoped>
-
+  .component-tabs {
+    border: 1px solid #00000029;
+  }
 </style>

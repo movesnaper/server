@@ -2,7 +2,7 @@
   <div>
     <div class="row m-0 flex-center">
       <div class="col">
-        <b-button variant="link" :to="`lombard/${item._id}`">{{ item.name }}</b-button>
+        <b-button variant="link" :to="`lombards/${item._id}`">{{ item.name }}</b-button>
       </div>
       <b-button variant="outline" v-for="(key) in types" :key="key">
         <b-badge :variant="variants[key]">
@@ -17,7 +17,8 @@
     </div>
     <b-collapse :id="`info-${item._id}`" v-model="visible[index]">
       <warnings-list :warnings="warnings">
-        <template #remove-btn="{selected}">
+        <h1>test</h1>
+        <!-- <template #remove-btn="{selected}">
           <b-button v-if="selected.some((v) => v)"
             class="relative danger py-0"
             variant="link"
@@ -26,7 +27,7 @@
             Удалить
             <b-spinner v-if="loading" class="absolute-center"/>
           </b-button>
-        </template>
+        </template> -->
       </warnings-list>
     </b-collapse>
   </div>
@@ -43,7 +44,12 @@ export default {
   },
   props: ['item', 'index'],
   data: () => ({
-    warnings: [],
+    warnings: [
+      { _id: 'virus', name: 'virus', deleted: true, date: '2222', values: [
+        {_id: '111', date: '4444', number: 4, account: 'dt-377', summ: '225.22'}
+      ]},
+      { _id: 'makeevka', name: 'makeevka', warning: true, date: '2222', values: []}
+    ],
     loading: false,
     visible: {}
   }),
@@ -59,7 +65,7 @@ export default {
     async refresh () {
       try {
         const params = { startkey: [this.item._id] }
-        this.warnings = await db('/company').get('/warnings', { params })
+        // this.warnings = await db('/company').get('/warnings', { params })
       } catch (e) {
         this.$alert(e)
       } finally {

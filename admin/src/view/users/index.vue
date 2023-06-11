@@ -3,7 +3,7 @@
     <data-table v-if="!loading" class="users-table" :items="items" :fields="schema">
         <template #index="{index}">{{index + 1}}</template>
         <template #name="{item}">
-          <b-button variant="link" :to="`/user/${item.name}`">{{ item.name }}</b-button>
+          <b-button variant="link" :to="`/users/${item._id}`">{{ item._id }}</b-button>
         </template>
         <template #roles="{item, index}">
           <b-input type="text"
@@ -57,23 +57,24 @@ export default {
   },
   data: () => ({
     items: [],
-    schema: [],
+    schema: {
+      index: { name: 'index'},
+      name: { name: 'name'},
+      roles: {name: 'roles'},
+      reset: {name: 'reset'},
+      active: { name: 'active'},
+      remove: {name: 'remove'}
+    },
     loading: false
   }),
   async created () {
-    try {
-      const params = { key: 'table-fields' }
-      this.schema = await db('/company').get('/users/schema', { params })
-    } catch (e) {
-      this.$alert(e)
-    }
     this.update()
   },
   methods: {
     async update () {
       try {
         this.loading = true
-        this.items = await db('/company').get('/users')
+        this.items = await db('/users').get()
       } catch (e) {
         this.$alert(e)
       } finally {
@@ -83,7 +84,7 @@ export default {
 
     async save (value, index) {
       try {
-        const { id } = await db('/company').post('/users', value)
+        const { id } = await db('/users').post('', value)
         this.items.splice(index, 1, { ...value, _id: id })
       } catch (e) {
         this.$alert(e)
@@ -93,7 +94,7 @@ export default {
     async remove ({ _id, name }, index) {
       try {
         const dialog = await this.$confirm({ name })
-        await db('/company').remove('/users', { data: { _id } })
+        await db('/users').remove('', { data: { _id } })
         this.items.splice(index, 1)
         dialog.close()
       } catch (e) {

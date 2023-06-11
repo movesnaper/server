@@ -1,27 +1,27 @@
 <template>
   <div :class="['accordion', 'px-0']" role="tablist">
-    <b-card v-for="(item, index) in values" :key="index" no-body class="px-0">
-      <b-card-header class="py-0 pointer" role="tab" v-b-toggle="`program-${index}`">
+    <b-card v-for="(item, index) in value || []" :key="index" no-body class="px-0">
+      <b-card-header class="py-0 pointer" role="tab" v-b-toggle="`${fieldKey}-${index}`">
         <header-list
-        :schema="header"
+        :header="header"
         :index="index" 
-        :value="item"
-        @remove="remove"
-        :loading="loading"/>
+        :value="item || {}"
+        :active="visible[index]"
+        @remove="remove"/>
       </b-card-header>
-      <b-collapse v-model="visible[index]" accordion="accordion" role="tabpanel" :id="`program-${index}`" >
-        <b-card-body class="pt-0">
-          <fields-inputs
-          :schema="schema"
-          :value="item"
-          @input="(v) => setValue(index, v)"
-          @change="$emit('change')"/>
+      <b-collapse v-model="visible[index]" accordion="accordion" role="tabpanel" :id="`${fieldKey}-${index}`" >
+        <b-card-body>
+            <fields-inputs v-for="(field) in schema" :key="field.key"
+            :schema="[field]"
+            :value="item"
+            @input="(v) => setValue(item, v)"
+            :fieldKey="field.key"
+            @change="change"/>
         </b-card-body>
       </b-collapse>
     </b-card>
-    <b-button variant="outline" @click="add" class="relative" :disabled="loading">
+    <b-button variant="outline" @click="add" class="relative" >
       <b-icon icon="plus-circle" variant="success"/>
-      <b-spinner v-if="loading" class="absolute-center"/>
     </b-button>
   </div>
 </template>
@@ -29,52 +29,38 @@
 <script>
 
 export default {
-  name: 'FieldList',
+  name: 'FieldsList',
   components: {
     HeaderList: () => import('./HeaderList.vue'),
     FieldsInputs: () => import('./FieldsInputs.vue')
   },
-  props: ['value', 'fieldKey', 'schema', 'header', 'loading'],
+  props: ['value', 'schema', 'header', 'fieldKey'],
   data: () => ({
     visible: {}
   }),
-  computed: {
-    values() {
-      return (this.value || {})[this.fieldKey] || this.value 
-    }
-  },
-
   methods: {
-    setValue(index, value) {
-      this.values[index] = value
-      // this.values.splice(index, 1, value)
+    setValue(item, [key, value]) {
+      item[key] = value
     },
     change() {
       this.$emit('change')
     },
-    
     async add() {
-      this.values.push({})
+      const value = this.schema.reduce((cur, {key}) => ({...cur, [key]: ''}), {})
+      this.value.push(value)
       this.change()
     },
 
-    async remove ({index, name}) {
-      // const dialog = await this.$confirm({ name })
-      this.values.splice(index, 1)
+    async remove (index) {
+      this.value.splice(index, 1)
       this.change()
-      // dialog.close()
     }
   }
 }
 </script>
 
 <style scoped>
-  .simple >>>  .btn {
-    text-align: left;
-    border: 1px solid black;
-    box-shadow: none;
-  }
-  .simple >>>  .dropdown-menu {
+  .accordion {
     width: 100%;
   }
 </style>

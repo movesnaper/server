@@ -1,17 +1,19 @@
 <template>
-  <div>
-    <div v-for="(field) in schema" :key="field.key" >
-      <div class="form-group row m-0 mt-2">
-        <label class="col-sm-3 col-form-label" >{{ field && field.value || field.key }}</label>
-        <b-input
-          class="col"
-          v-bind="field"
-          rows="5"
-          :value="value[field.key]"
-          @input="(v) => setValue(field.key, v)"
-          @change="(v) => $emit('change', v)"/>
-      </div>
-    </div>
+  <div class="form-group row " >
+    <b-input-group class="col" v-for="({label, key}, index) in schema" :key="key">
+    <label v-if="label" class="col-3"
+    >{{ label }}</label>
+    <b-form-input
+      v-bind="schema[index]"
+      :fieldKey="key"
+      rows="5"
+      :value="getValue"
+      @input="(v) => setValue(key, v)"
+      @change="(v) => $emit('change', v)"/>
+      <template #append>
+        <slot name="append"></slot>
+      </template>
+    </b-input-group>
   </div>
 </template>
 
@@ -19,15 +21,22 @@
 
 export default {
   name: 'FieldInputs',
-  props: ['field', 'value', 'schema'],
+  props: ['value', 'schema', 'fieldKey'],
   components: {
-    FieldsList: () => import('./FieldsList.vue')
+    FieldsArray: () => import('./FieldsArray.vue'),
+    FieldsList: () => import('./FieldsList.vue'),
+    FieldsObject: () => import('./FieldsObject.vue')
+  },
+  computed: {
+    getValue() {
+      return this.value && this.value[this.fieldKey]
+    }
   },
   methods: {
     setValue(key, value) {
-      this.value[key] = value
-      this.$emit('input', this.value)
+      this.$emit('input', [key, value])
     }
+
   }
 }
 </script>

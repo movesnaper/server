@@ -41,7 +41,7 @@
 
 <script>
 // import { InputSearch } from '@/widjets'
-import { moment } from '@/functions'
+// import { moment } from '@/functions'
 import mixins from './mixins'
 
 export default {
@@ -55,9 +55,9 @@ export default {
   computed: {
     values () {
       return this.warnings.map((v) => {
-        const date = moment(v.date).format('L')
-        const { account, summ } = this.getAccount(v.values)
-        return { ...v, date, account, summ }
+        // const date = moment(v.date).format('L')
+        // const { account, summ } = this.getAccount(v.values)
+        return { ...v, account: 'test', summ: '12.25' }
       })
     },
     checked () {
@@ -72,10 +72,10 @@ export default {
     toggleAll (checked) {
       this.selected = checked ? this.warnings.map((v) => v._id) : []
     },
-    getAccount ([{ dt, ct, summ }]) {
-      // const acc = dt !== '301' ? `dt.${dt}` : `ct.${ct}`
-      return { account: this.$t(`accounts.dt${dt}-ct${ct}`), summ }
-    }
+    // getAccount ([{ dt, ct, summ }]) {
+    //   // const acc = dt !== '301' ? `dt.${dt}` : `ct.${ct}`
+    //   return { account: this.$t(`accounts.dt${dt}-ct${ct}`), summ }
+    // }
   }
 
 }

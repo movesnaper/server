@@ -9,6 +9,7 @@ router.use('/company', require('./company/index.js'))
 router.use('/schema', require('./schema/index.js'))
 router.use('/lombards', require('./lombards/index.js'))
 router.use('/programs', require('./programs/index.js'))
+router.use('/users', require('./users/index.js'))
 
 
 

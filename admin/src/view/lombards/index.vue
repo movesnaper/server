@@ -5,14 +5,14 @@
       <template #name="{item, index}">
         <warnings :item="item" :index="index"/>
       </template>
-      <template #program="{item, index}">
+      <!-- <template #program="{item, index}">
         <div class="px-2">
           <b-form-select
           :value="item.program"
           @input="(program) => save({...item, program}, index)"
           :options="programs.map((v) => v.version)"/>
         </div>
-      </template>
+      </template> -->
       <template #token="{item, index}" >
         <div class="row m-0 px-2">
           <b-input class="col mr-2" type="text" :disabled="!item.active" :value="item.token" readonly/>
@@ -66,14 +66,27 @@ export default {
     FormInput 
   },
   data: () => ({
-    lombards: [],
-    programs: [],
+    lombards: [
+      {_id: 'virus', name: 'virus', active: true, token: 'tets'},
+      {_id: 'makeevka', name: 'makeevka', active: false,  token: 'tets2'}
+    ],
+    // programs: [
+    //   { version: '123'},
+    //   { version: 'test'}
+    // ],
     loading: false,
-    schema: {}
+    schema: {
+      index: { name: 'index'},
+      name: { name: 'name'},
+      // program: { name: 'program'},
+      token: {name: 'token'},
+      active: { name: 'active'},
+      remove: {name: 'remove'}
+    }
   }),
   async created () {
     try {
-      this.schema = await db('/schema').get('/lombards')
+      // this.schema = await db('/schema').get('/lombards')
     } catch (e) {
       this.$alert(e)
     }
@@ -83,8 +96,8 @@ export default {
     async update () {
       try {
         this.loading = true
-        this.lombards = await db('/lombards').get()
-        this.programs = await db('/programs').get()
+        // this.lombards = await db('/lombards').get()
+        // this.programs = await db('/programs').get()
       } catch (e) {
         this.$alert(e)
       } finally {
