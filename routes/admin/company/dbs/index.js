@@ -1,6 +1,6 @@
 const { nano } = require('../../../functions')
 const users = nano.use('users')
-const admin = ({doc}) => doc.roles.includes('admin')
+const admin = ({doc}) => (doc.roles || []).includes('admin')
 const active = ({doc}) => !!doc.active
 
 const get = async (req, res) => {

@@ -1,5 +1,6 @@
 const nano = require('nano')(process.env.COUCHDB)
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 const { SECRET_OR_KEY } = process.env
 
 
@@ -9,9 +10,9 @@ const  verify = async (token) =>  {
   return value
 }
 
-const sign = v => jwt.sign(v, SECRET_OR_KEY)
+const sign = (v, populate = (v) => v) => jwt.sign(populate(v), SECRET_OR_KEY, { expiresIn: '100m' })
 
-const docs = (v) => v.doc
+const docs = (v, populate = (v) => v) => populate(v.doc)
 
 const reduce = ({ docs }) => docs.reduce((cur, v) => ({...cur, [v._id]: v }), {})
 
@@ -22,4 +23,4 @@ const keyValue = ((cur, { key, doc}) => {
   return {...cur, [key]: doc}
 })
 
-module.exports = { nano, docs, keyValue, verify, sign, reduce, shortName }
+module.exports = { nano, docs, keyValue, verify, sign, reduce, shortName, bcrypt }

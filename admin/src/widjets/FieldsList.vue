@@ -1,6 +1,6 @@
 <template>
   <div :class="['accordion', 'px-0']" role="tablist">
-    <b-card v-for="(item, index) in value || []" :key="index" no-body class="px-0">
+    <b-card v-for="(item, index) in value" :key="index" no-body class="px-0">
       <b-card-header class="py-0 pointer" role="tab" v-b-toggle="`${fieldKey}-${index}`">
         <header-list
         :header="header"
@@ -34,13 +34,24 @@ export default {
     HeaderList: () => import('./HeaderList.vue'),
     FieldsInputs: () => import('./FieldsInputs.vue')
   },
-  props: ['value', 'schema', 'header', 'fieldKey'],
+  props: {
+    value: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
+    schema: {},
+    header: {},
+    fieldKey: {}
+  },
   data: () => ({
     visible: {}
   }),
   methods: {
     setValue(item, [key, value]) {
       item[key] = value
+      this.$emit('input', this.value)
     },
     change() {
       this.$emit('change')

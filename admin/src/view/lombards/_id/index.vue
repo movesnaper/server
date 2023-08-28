@@ -2,7 +2,7 @@
   <fields-tabs 
   :schema="schema"
   :loading="loading"
-  :value="value"
+  v-model="value"
   @change="saveSync">
   </fields-tabs>
 </template>
@@ -10,52 +10,27 @@
 <script>
 
 import { db } from '@/db'
-import { debounce } from 'vue-debounce'
+import company from '../../company/index.vue'
 
 export default {
   name: 'Lombard',
-  components: { 
-    FieldsTabs: () => import('@/widjets/FieldsTabs.vue')
-  },
-  data () {
-    return {
-      loading: false,
-      value: {},
-      schema: [],
-      saveSync: debounce(this.save, 300)
-    }
-  },
-  watch: {
-    '$route.params': {
-      handler () {
-        this.refresh()
-      },
-      immediate: true
-    }
-  },
-  async created () {
-    try {
-      this.schema = await db('/schema').get('/lombards')
-    } catch (e) {
-      this.$alert(e)
-    }
-  },
+  mixins: [company],
   methods: {
-    async refresh () {
+    async update (silent) {
+      if (!silent) this.loading = true
       try {
-        this.loading = true
-        this.value = await db('/lombards').get(`/${this.$route.params.id}`)
+        this.value = await db(this.url).get(`/${this.$route.params.id}`)
       } catch (e) {
         this.$alert(e)
       } finally {
         this.loading = false
       }
     },
-
-    async save () {
-      console.log(this.value);
+    async save (key) {
+      console.log(key, this.value[key]);
+      const value = this.value[key]
       try {
-        const { rev } = await db('/lombards').post(`/${this.$route.params.id}`, this.value)
+        const { rev } = await db(`${this.url}/${key}`).post(`/${this.$route.params.id}`, {value})
         this.value = {...this.value, _rev: rev }
       } catch (e) {
         this.$alert(e)
@@ -67,7 +42,7 @@ export default {
 </script>
 
 <style scoped>
-  .component-tabs {
+  /* .component-tabs {
     border: 1px solid #00000029;
-  }
+  } */
 </style>

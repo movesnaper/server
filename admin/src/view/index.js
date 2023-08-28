@@ -15,8 +15,10 @@ export default {
 			return this.importComponent(name + (path || ''))
 		}
 	},
+
   render(h) {
-    return h(this.component)
+    const { name } = this.$route
+    return h(this.component, { props: { url: `/${name}`}})
   },
   methods: {
     importComponent(name) {

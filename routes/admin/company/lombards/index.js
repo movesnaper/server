@@ -4,14 +4,13 @@ const { nano } = require('../../functions')
 const db = nano.use('lombards')
 
 router.get('/', async (req, res) => {
-    console.log('lombards');
-    // try {
-    //     const {value} = await db.get(req.params.id)
-    //     res.status(200).json(value)
-    //   } catch(e) {
-    //     console.error(e);
-    //     res.status(500).json(e)
-    //   }
+    try {
+        const {value} = await db.get(req.params.id)
+        res.status(200).json(value)
+      } catch(e) {
+        console.error(e);
+        res.status(500).json(e)
+      }
 })
 router.get('/:id?', async (req, res) => {
     try {

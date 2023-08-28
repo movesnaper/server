@@ -1,7 +1,5 @@
 <template>
-  <b-navbar type="dark" variant="info" class="px-5" fixed="top">
-      <b-navbar-brand style="cursor: pointer" to="/">PShop</b-navbar-brand>
-      
+
     <b-navbar-nav >
       <component v-for="({ key, value, children }) in menu" :key="key"
         :is="!children ? 'b-nav-item' : 'b-nav-item-dropdown'"
@@ -17,33 +15,31 @@
         </template>
        </component>
     </b-navbar-nav>
-    <!-- <b-navbar-nav  class="ml-auto">
-      <b-nav-item-dropdown v-if="user" :text="user" right>
-      <b-link class="dropdown-item" :disabled="loading" @click="logout">
-        <b-spinner v-if="loading" class="absolute-center"/>
-        Выйти
-      </b-link>
-      </b-nav-item-dropdown>
-    </b-navbar-nav> -->
-  </b-navbar>
 </template>
 
 <script>
 const { db } = require('@/db')
 
 export default {
-  props: ['loading', 'menu'],
   data: () => ({
-    user: '',
+    loading: false,
+    menu: null
   }),
-  methods: {
-    async logout () {
-      this.loading = true
-      await db('/auth').post('/logout')
-      localStorage.removeItem('login')
-      window.location.reload()
-    }
-  }
+  async created() {
+      const { value } = await db('/schema').get('/menu') || {}
+      this.menu = value
+      const routes = this.menu.map((v) => {
+        return {
+          name: v.key,
+          path: `/${v.key}/:id?`, 
+          component: () => import('@/view'),
+          beforeEnter: (to, from, next) => {
+            !localStorage.getItem('jwt') ? next('/') : next()
+          }
+        }
+      })
+      this.$router.addRoutes(routes)
+  },
 }
 </script>
 

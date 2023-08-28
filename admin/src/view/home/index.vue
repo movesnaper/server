@@ -1,24 +1,21 @@
 <template>
   <div class="m-5">
     <b-card-group v-if="!loading" deck >
-      <b-card v-for="({ name, description}, i) in items" :key="i">
+      <b-card v-for="(value, key) in data" :key="key">
         <template #header>
           <div class="card__menu">
             <b-dropdown no-caret variant="outline">
               <template #button-content>
                 <b-icon icon="three-dots-vertical"></b-icon>
               </template>
-              <!-- <b-dropdown-item-button @click="copy(name)">Copy</b-dropdown-item-button> -->
             </b-dropdown>
           </div>
         </template>
-        <b-card-body @click="() => login(name).then(() => $router.push('/company'))">
-          <b-card-title>{{ name }}</b-card-title>
-          <b-card-text>{{ description }}</b-card-text>
+        <b-card-body @click="login(key, value)">
+          <b-card-title>{{ key }}</b-card-title>
         </b-card-body>
       </b-card>
       <modal-login ref="modal-login"/>
-      <!-- <modal-copy ref="modal-copy"/> -->
     </b-card-group>
     <div v-else>
       <b-skeleton-table
@@ -35,33 +32,29 @@ import { db } from '@/db'
 export default {
   components: {
     ModalLogin: () => import('@/view/auth')
-    // ModalCopy: () => import('../../components/ModalCopy.vue')
   },
   data: () => ({
-    items: [],
+    data: {},
     loading: false
   }),
-  async created () {
-    try {
-      this.loading = true
-      this.items = await db().get('/')
-    } catch (e) {
-      this.$alert(e)
-    } finally {
-      this.loading = false
-    }
+  created () {
+    this.update()
   },
   methods: {
-    async login (name) {
-      await this.$refs['modal-login'].show(name)
-      localStorage.setItem('login', name)
+    async update() {
+      try {
+        this.loading = true
+        this.data = await db().get('/')
+      } catch (e) {
+        this.$alert(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async login (name, password) {
+      await this.$refs['modal-login'].show({ name, password })
+      this.$router.push('/company')
     }
-
-    // async copy (name) {
-    //   await this.login(name)
-    //   const modal = this.$refs['modal-copy']
-    //   modal.show(name)
-    // }
   }
 }
 </script>

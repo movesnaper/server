@@ -1,49 +1,40 @@
 <template>
-  <div class="lombards m-5">
-    <data-table v-if="!loading" class="lombards-table" :items="lombards" :fields="schema">
+  <div class="m-5">
+    <data-table v-if="!loading" :items="data" :fields="schema">
       <template #index="{index}">{{index + 1}}</template>
-      <template #name="{item, index}">
-        <warnings :item="item" :index="index"/>
+      <template #name="{item}">
+        <b-button variant="link" :to="`${url}/${item._id}`">{{ item._id }}</b-button>
       </template>
-      <!-- <template #program="{item, index}">
-        <div class="px-2">
-          <b-form-select
-          :value="item.program"
-          @input="(program) => save({...item, program}, index)"
-          :options="programs.map((v) => v.version)"/>
-        </div>
-      </template> -->
       <template #token="{item, index}" >
         <div class="row m-0 px-2">
-          <b-input class="col mr-2" type="text" :disabled="!item.active" :value="item.token" readonly/>
-            <b-button variant="outline" :id="`copy-${index}`" @click="copy(item).then(showTooltip)">
-              <b-icon icon="stickies"/>
-            </b-button>
-            <b-tooltip
-            :disabled="true"
-            :ref="`copy-${index}`"
-            :delay="50"
-            :target="`copy-${index}`" variant="light">{{ $t('lombards.copy_token')}}</b-tooltip>
+          <b-form-checkbox :checked="!!item['token']" @change="activate(item)"/>
+          <b-input class="col mr-2" type="text" :value="item.token" readonly/>
+          <b-button 
+          v-if="item['token']"
+          variant="outline"
+          :id="`copy-${index}`" 
+          @click="copy(item).then(showTooltip)">
+            <b-icon icon="stickies"/>
+          </b-button>
+          <b-tooltip
+          :disabled="true"
+          :ref="`copy-${index}`"
+          :delay="50"
+          :target="`copy-${index}`" variant="light">{{ $t('lombards.copy_token')}}</b-tooltip>
         </div>
       </template>
-      <template #active="{item, index}">
-        <div class="col">
-          <b-form-checkbox :checked="item['active']"
-          @change="save({...item, active: !item.active}, index)"/>
-        </div>
-      </template>
-      <template #remove="{item, index}">
-        <b-button  variant="link" >
-          <b-icon icon="trash" @click="remove(item, index)" variant="danger"/>
+      <template #remove="{item}">
+        <b-button  variant="link">
+          <b-icon icon="trash" @click="remove(item)" variant="danger"/>
         </b-button>
       </template>
-      <template #footer_index>
-        <div class="center">
-          <b-icon icon="plus-circle" variant="success"/>
-        </div>
-      </template>
-      <template #footer_name>
-        <form-input :action="(name) => save({ name }, lombards.length)"/>
+      <template #footer>
+        <td>
+          <b-icon icon="plus-circle" variant="success" />
+        </td>
+        <td>
+          <form-input :action="add"/>
+        </td>
       </template>
     </data-table>
     <div v-else>
@@ -52,6 +43,7 @@
       :columns="4"
       :table-props="{ bordered: true, striped: true }"/>
     </div>
+
   </div>
 </template>
 
@@ -60,44 +52,26 @@ import { db } from '@/db'
 import { DataTable, FormInput } from '@/widjets'
 
 export default {
-  components: { 
-    Warnings: () => import('./components/warnings/index.vue'), 
-    DataTable, 
-    FormInput 
-  },
+  components: { DataTable, FormInput },
   data: () => ({
-    lombards: [
-      {_id: 'virus', name: 'virus', active: true, token: 'tets'},
-      {_id: 'makeevka', name: 'makeevka', active: false,  token: 'tets2'}
-    ],
-    // programs: [
-    //   { version: '123'},
-    //   { version: 'test'}
-    // ],
+    url: '/lombards',
+    data: [],
     loading: false,
-    schema: {
-      index: { name: 'index'},
-      name: { name: 'name'},
-      // program: { name: 'program'},
-      token: {name: 'token'},
-      active: { name: 'active'},
-      remove: {name: 'remove'}
-    }
+    schema: [
+      { key: 'index', value: '' },
+      { key: 'name', value: 'Наименование' },
+      { key: 'token', value: 'Токен' },
+      { key: 'remove', value: '' }
+    ]
   }),
   async created () {
-    try {
-      // this.schema = await db('/schema').get('/lombards')
-    } catch (e) {
-      this.$alert(e)
-    }
     this.update()
   },
   methods: {
-    async update () {
+    async update (silent) {
       try {
-        this.loading = true
-        // this.lombards = await db('/lombards').get()
-        // this.programs = await db('/programs').get()
+        if (!silent) this.loading = true
+        this.data = await db(this.url).get()
       } catch (e) {
         this.$alert(e)
       } finally {
@@ -105,23 +79,36 @@ export default {
       }
     },
 
-    async save (value, index) {
+    async add (id) {
+      const index = this.lombards.length
       try {
-        const { id } = await db('/company').post('/lombards', value)
-        this.lombards.splice(index, 1, { ...value, _id: id })
+        await db('/lombards').post(`/${id}`, {index, date: new Date})
       } catch (e) {
         this.$alert(e)
+      } finally {
+        this.update(true)
       }
     },
 
-    async remove ({ _id }, index) {
+    async activate ({_id, active}) {
       try {
-        const dialog = await this.$confirm({ name: _id })
-        await db('/company').remove('/lombards', { data: { _id } })
-        this.items.splice(index, 1)
-        dialog.close()
+        await db(`${this.url}/active`).post(`/${_id}`, {value: !active})
       } catch (e) {
         this.$alert(e)
+      } finally {
+        this.update(true)
+      }
+    },
+
+    async remove ({ _id, _rev }) {
+      const dialog = await this.$confirm({ name: _id })
+      try {
+        await db(this.url).remove(`/${_id}`, {_rev})
+        this.update(true)
+      } catch (e) {
+        this.$alert(e)
+      } finally {
+        dialog.close()
       }
     },
 
@@ -151,8 +138,5 @@ export default {
 </script>
 
 <style scoped>
-  .lombards >>> .list-group-item {
-    border-left: initial;
-    border-right: initial;
-  }
+
 </style>

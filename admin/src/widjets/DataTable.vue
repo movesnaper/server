@@ -3,24 +3,26 @@
     <table class="table table-sm">
     <thead >
       <tr>
-        <th v-for="({name, width}, key) in fields" :key="key"
-        :class="key" :style="{width}">
-          {{name}}
+        <th v-for="(field, index) in fields" :key="index">
+          {{field.value !== undefined ? field.value : field}}
         </th>
       </tr>
     </thead>
     <tbody >
       <tr v-for="(item, index) in items"  :key="index"
         :class="{active: active === index}">
-      <td v-for="({ width }, key) in fields" :key="key" :class="[key]"
-      :style="{width, 'vertical-align': 'unset'}">
-        <slot  :name="key" :item="{...item, index}" :index="index"></slot>
+      <td 
+      v-for="(field) in item.schema || fields" :key="field.key || field" 
+        :style="{'vertical-align': 'unset', width: field.width}">
+        <slot
+          :name="field.key || field"
+          :item="{...item, index}"
+          :index="index">
+        </slot>
       </td>
       </tr>
       <tr class="footer">
-      <td v-for="(name, key) in fields" :key="key" :class="key">
-        <slot  :name="'footer_' + key"/>
-      </td>
+        <slot  name="footer"/>
       </tr>
     </tbody>
     </table>

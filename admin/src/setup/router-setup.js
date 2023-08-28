@@ -11,6 +11,14 @@ export default new Router({
       path: '/',
       name: 'home',
       component: () => import('@/view')
-    }
+    },
+    {
+      path: '/logout',
+      name: 'logout',
+      beforeEnter: (to, from, next) => {
+          localStorage.removeItem('jwt')
+          next('/')
+      }
+  },
   ]
 })

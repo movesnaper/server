@@ -1,15 +1,26 @@
 const express = require('express')
 const router = express.Router()
+const { verify, sign } = require('../functions')
+router.get('/', require('./users/admins.js'))
 
-router.get('/', async (req, res) => {
-  res.status(200).json(await require('./company/dbs').get(req, res))
-})
-router.use('/auth', require('./auth'))
-router.use('/company', require('./company/index.js'))
-router.use('/schema', require('./schema/index.js'))
-router.use('/lombards', require('./lombards/index.js'))
-router.use('/programs', require('./programs/index.js'))
-router.use('/users', require('./users/index.js'))
+const auth = async (req, res, next) => {
+  const token = req.get("jwt")
+  if (!token) res.status(401).json('auth_user_requred')
+  try {
+    const { name } = await verify(token)
+    res.set('jwt', sign({ name }))
+    next()
+  } catch(err){
+    res.status(401).json({ err })
+  }
+};
+
+router.use('/auth', require('./auth/index.js'))
+router.use('/company', auth, require('./company/index.js'))
+router.use('/schema', auth, require('./schema/index.js'))
+router.use('/lombards', auth, require('./lombards/index.js'))
+router.use('/programs', auth, require('./programs/index.js'))
+router.use('/users', auth, require('./users/index.js'))
 
 
 

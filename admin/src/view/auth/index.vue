@@ -1,7 +1,7 @@
 <template>
   <div>
-    <b-modal ref="modal" hide-footer :title="user">
-      <login @login="onLogin" :err="err" :loading="loading"/>
+    <b-modal ref="modal" hide-footer :title="value.name">
+      <login :value="value" @login="login" :err="err" :loading="loading"/>
     </b-modal>
   </div>
 </template>
@@ -13,26 +13,25 @@ export default {
     Login: () => import('./Login') 
   },
   data: () => ({
-    user: '',
+    value: {},
     resolve: null,
     err: {},
     loading: false
   }),
 
   methods: {
-    show (user) {
-      this.user = user
+    show (value) {
+      this.value = value
       return new Promise((resolve) => {
         this.resolve = resolve
         this.err = { }
         this.$refs['modal'].show()
       })
     },
-    async onLogin (password) {
+    async login (data) {
       this.loading = true
       try {
-        await db('/auth').post('/login', { user: this.user, password })
-        this.$refs['modal'].hide()
+        await db('/auth/login').post(`/${this.value.name}`, data)
         this.resolve()
       } catch (err) {
         console.error(err);

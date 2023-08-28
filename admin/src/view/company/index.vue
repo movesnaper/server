@@ -2,7 +2,7 @@
   <fields-tabs 
   :schema="schema"
   :loading="loading"
-  :value="value"
+  v-model="value"
   @change="saveSync">
     <template #test>
       <h1>test</h1>
@@ -16,45 +16,42 @@ import { debounce } from 'vue-debounce'
 
 export default {
   name: 'Company',
+  props: ['url'],
   components: { 
     FieldsTabs: () => import('@/widjets/FieldsTabs.vue')
   },
   data: (vm) => ({
     loading: false,
-    value: {},
     schema: {},
+    value: {},
     saveSync: debounce(vm.save, 300)
   }),
-  watch: {
-    '$route.params': {
-      async handler () {
-        this.loading = true
-        await this.refresh()
-        this.loading = false
-      },
-      immediate: true
-    }
-  },
+
   async created () {
+    const [hash, value] = this.$route.hash.split('#')
     try {
-      this.schema = await db('/schema').get('/company')
+      this.schema = await db('/schema').get(this.url)
+      if (value) this.update(value)
+      else this.$router.push(`#${this.schema.tabs[0].key}`)
     } catch (e) {
       this.$alert(e)
     }
   },
   methods: {
-    async refresh () {
+    async update (value) {
+      this.loading = true
       try {
-        this.value = await db('/company').get()
+        this.value = await db(this.url).get(`/${value}`)
       } catch (e) {
         this.$alert(e)
+      } finally {
+        this.loading = false
       }
     },
     async save(key) {
-      console.log(key, this.value[key]);
       try {
-        const {rev} = await db('/company').post(`/${key}`, this.value[key])
-        this.value[key] = {...this.value[key], _rev: rev}
+        const {rev} = await db(this.url).post(`/${key}`, this.value)
+        this.value = {...this.value, _rev: rev}
       } catch (e) {
         this.$alert(e)
       }      

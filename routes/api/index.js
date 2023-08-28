@@ -43,7 +43,6 @@ router.post('/logout', (req, res) => {
 })
 
 router.get('/', session, async ({db}, res) => {
-  console.log("test")
     db.allDocs({ include_docs: true })
     .then(v => res.json(v))
       .catch(err => console.error(err))

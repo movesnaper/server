@@ -1,13 +1,14 @@
 import axios from 'axios'
-import { store, router } from '@/setup'
+import { router } from '@/setup'
+import jwt_decode from "jwt-decode"
 
 axios.interceptors.response.use((response) => {
+  const {jwt} = response.headers
+  jwt ? localStorage.setItem('jwt', jwt) : localStorage.removeItem('jwt')
   return response
 }, async (error) => {
-  if (error.response.status === 401) {
-    // await store.dispatch('logout')
-    await query('post', `/api/auth/logout`)
-    router.push('/')
+  if (error.response && error.response.status === 401) {
+    router.push('/logout')
   }
   if (error.response && error.response.data) {
     return Promise.reject(error.response.data)
@@ -16,30 +17,35 @@ axios.interceptors.response.use((response) => {
 })
 const config = {
   headers: {
-    'Content-Type': 'application/json;charset=utf-8'
+    'Content-Type': 'application/json;charset=utf-8',
   }
 }
 const query = (method, url, params) => {
+  setHeaders('jwt', localStorage.getItem('jwt'))
   return axios[method](url, params, config)
     .then(res => res.data)
 }
 
-const setHeaders = (name, token) => {
+const setHeaders = (name, value) => {
   const headers = axios.defaults.headers.common
-  if (token) headers[name] = token
+  if (value) headers[name] = value
   else delete headers[name]
 }
 
-export const getToken = (name) => {
-  const token = localStorage.getItem(name)
-  setHeaders(name, token)
+
+export const user = {
+  get name()  {
+    const token = localStorage.getItem('jwt')
+    return token && jwt_decode(token).name
+  }
 }
+
 
 export const db = (name = '') => {
   const baseUrl = '/api' + name
   return {
     get: (url = '', params) => query('get', `${baseUrl}${url}`, params),
     post: (url, params) => query('post', `${baseUrl}${url}`, params),
-    remove: (url, params) => query('delete', `${baseUrl}${url}`, params)
+    remove: (url, data) => query('delete', `${baseUrl}${url}`, {data})
   }
 }
